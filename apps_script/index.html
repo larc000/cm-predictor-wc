@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f6f8;
+      color: #222;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 {
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-top: 0;
+    }
+
+    .user-box {
+      background: #fff;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      border: 1px solid #ddd;
+    }
+
+    .group-title {
+      margin-top: 32px;
+      padding: 10px 14px;
+      background: #1f2937;
+      color: white;
+      border-radius: 8px;
+      font-size: 18px;
+    }
+
+    .match {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 12px 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .match-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .teams {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .date {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .match-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .status-chip,
+    .points-chip {
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 4px 8px;
+    }
+
+    .status-open {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-closed {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-final {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+
+    .points-chip {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .match-note {
+      color: #6b7280;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    .prediction-row {
+      display: flex;
+      align-items: end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .score-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 4px;
+    }
+
+    input[type="number"] {
+      width: 90px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+    }
+
+    .separator {
+      font-size: 22px;
+      font-weight: bold;
+      padding-bottom: 10px;
+    }
+
+    button {
+      padding: 11px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    button.secondary {
+      background: #111827;
+    }
+
+    button.secondary:hover {
+      background: #374151;
+    }
+
+    button[disabled] {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    button[disabled]:hover {
+      background: #9ca3af;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .leaderboard {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #ddd;
+      margin-top: 12px;
+    }
+
+    .error {
+      color: #b91c1c;
+      font-weight: bold;
+    }
+
+    button.saved {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    button.saved:hover {
+      background: #9ca3af;
+    }
+
+    #toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #16a34a;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      display: none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="toast"></div>
+  <div class="container">
+    <h1>Quiniela Mundialista 2026 - CM LATAM</h1>
+    <p class="subtitle">Registra y edita tus marcadores antes del cierre de cada partido.</p>
+
+    <div id="userInfo" class="user-box">Cargando usuario...</div>
+
+    <h2>Partidos y pronósticos</h2>
+    <div id="matches">Cargando partidos...</div>
+
+    <h2>Tabla de posiciones</h2>
+    <button onclick="loadLeaderboard()">Actualizar ranking</button>
+    <div id="leaderboard" class="leaderboard"></div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let matchesById = {};
+
+    function loadUser() {
+      google.script.run
+        .withSuccessHandler(function(user) {
+          currentUser = user;
+
+          const container = document.getElementById('userInfo');
+
+          if (!user.authenticated) {
+            container.innerHTML = `<p class="error">${user.message}</p>`;
+            document.getElementById('matches').innerHTML = '';
+            return;
+          }
+
+          container.innerHTML = `
+            Ingresaste como: <strong>${user.name}</strong><br>
+            <small>${user.email}</small>
+          `;
+
+          loadMatches();
+          loadLeaderboard();
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById('userInfo').innerHTML =
+            `<p class="error">Error cargando usuario: ${error.message}</p>`;
+        })
+        .getCurrentUser();
+    }
+
+    function loadMatches() {
+      google.script.run
+        .withSuccessHandler(function(matches) {
+          const container = document.getElementById('matches');
+          container.innerHTML = '';
+          matchesById = {};
+
+          const validMatches = matches.filter(match => match.MatchID);
+
+          if (validMatches.length === 0) {
+            container.innerHTML = 'No hay partidos disponibles.';
+            return;
+          }
+
+          const grouped = {};
+
+          validMatches.forEach(match => {
+            matchesById[match.MatchID] = match;
+
+            const group = match.Group || 'Sin grupo';
+
+            if (!grouped[group]) {
+              grouped[group] = [];
+            }
+
+            grouped[group].push(match);
+          });
+
+          Object.keys(grouped).sort().forEach(group => {
+            const groupTitle = document.createElement('h3');
+            groupTitle.className = 'group-title';
+            groupTitle.textContent = 'Grupo ' + group;
+            container.appendChild(groupTitle);
+
+            grouped[group].forEach(match => {
+              const div = document.createElement('div');
+              div.className = 'match';
+
+              const saved = match.hasPrediction;
+              const canEdit = match.canEdit;
+              const inputDisabled = saved || !canEdit;
+              const saveLabel = !saved && !canEdit ? 'Cerrado' : saved ? 'Guardar cambios' : 'Guardar';
+              const statusClass = getStatusClass(match.Status);
+              const statusLabel = getStatusLabel(match.Status);
+              const pointsLabel = getPointsLabel(match);
+              const resultLabel = getResultLabel(match);
+
+              div.innerHTML = `
+                <div class="match-header">
+                  <div>
+                    <div class="teams">${match.TeamA} vs ${match.TeamB}</div>
+                    <div class="date">Fecha: ${match.DateTime}</div>
+                    <div class="match-meta">
+                      <span class="status-chip ${statusClass}">${statusLabel}</span>
+                      <span class="points-chip">${pointsLabel}</span>
+                    </div>
+                    ${resultLabel ? `<div class="match-note">${resultLabel}</div>` : ''}
+                  </div>
+                </div>
+
+                <div class="prediction-row">
+                  <div class="score-box">
+                    <label>${match.TeamA}</label>
+                    <input 
+                      type="number" 
+                      id="a_${match.MatchID}" 
+                      min="0"
+                      value="${saved ? match.myPredScoreA : ''}"
+                      ${inputDisabled ? 'disabled' : ''}
+                    >
+                  </div>
+
+                  <div class="separator">-</div>
+
+                  <div class="score-box">
+                    <label>${match.TeamB}</label>
+                    <input 
+                      type="number" 
+                      id="b_${match.MatchID}" 
+                      min="0"
+                      value="${saved ? match.myPredScoreB : ''}"
+                      ${inputDisabled ? 'disabled' : ''}
+                    >
+                  </div>
+
+                  <div class="actions">
+                    <button
+                      id="save_${match.MatchID}"
+                      onclick="submit('${match.MatchID}')"
+                      class="${saved ? 'hidden' : ''}"
+                      ${!canEdit ? 'disabled' : ''}
+                    >
+                      ${saveLabel}
+                    </button>
+
+                    ${saved && canEdit ? `
+                      <button
+                        id="edit_${match.MatchID}"
+                        class="secondary"
+                        onclick="startEdit('${match.MatchID}')"
+                      >
+                        Editar
+                      </button>
+
+                      <button
+                        id="cancel_${match.MatchID}"
+                        class="secondary hidden"
+                        onclick="cancelEdit('${match.MatchID}')"
+                      >
+                        Cancelar
+                      </button>
+                    ` : ''}
+
+                    ${saved && !canEdit ? '<button class="saved" disabled>Guardado</button>' : ''}
+                  </div>
+                </div>
+
+                ${!canEdit ? `<div class="match-note">${match.lockReason}</div>` : ''}
+              `;
+
+              container.appendChild(div);
+            });
+          });
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById('matches').innerHTML =
+            `<p class="error">Error cargando partidos: ${error.message}</p>`;
+        })
+        .getMatchesWithMyPredictions();
+    }
+
+    function getStatusLabel(status) {
+      if (status === 'Open') return 'Abierto';
+      if (status === 'Final') return 'Final';
+      return 'Cerrado';
+    }
+
+    function getStatusClass(status) {
+      if (status === 'Open') return 'status-open';
+      if (status === 'Final') return 'status-final';
+      return 'status-closed';
+    }
+
+    function getPointsLabel(match) {
+      if (!match.hasPrediction) {
+        return 'Sin pronóstico';
+      }
+
+      if (match.Status === 'Final') {
+        return `Puntos: ${Number(match.myPoints) || 0}`;
+      }
+
+      return 'Puntos pendientes';
+    }
+
+    function getResultLabel(match) {
+      if (match.Status !== 'Final') {
+        return '';
+      }
+
+      if (
+        match.ScoreA === '' ||
+        match.ScoreA === null ||
+        match.ScoreA === undefined ||
+        match.ScoreB === '' ||
+        match.ScoreB === null ||
+        match.ScoreB === undefined
+      ) {
+        return '';
+      }
+
+      return `Resultado final: ${match.TeamA} ${match.ScoreA} - ${match.ScoreB} ${match.TeamB}`;
+    }
+
+    function loadLeaderboard() {
+      google.script.run
+        .withSuccessHandler(function(data) {
+          const container = document.getElementById('leaderboard');
+
+          if (!data || data.length === 0) {
+            container.innerHTML = 'Todavía no hay puntos registrados.';
+            return;
+          }
+
+          let html = '<ol>';
+
+          data.forEach(row => {
+            html += `<li><strong>${row.name}</strong> - ${row.points} pts</li>`;
+          });
+
+          html += '</ol>';
+          container.innerHTML = html;
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById('leaderboard').innerHTML =
+            `<p class="error">Error cargando ranking: ${error.message}</p>`;
+        })
+        .getLeaderboard();
+    }
+
+    function submit(matchId) {
+      const predA = document.getElementById('a_' + matchId).value;
+      const predB = document.getElementById('b_' + matchId).value;
+      const match = matchesById[matchId];
+      const saveButton = document.getElementById('save_' + matchId);
+
+      if (predA === '' || predB === '') {
+        alert('Completa el marcador.');
+        return;
+      }
+
+      if (saveButton) {
+        saveButton.disabled = true;
+        saveButton.innerText = 'Guardando...';
+      }
+
+      google.script.run
+        .withSuccessHandler(function(response) {
+
+          if (response.success) {
+
+            showToast(response.message);
+
+            loadMatches();
+            loadLeaderboard();
+
+          } else {
+
+            showToast(response.message);
+            restoreSaveButton(saveButton, match);
+
+          }
+        })
+        .withFailureHandler(function(error) {
+          restoreSaveButton(saveButton, match);
+          alert('Error: ' + error.message);
+        })
+        .submitPrediction(matchId, predA, predB);
+    }
+
+    function startEdit(matchId) {
+      const match = matchesById[matchId];
+
+      if (!match || !match.canEdit) {
+        showToast(match ? match.lockReason : 'No se pudo editar este partido.');
+        return;
+      }
+
+      document.getElementById('a_' + matchId).disabled = false;
+      document.getElementById('b_' + matchId).disabled = false;
+
+      document.getElementById('edit_' + matchId).classList.add('hidden');
+      document.getElementById('cancel_' + matchId).classList.remove('hidden');
+      document.getElementById('save_' + matchId).classList.remove('hidden');
+      document.getElementById('save_' + matchId).innerText = 'Guardar cambios';
+    }
+
+    function cancelEdit(matchId) {
+      const match = matchesById[matchId];
+
+      document.getElementById('a_' + matchId).value = match.myPredScoreA;
+      document.getElementById('b_' + matchId).value = match.myPredScoreB;
+      document.getElementById('a_' + matchId).disabled = true;
+      document.getElementById('b_' + matchId).disabled = true;
+
+      document.getElementById('save_' + matchId).classList.add('hidden');
+      document.getElementById('cancel_' + matchId).classList.add('hidden');
+      document.getElementById('edit_' + matchId).classList.remove('hidden');
+    }
+
+    function restoreSaveButton(button, match) {
+      if (!button) {
+        return;
+      }
+
+      button.disabled = false;
+      button.innerText = match && match.hasPrediction ? 'Guardar cambios' : 'Guardar';
+    }
+
+    function showToast(message) {
+
+      const toast = document.getElementById('toast');
+
+      toast.innerText = message;
+      toast.style.display = 'block';
+
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2500);
+    }
+
+    loadUser();
+  </script>
+</body>
+</html>
