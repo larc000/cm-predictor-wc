@@ -1,4 +1,9 @@
 const SPREADSHEET_ID = '15dHH6_GHu7oKnVkQTzo53aWXRWtIFTf8DiiXK29SOCw';
+const GOOGLE_CLIENT_ID = '22101400405-22n609tqgo9nptnsu6mf5r93v62im26p.apps.googleusercontent.com';
+const ALLOWED_GOOGLE_HOSTED_DOMAIN = '';
+const POINTS_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+const POINTS_REFRESHED_AT_PROPERTY = 'POINTS_REFRESHED_AT';
+const POINTS_RESULTS_FINGERPRINT_PROPERTY = 'POINTS_RESULTS_FINGERPRINT';
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('index')
@@ -15,6 +20,125 @@ function isBlankRow(row) {
 
 function normalizeEmail(email) {
   return String(email || '').trim().toLowerCase();
+}
+
+function isGoogleClientIdConfigured() {
+  return GOOGLE_CLIENT_ID &&
+    GOOGLE_CLIENT_ID.indexOf('REEMPLAZA_CON_TU_CLIENT_ID') === -1 &&
+    GOOGLE_CLIENT_ID.indexOf('.apps.googleusercontent.com') !== -1;
+}
+
+function getAuthConfig() {
+  return {
+    googleClientId: isGoogleClientIdConfigured() ? GOOGLE_CLIENT_ID : '',
+    authConfigured: isGoogleClientIdConfigured(),
+    allowedDomain: ALLOWED_GOOGLE_HOSTED_DOMAIN
+  };
+}
+
+function verifyGoogleIdToken(idToken) {
+  if (!isGoogleClientIdConfigured()) {
+    throw new Error('Falta configurar GOOGLE_CLIENT_ID en Code.gs.');
+  }
+
+  if (!idToken) {
+    throw new Error('Inicia sesión con Google para continuar.');
+  }
+
+  const response = UrlFetchApp.fetch(
+    'https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(idToken),
+    { muteHttpExceptions: true }
+  );
+
+  if (response.getResponseCode() !== 200) {
+    throw new Error('No se pudo verificar tu sesión de Google.');
+  }
+
+  const payload = JSON.parse(response.getContentText());
+
+  if (payload.aud !== GOOGLE_CLIENT_ID) {
+    throw new Error('Esta sesión de Google fue emitida para otra aplicación.');
+  }
+
+  if (payload.iss !== 'accounts.google.com' && payload.iss !== 'https://accounts.google.com') {
+    throw new Error('El emisor de la sesión de Google no es válido.');
+  }
+
+  if (Number(payload.exp) * 1000 < Date.now()) {
+    throw new Error('Tu sesión de Google expiró. Inicia sesión de nuevo.');
+  }
+
+  if (payload.email_verified !== true && payload.email_verified !== 'true') {
+    throw new Error('Tu correo de Google no está verificado.');
+  }
+
+  if (
+    ALLOWED_GOOGLE_HOSTED_DOMAIN &&
+    normalizeEmail(payload.hd) !== normalizeEmail(ALLOWED_GOOGLE_HOSTED_DOMAIN)
+  ) {
+    throw new Error('Debes ingresar con una cuenta del dominio autorizado.');
+  }
+
+  return {
+    email: normalizeEmail(payload.email),
+    name: payload.name || payload.email,
+    picture: payload.picture || '',
+    hostedDomain: payload.hd || ''
+  };
+}
+
+function getRegisteredUser(identity) {
+  const usersSheet = getSheet('Users');
+  const data = usersSheet.getDataRange().getValues();
+  const headers = data.shift();
+
+  const emailIndex = headers.indexOf('Email');
+  const nameIndex = headers.indexOf('Name');
+  const roleIndex = headers.indexOf('Role');
+  const activeIndex = headers.indexOf('Active');
+
+  const userRow = data.find(row =>
+    normalizeEmail(row[emailIndex]) === identity.email
+  );
+
+  if (!userRow) {
+    return {
+      authenticated: false,
+      code: 'USER_NOT_REGISTERED',
+      email: identity.email,
+      name: identity.name,
+      message: 'Tu correo no está registrado para participar en la quiniela.'
+    };
+  }
+
+  if (String(userRow[activeIndex]).toUpperCase() !== 'TRUE') {
+    return {
+      authenticated: false,
+      code: 'USER_INACTIVE',
+      email: identity.email,
+      name: userRow[nameIndex] || identity.name,
+      message: 'Tu usuario está inactivo.'
+    };
+  }
+
+  return {
+    authenticated: true,
+    email: identity.email,
+    name: userRow[nameIndex] || identity.name,
+    role: userRow[roleIndex],
+    picture: identity.picture,
+    hostedDomain: identity.hostedDomain
+  };
+}
+
+function requireCurrentUser(idToken) {
+  const currentUser = getCurrentUser(idToken);
+
+  if (!currentUser.authenticated) {
+    throw new Error(currentUser.message);
+  }
+
+  return currentUser;
 }
 
 function parseSheetDate(value) {
@@ -82,6 +206,97 @@ function getMatchEditState(status, dateTime) {
   };
 }
 
+function getFinalResultsFingerprint() {
+  const matchesSheet = getSheet('Matches');
+  const matchesData = matchesSheet.getDataRange().getValues();
+  const headers = matchesData.shift();
+
+  const matchIdIndex = headers.indexOf('MatchID');
+  const scoreAIndex = headers.indexOf('ScoreA');
+  const scoreBIndex = headers.indexOf('ScoreB');
+  const statusIndex = headers.indexOf('Status');
+
+  return JSON.stringify(
+    matchesData
+      .filter(row => !isBlankRow(row) && String(row[statusIndex]).trim() === 'Final')
+      .map(row => [
+        row[matchIdIndex],
+        row[scoreAIndex],
+        row[scoreBIndex],
+        row[statusIndex]
+      ])
+  );
+}
+
+function refreshPointsIfNeeded(force) {
+  const properties = PropertiesService.getScriptProperties();
+  const now = Date.now();
+  const lastRefresh = Number(properties.getProperty(POINTS_REFRESHED_AT_PROPERTY)) || 0;
+  const currentFingerprint = getFinalResultsFingerprint();
+  const previousFingerprint = properties.getProperty(POINTS_RESULTS_FINGERPRINT_PROPERTY);
+
+  if (
+    !force &&
+    currentFingerprint === previousFingerprint &&
+    now - lastRefresh < POINTS_REFRESH_INTERVAL_MS
+  ) {
+    return;
+  }
+
+  const lock = LockService.getScriptLock();
+
+  if (!lock.tryLock(5000)) {
+    return;
+  }
+
+  try {
+    calculateAllPoints();
+    properties.setProperty(POINTS_REFRESHED_AT_PROPERTY, String(now));
+    properties.setProperty(POINTS_RESULTS_FINGERPRINT_PROPERTY, currentFingerprint);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function handleMatchResultsEdit(e) {
+  const range = e && e.range;
+
+  if (!range || range.getSheet().getName() !== 'Matches') {
+    return;
+  }
+
+  const sheet = range.getSheet();
+  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  const watchedColumns = ['ScoreA', 'ScoreB', 'Status']
+    .map(header => headers.indexOf(header) + 1)
+    .filter(column => column > 0);
+
+  const startColumn = range.getColumn();
+  const endColumn = startColumn + range.getNumColumns() - 1;
+  const touchedResultsColumn = watchedColumns.some(column =>
+    column >= startColumn && column <= endColumn
+  );
+
+  if (touchedResultsColumn) {
+    refreshPointsIfNeeded(true);
+  }
+}
+
+function installMatchResultsTrigger() {
+  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  ScriptApp.getProjectTriggers().forEach(trigger => {
+    if (trigger.getHandlerFunction() === 'handleMatchResultsEdit') {
+      ScriptApp.deleteTrigger(trigger);
+    }
+  });
+
+  ScriptApp.newTrigger('handleMatchResultsEdit')
+    .forSpreadsheet(spreadsheet)
+    .onEdit()
+    .create();
+}
+
 function getMatches() {
   const sheet = getSheet('Matches');
   const data = sheet.getDataRange().getValues();
@@ -102,12 +317,10 @@ function getMatches() {
   });
 }
 
-function getMatchesWithMyPredictions() {
-  const currentUser = getCurrentUser();
+function getMatchesWithMyPredictions(idToken) {
+  const currentUser = requireCurrentUser(idToken);
 
-  if (!currentUser.authenticated) {
-    return [];
-  }
+  refreshPointsIfNeeded(false);
 
   const email = currentUser.email;
 
@@ -174,8 +387,8 @@ function getMatchesWithMyPredictions() {
   });
 }
 
-function submitPrediction(matchId, predScoreA, predScoreB) {
-  const currentUser = getCurrentUser();
+function submitPrediction(idToken, matchId, predScoreA, predScoreB) {
+  const currentUser = getCurrentUser(idToken);
 
   if (!currentUser.authenticated) {
     return {
@@ -282,22 +495,33 @@ function calculateAllPoints() {
 
   const matchMap = {};
 
-  matchesData.forEach(row => {
+  matchesData.filter(row => !isBlankRow(row)).forEach(row => {
     const match = {};
     matchHeaders.forEach((h, i) => match[h] = row[i]);
     matchMap[match.MatchID] = match;
   });
 
-  const pointsColumnIndex = predictionHeaders.indexOf('Points') + 1;
+  const pointsIndex = predictionHeaders.indexOf('Points');
+  const pointsColumnIndex = pointsIndex + 1;
+  const pointsValues = predictionsData.map(row => {
+    if (isBlankRow(row)) {
+      return [row[pointsIndex] || ''];
+    }
 
-  predictionsData.forEach((row, index) => {
     const prediction = {};
     predictionHeaders.forEach((h, i) => prediction[h] = row[i]);
 
     const match = matchMap[prediction.MatchID];
 
-    if (!match || match.Status !== 'Final') {
-      return;
+    if (
+      !match ||
+      String(match.Status).trim() !== 'Final' ||
+      match.ScoreA === '' ||
+      match.ScoreA === null ||
+      match.ScoreB === '' ||
+      match.ScoreB === null
+    ) {
+      return [0];
     }
 
     const points = calculatePoints(
@@ -307,8 +531,13 @@ function calculateAllPoints() {
       Number(match.ScoreB)
     );
 
-    predictionsSheet.getRange(index + 2, pointsColumnIndex).setValue(points);
+    return [points];
   });
+
+  if (pointsValues.length > 0) {
+    predictionsSheet.getRange(2, pointsColumnIndex, pointsValues.length, 1)
+      .setValues(pointsValues);
+  }
 }
 
 function calculatePoints(predA, predB, realA, realB) {
@@ -334,7 +563,11 @@ function getResult(scoreA, scoreB) {
   return 'DRAW';
 }
 
-function getLeaderboard() {
+function getLeaderboard(idToken) {
+  requireCurrentUser(idToken);
+
+  refreshPointsIfNeeded(false);
+
   const usersSheet = getSheet('Users');
   const predictionsSheet = getSheet('Predictions');
 
@@ -390,49 +623,15 @@ function getLeaderboard() {
     .sort((a, b) => b.points - a.points);
 }
 
-function getCurrentUser() {
-  const email = Session.getActiveUser().getEmail();
-
-  if (!email) {
+function getCurrentUser(idToken) {
+  try {
+    const identity = verifyGoogleIdToken(idToken);
+    return getRegisteredUser(identity);
+  } catch (error) {
     return {
       authenticated: false,
-      message: 'No se pudo detectar tu correo. Debes ingresar con una cuenta de Google.'
+      code: 'GOOGLE_LOGIN_REQUIRED',
+      message: error.message
     };
   }
-
-  const usersSheet = getSheet('Users');
-  const data = usersSheet.getDataRange().getValues();
-  const headers = data.shift();
-
-  const emailIndex = headers.indexOf('Email');
-  const nameIndex = headers.indexOf('Name');
-  const roleIndex = headers.indexOf('Role');
-  const activeIndex = headers.indexOf('Active');
-
-  const userRow = data.find(row =>
-    String(row[emailIndex]).toLowerCase() === email.toLowerCase()
-  );
-
-  if (!userRow) {
-    return {
-      authenticated: false,
-      email,
-      message: 'Tu correo no está registrado para participar en la quiniela.'
-    };
-  }
-
-  if (String(userRow[activeIndex]).toUpperCase() !== 'TRUE') {
-    return {
-      authenticated: false,
-      email,
-      message: 'Tu usuario está inactivo.'
-    };
-  }
-
-  return {
-    authenticated: true,
-    email,
-    name: userRow[nameIndex],
-    role: userRow[roleIndex]
-  };
 }

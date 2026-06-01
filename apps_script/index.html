@@ -2,7 +2,12 @@
 <html>
 <head>
   <base target="_top">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -10,31 +15,198 @@
       color: #222;
     }
 
-    .container {
-      max-width: 960px;
+    .app-shell {
+      max-width: 1120px;
       margin: 0 auto;
       padding: 24px;
     }
 
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
     h1 {
-      margin-bottom: 4px;
+      margin: 0 0 4px;
+      font-size: 32px;
+      line-height: 1.1;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 24px;
     }
 
     .subtitle {
       color: #666;
-      margin-top: 0;
+      margin: 0;
     }
 
-    .user-box {
+    .account-box {
+      min-width: 220px;
+      max-width: 320px;
       background: #fff;
-      border-radius: 10px;
-      padding: 12px 16px;
-      margin: 16px 0;
       border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px 12px;
+      text-align: right;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    .account-box span {
+      display: block;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .account-box strong {
+      display: block;
+      margin-top: 3px;
+    }
+
+    .account-box small {
+      display: block;
+      color: #4b5563;
+      margin-top: 2px;
+      overflow-wrap: anywhere;
+    }
+
+    .account-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+
+    .google-signin {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+
+    .signout-button {
+      background: #f3f4f6;
+      color: #374151;
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+
+    .signout-button:hover {
+      background: #e5e7eb;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: #e5e7eb;
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 24px;
+      width: fit-content;
+    }
+
+    button {
+      padding: 11px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    button.secondary {
+      background: #111827;
+    }
+
+    button.secondary:hover {
+      background: #374151;
+    }
+
+    button[disabled] {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    button[disabled]:hover {
+      background: #9ca3af;
+    }
+
+    .tab-button {
+      background: transparent;
+      color: #374151;
+      box-shadow: none;
+    }
+
+    .tab-button:hover {
+      background: #d1d5db;
+    }
+
+    .tab-button.active {
+      background: #fff;
+      color: #111827;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .section-copy {
+      color: #6b7280;
+      margin: 6px 0 0;
+    }
+
+    .notice {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 14px 16px;
+      color: #4b5563;
+    }
+
+    .notice h3 {
+      margin: 0 0 8px;
+      color: #111827;
+      font-size: 18px;
+    }
+
+    .notice p {
+      margin: 6px 0;
+    }
+
+    .notice ol,
+    .notice ul {
+      margin: 10px 0 0;
+      padding-left: 22px;
+    }
+
+    .notice li {
+      margin: 5px 0;
     }
 
     .group-title {
-      margin-top: 32px;
+      margin: 28px 0 12px;
       padding: 10px 14px;
       background: #1f2937;
       color: white;
@@ -45,7 +217,7 @@
     .match {
       background: white;
       border: 1px solid #ddd;
-      border-radius: 12px;
+      border-radius: 8px;
       padding: 16px;
       margin: 12px 0;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
@@ -143,37 +315,6 @@
       padding-bottom: 10px;
     }
 
-    button {
-      padding: 11px 16px;
-      border: none;
-      border-radius: 8px;
-      background: #2563eb;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #1d4ed8;
-    }
-
-    button.secondary {
-      background: #111827;
-    }
-
-    button.secondary:hover {
-      background: #374151;
-    }
-
-    button[disabled] {
-      background: #9ca3af;
-      cursor: not-allowed;
-    }
-
-    button[disabled]:hover {
-      background: #9ca3af;
-    }
-
     .actions {
       display: flex;
       gap: 8px;
@@ -186,10 +327,61 @@
 
     .leaderboard {
       background: white;
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 8px;
       border: 1px solid #ddd;
-      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    .ranking-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .ranking-table th,
+    .ranking-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+
+    .ranking-table th {
+      background: #f9fafb;
+      color: #4b5563;
+      font-size: 13px;
+    }
+
+    .ranking-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .points-cell {
+      font-weight: bold;
+      text-align: right;
+    }
+
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .rule-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .rule-card strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .rule-card p {
+      color: #4b5563;
+      margin: 0;
+      line-height: 1.4;
     }
 
     .error {
@@ -217,58 +409,346 @@
       display: none;
       z-index: 9999;
     }
+
+    @media (max-width: 720px) {
+      .app-shell {
+        padding: 18px;
+      }
+
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .account-box {
+        max-width: none;
+        text-align: left;
+      }
+
+      .account-actions,
+      .google-signin {
+        justify-content: flex-start;
+      }
+
+      .tabs {
+        width: 100%;
+      }
+
+      .tab-button {
+        flex: 1;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .rules-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
 <body>
   <div id="toast"></div>
-  <div class="container">
-    <h1>Quiniela Mundialista 2026 - CM LATAM</h1>
-    <p class="subtitle">Registra y edita tus marcadores antes del cierre de cada partido.</p>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <h1>Quiniela Mundialista 2026 - CM LATAM</h1>
+        <p class="subtitle">Registra y edita tus marcadores antes del cierre de cada partido.</p>
+      </div>
 
-    <div id="userInfo" class="user-box">Cargando usuario...</div>
+      <div id="accountBox" class="account-box">
+        <span>Mi cuenta</span>
+        <strong>Cargando...</strong>
+      </div>
+    </header>
 
-    <h2>Partidos y pronósticos</h2>
-    <div id="matches">Cargando partidos...</div>
+    <nav class="tabs" aria-label="Secciones">
+      <button id="tabButton_quiniela" class="tab-button active" type="button" onclick="showTab('quiniela')">
+        Mi Quiniela
+      </button>
+      <button id="tabButton_reglas" class="tab-button" type="button" onclick="showTab('reglas')">
+        Reglas
+      </button>
+      <button id="tabButton_ranking" class="tab-button" type="button" onclick="showTab('ranking')">
+        Ranking
+      </button>
+    </nav>
 
-    <h2>Tabla de posiciones</h2>
-    <button onclick="loadLeaderboard()">Actualizar ranking</button>
-    <div id="leaderboard" class="leaderboard"></div>
+    <section id="tab_quiniela" class="tab-panel active">
+      <div class="section-heading">
+        <div>
+          <h2>Mi Quiniela</h2>
+          <p class="section-copy">Tus marcadores, estados y puntos por partido.</p>
+        </div>
+      </div>
+      <div id="matches">Cargando partidos...</div>
+    </section>
+
+    <section id="tab_reglas" class="tab-panel">
+      <div class="section-heading">
+        <div>
+          <h2>Reglas</h2>
+          <p class="section-copy">La edición cierra 24 horas antes de cada partido.</p>
+        </div>
+      </div>
+
+      <div class="rules-grid">
+        <div class="rule-card">
+          <strong>3 pts</strong>
+          <p>Por acertar el resultado: ganador, perdedor o empate.</p>
+        </div>
+        <div class="rule-card">
+          <strong>+2 pts</strong>
+          <p>Extra por acertar el marcador exacto del partido.</p>
+        </div>
+        <div class="rule-card">
+          <strong>24 h</strong>
+          <p>Antes del partido se bloquea el registro y la edición.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab_ranking" class="tab-panel">
+      <div class="section-heading">
+        <div>
+          <h2>Ranking</h2>
+          <p class="section-copy">Puntos acumulados por participante.</p>
+        </div>
+        <button type="button" onclick="loadLeaderboard()">Actualizar ranking</button>
+      </div>
+      <div id="leaderboard" class="leaderboard notice">Cargando ranking...</div>
+    </section>
   </div>
 
   <script>
     let currentUser = null;
     let matchesById = {};
+    let googleClientId = '';
+    let googleIdToken = sessionStorage.getItem('googleIdToken') || '';
 
-    function loadUser() {
+    function showTab(tabName) {
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+      });
+
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.remove('active');
+      });
+
+      document.getElementById('tabButton_' + tabName).classList.add('active');
+      document.getElementById('tab_' + tabName).classList.add('active');
+
+      if (tabName === 'ranking' && currentUser && currentUser.authenticated) {
+        loadLeaderboard();
+      }
+    }
+
+    function initializeApp() {
+      renderSignedOut('Preparando inicio de sesión...');
+
       google.script.run
-        .withSuccessHandler(function(user) {
-          currentUser = user;
+        .withSuccessHandler(function(config) {
+          googleClientId = config.googleClientId || '';
 
-          const container = document.getElementById('userInfo');
-
-          if (!user.authenticated) {
-            container.innerHTML = `<p class="error">${user.message}</p>`;
-            document.getElementById('matches').innerHTML = '';
+          if (!config.authConfigured) {
+            renderConfigNotice();
             return;
           }
 
-          container.innerHTML = `
-            Ingresaste como: <strong>${user.name}</strong><br>
-            <small>${user.email}</small>
-          `;
+          waitForGoogleIdentity();
 
-          loadMatches();
-          loadLeaderboard();
+          if (googleIdToken) {
+            loadUser();
+          } else {
+            renderSignedOut();
+          }
         })
         .withFailureHandler(function(error) {
-          document.getElementById('userInfo').innerHTML =
-            `<p class="error">Error cargando usuario: ${error.message}</p>`;
+          document.getElementById('matches').innerHTML =
+            `<div class="notice error">Error cargando configuración: ${escapeHtml(error.message)}</div>`;
         })
-        .getCurrentUser();
+        .getAuthConfig();
+    }
+
+    function waitForGoogleIdentity(attempt) {
+      if (window.google && google.accounts && google.accounts.id) {
+        google.accounts.id.initialize({
+          client_id: googleClientId,
+          callback: handleGoogleCredential,
+          auto_select: false
+        });
+
+        renderGoogleButton();
+        return;
+      }
+
+      if ((attempt || 0) > 50) {
+        document.getElementById('matches').innerHTML = `
+          <div class="notice error">
+            No se pudo cargar el botón de Google. Revisa que el navegador permita scripts de accounts.google.com.
+          </div>
+        `;
+        return;
+      }
+
+      setTimeout(() => waitForGoogleIdentity((attempt || 0) + 1), 100);
+    }
+
+    function renderGoogleButton() {
+      const buttonContainer = document.getElementById('googleSignInButton');
+
+      if (!buttonContainer || !window.google || !google.accounts || !google.accounts.id) {
+        return;
+      }
+
+      buttonContainer.innerHTML = '';
+      google.accounts.id.renderButton(buttonContainer, {
+        theme: 'outline',
+        size: 'large',
+        text: 'signin_with',
+        shape: 'rectangular'
+      });
+    }
+
+    function handleGoogleCredential(response) {
+      googleIdToken = response.credential;
+      sessionStorage.setItem('googleIdToken', googleIdToken);
+      loadUser();
+    }
+
+    function signOut() {
+      googleIdToken = '';
+      currentUser = null;
+      matchesById = {};
+      sessionStorage.removeItem('googleIdToken');
+
+      if (window.google && google.accounts && google.accounts.id) {
+        google.accounts.id.disableAutoSelect();
+      }
+
+      renderSignedOut('Sesión cerrada.');
+      renderGoogleButton();
+    }
+
+    function renderSignedOut(message) {
+      document.getElementById('accountBox').innerHTML = `
+        <span>Mi cuenta</span>
+        <strong>Iniciar sesión</strong>
+        <small>${escapeHtml(message || 'Usa tu cuenta de Google para continuar.')}</small>
+        <div id="googleSignInButton" class="google-signin"></div>
+      `;
+
+      document.getElementById('matches').innerHTML = `
+        <div class="notice">
+          <h3>Inicia sesión con Google</h3>
+          <p>La app verificará tu correo y lo comparará contra el tab <strong>Users</strong>.</p>
+        </div>
+      `;
+
+      document.getElementById('leaderboard').innerHTML =
+        'Inicia sesión para ver el ranking.';
+    }
+
+    function renderConfigNotice() {
+      document.getElementById('accountBox').innerHTML = `
+        <span>Mi cuenta</span>
+        <strong class="error">Config pendiente</strong>
+        <small>Falta el Google Client ID.</small>
+      `;
+
+      document.getElementById('matches').innerHTML = `
+        <div class="notice">
+          <h3>Falta configurar Google Login</h3>
+          <p>Reemplaza <strong>GOOGLE_CLIENT_ID</strong> en <strong>Code.gs</strong> con el OAuth Client ID de tipo Web application.</p>
+        </div>
+      `;
+    }
+
+    function loadUser() {
+      if (!googleIdToken) {
+        renderSignedOut();
+        renderGoogleButton();
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(function(user) {
+          currentUser = user;
+          renderAccount(user);
+
+          if (!user.authenticated) {
+            document.getElementById('matches').innerHTML =
+              renderAuthNotice(user);
+            document.getElementById('leaderboard').innerHTML =
+              `<p class="error">${escapeHtml(user.message)}</p>`;
+            renderGoogleButton();
+            return;
+          }
+
+          loadMatches();
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById('accountBox').innerHTML = `
+            <span>Mi cuenta</span>
+            <strong class="error">Error</strong>
+            <small>${escapeHtml(error.message)}</small>
+          `;
+        })
+        .getCurrentUser(googleIdToken);
+    }
+
+    function renderAccount(user) {
+      const accountBox = document.getElementById('accountBox');
+
+      if (!user.authenticated) {
+        accountBox.innerHTML = `
+          <span>Mi cuenta</span>
+          <strong class="error">No autorizado</strong>
+          <small>${escapeHtml(user.email || '')}</small>
+          <div class="account-actions">
+            <button type="button" class="signout-button" onclick="signOut()">Cambiar cuenta</button>
+          </div>
+        `;
+        return;
+      }
+
+      accountBox.innerHTML = `
+        <span>Mi cuenta</span>
+        <strong>${escapeHtml(user.name)}</strong>
+        <small>${escapeHtml(user.email)}</small>
+        <div class="account-actions">
+          <button type="button" class="signout-button" onclick="signOut()">Salir</button>
+        </div>
+      `;
+    }
+
+    function renderAuthNotice(user) {
+      if (user.code !== 'GOOGLE_LOGIN_REQUIRED') {
+        return `<div class="notice error">${escapeHtml(user.message)}</div>`;
+      }
+
+      return `
+        <div class="notice">
+          <h3>No se pudo validar tu sesión</h3>
+          <p class="error">${escapeHtml(user.message)}</p>
+          <p>Vuelve a iniciar sesión con Google para continuar.</p>
+          <div id="googleSignInButton" class="google-signin"></div>
+        </div>
+      `;
     }
 
     function loadMatches() {
+      if (!googleIdToken) {
+        renderSignedOut();
+        renderGoogleButton();
+        return;
+      }
+
       google.script.run
         .withSuccessHandler(function(matches) {
           const container = document.getElementById('matches');
@@ -278,7 +758,7 @@
           const validMatches = matches.filter(match => match.MatchID);
 
           if (validMatches.length === 0) {
-            container.innerHTML = 'No hay partidos disponibles.';
+            container.innerHTML = '<div class="notice">No hay partidos disponibles.</div>';
             return;
           }
 
@@ -318,8 +798,8 @@
               div.innerHTML = `
                 <div class="match-header">
                   <div>
-                    <div class="teams">${match.TeamA} vs ${match.TeamB}</div>
-                    <div class="date">Fecha: ${match.DateTime}</div>
+                    <div class="teams">${escapeHtml(match.TeamA)} vs ${escapeHtml(match.TeamB)}</div>
+                    <div class="date">Fecha: ${escapeHtml(match.DateTime)}</div>
                     <div class="match-meta">
                       <span class="status-chip ${statusClass}">${statusLabel}</span>
                       <span class="points-chip">${pointsLabel}</span>
@@ -330,12 +810,12 @@
 
                 <div class="prediction-row">
                   <div class="score-box">
-                    <label>${match.TeamA}</label>
-                    <input 
-                      type="number" 
-                      id="a_${match.MatchID}" 
+                    <label>${escapeHtml(match.TeamA)}</label>
+                    <input
+                      type="number"
+                      id="a_${match.MatchID}"
                       min="0"
-                      value="${saved ? match.myPredScoreA : ''}"
+                      value="${saved ? escapeHtml(match.myPredScoreA) : ''}"
                       ${inputDisabled ? 'disabled' : ''}
                     >
                   </div>
@@ -343,12 +823,12 @@
                   <div class="separator">-</div>
 
                   <div class="score-box">
-                    <label>${match.TeamB}</label>
-                    <input 
-                      type="number" 
-                      id="b_${match.MatchID}" 
+                    <label>${escapeHtml(match.TeamB)}</label>
+                    <input
+                      type="number"
+                      id="b_${match.MatchID}"
                       min="0"
-                      value="${saved ? match.myPredScoreB : ''}"
+                      value="${saved ? escapeHtml(match.myPredScoreB) : ''}"
                       ${inputDisabled ? 'disabled' : ''}
                     >
                   </div>
@@ -385,7 +865,7 @@
                   </div>
                 </div>
 
-                ${!canEdit ? `<div class="match-note">${match.lockReason}</div>` : ''}
+                ${!canEdit ? `<div class="match-note">${escapeHtml(match.lockReason)}</div>` : ''}
               `;
 
               container.appendChild(div);
@@ -394,9 +874,9 @@
         })
         .withFailureHandler(function(error) {
           document.getElementById('matches').innerHTML =
-            `<p class="error">Error cargando partidos: ${error.message}</p>`;
+            `<div class="notice error">Error cargando partidos: ${escapeHtml(error.message)}</div>`;
         })
-        .getMatchesWithMyPredictions();
+        .getMatchesWithMyPredictions(googleIdToken);
     }
 
     function getStatusLabel(status) {
@@ -439,36 +919,73 @@
         return '';
       }
 
-      return `Resultado final: ${match.TeamA} ${match.ScoreA} - ${match.ScoreB} ${match.TeamB}`;
+      return `Resultado final: ${escapeHtml(match.TeamA)} ${escapeHtml(match.ScoreA)} - ${escapeHtml(match.ScoreB)} ${escapeHtml(match.TeamB)}`;
     }
 
     function loadLeaderboard() {
+      if (!googleIdToken) {
+        renderSignedOut();
+        renderGoogleButton();
+        return;
+      }
+
+      const container = document.getElementById('leaderboard');
+      container.className = 'leaderboard notice';
+      container.innerHTML = 'Actualizando ranking...';
+
       google.script.run
         .withSuccessHandler(function(data) {
-          const container = document.getElementById('leaderboard');
-
           if (!data || data.length === 0) {
+            container.className = 'leaderboard notice';
             container.innerHTML = 'Todavía no hay puntos registrados.';
             return;
           }
 
-          let html = '<ol>';
+          container.className = 'leaderboard';
 
-          data.forEach(row => {
-            html += `<li><strong>${row.name}</strong> - ${row.points} pts</li>`;
+          let html = `
+            <table class="ranking-table">
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Participante</th>
+                  <th class="points-cell">Puntos</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+
+          data.forEach((row, index) => {
+            html += `
+              <tr>
+                <td>${index + 1}</td>
+                <td>
+                  <strong>${escapeHtml(row.name)}</strong><br>
+                  <small>${escapeHtml(row.email)}</small>
+                </td>
+                <td class="points-cell">${Number(row.points) || 0}</td>
+              </tr>
+            `;
           });
 
-          html += '</ol>';
+          html += '</tbody></table>';
           container.innerHTML = html;
         })
         .withFailureHandler(function(error) {
-          document.getElementById('leaderboard').innerHTML =
-            `<p class="error">Error cargando ranking: ${error.message}</p>`;
+          container.className = 'leaderboard notice';
+          container.innerHTML =
+            `<p class="error">Error cargando ranking: ${escapeHtml(error.message)}</p>`;
         })
-        .getLeaderboard();
+        .getLeaderboard(googleIdToken);
     }
 
     function submit(matchId) {
+      if (!googleIdToken) {
+        renderSignedOut();
+        renderGoogleButton();
+        return;
+      }
+
       const predA = document.getElementById('a_' + matchId).value;
       const predB = document.getElementById('b_' + matchId).value;
       const match = matchesById[matchId];
@@ -486,26 +1003,19 @@
 
       google.script.run
         .withSuccessHandler(function(response) {
-
           if (response.success) {
-
             showToast(response.message);
-
             loadMatches();
-            loadLeaderboard();
-
           } else {
-
             showToast(response.message);
             restoreSaveButton(saveButton, match);
-
           }
         })
         .withFailureHandler(function(error) {
           restoreSaveButton(saveButton, match);
           alert('Error: ' + error.message);
         })
-        .submitPrediction(matchId, predA, predB);
+        .submitPrediction(googleIdToken, matchId, predA, predB);
     }
 
     function startEdit(matchId) {
@@ -548,7 +1058,6 @@
     }
 
     function showToast(message) {
-
       const toast = document.getElementById('toast');
 
       toast.innerText = message;
@@ -559,7 +1068,16 @@
       }, 2500);
     }
 
-    loadUser();
+    function escapeHtml(value) {
+      return String(value === null || value === undefined ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    initializeApp();
   </script>
 </body>
 </html>
