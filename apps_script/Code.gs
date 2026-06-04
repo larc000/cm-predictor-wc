@@ -1,6 +1,4 @@
 const SPREADSHEET_ID = '15dHH6_GHu7oKnVkQTzo53aWXRWtIFTf8DiiXK29SOCw';
-const GOOGLE_CLIENT_ID = '22101400405-22n609tqgo9nptnsu6mf5r93v62im26p.apps.googleusercontent.com';
-const ALLOWED_GOOGLE_HOSTED_DOMAIN = '';
 const POINTS_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 const POINTS_REFRESHED_AT_PROPERTY = 'POINTS_REFRESHED_AT';
 const POINTS_RESULTS_FINGERPRINT_PROPERTY = 'POINTS_RESULTS_FINGERPRINT';
@@ -22,72 +20,7 @@ function normalizeEmail(email) {
   return String(email || '').trim().toLowerCase();
 }
 
-function isGoogleClientIdConfigured() {
-  return GOOGLE_CLIENT_ID &&
-    GOOGLE_CLIENT_ID.indexOf('REEMPLAZA_CON_TU_CLIENT_ID') === -1 &&
-    GOOGLE_CLIENT_ID.indexOf('.apps.googleusercontent.com') !== -1;
-}
-
-function getAuthConfig() {
-  return {
-    googleClientId: isGoogleClientIdConfigured() ? GOOGLE_CLIENT_ID : '',
-    authConfigured: isGoogleClientIdConfigured(),
-    allowedDomain: ALLOWED_GOOGLE_HOSTED_DOMAIN
-  };
-}
-
-function verifyGoogleIdToken(idToken) {
-  if (!isGoogleClientIdConfigured()) {
-    throw new Error('Falta configurar GOOGLE_CLIENT_ID en Code.gs.');
-  }
-
-  if (!idToken) {
-    throw new Error('Inicia sesión con Google para continuar.');
-  }
-
-  const response = UrlFetchApp.fetch(
-    'https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(idToken),
-    { muteHttpExceptions: true }
-  );
-
-  if (response.getResponseCode() !== 200) {
-    throw new Error('No se pudo verificar tu sesión de Google.');
-  }
-
-  const payload = JSON.parse(response.getContentText());
-
-  if (payload.aud !== GOOGLE_CLIENT_ID) {
-    throw new Error('Esta sesión de Google fue emitida para otra aplicación.');
-  }
-
-  if (payload.iss !== 'accounts.google.com' && payload.iss !== 'https://accounts.google.com') {
-    throw new Error('El emisor de la sesión de Google no es válido.');
-  }
-
-  if (Number(payload.exp) * 1000 < Date.now()) {
-    throw new Error('Tu sesión de Google expiró. Inicia sesión de nuevo.');
-  }
-
-  if (payload.email_verified !== true && payload.email_verified !== 'true') {
-    throw new Error('Tu correo de Google no está verificado.');
-  }
-
-  if (
-    ALLOWED_GOOGLE_HOSTED_DOMAIN &&
-    normalizeEmail(payload.hd) !== normalizeEmail(ALLOWED_GOOGLE_HOSTED_DOMAIN)
-  ) {
-    throw new Error('Debes ingresar con una cuenta del dominio autorizado.');
-  }
-
-  return {
-    email: normalizeEmail(payload.email),
-    name: payload.name || payload.email,
-    picture: payload.picture || '',
-    hostedDomain: payload.hd || ''
-  };
-}
-
-function getRegisteredUser(identity) {
+function getRegisteredUserByEmail(email) {
   const usersSheet = getSheet('Users');
   const data = usersSheet.getDataRange().getValues();
   const headers = data.shift();
@@ -98,15 +31,14 @@ function getRegisteredUser(identity) {
   const activeIndex = headers.indexOf('Active');
 
   const userRow = data.find(row =>
-    normalizeEmail(row[emailIndex]) === identity.email
+    normalizeEmail(row[emailIndex]) === email
   );
 
   if (!userRow) {
     return {
       authenticated: false,
       code: 'USER_NOT_REGISTERED',
-      email: identity.email,
-      name: identity.name,
+      email,
       message: 'Tu correo no está registrado para participar en la quiniela.'
     };
   }
@@ -115,30 +47,18 @@ function getRegisteredUser(identity) {
     return {
       authenticated: false,
       code: 'USER_INACTIVE',
-      email: identity.email,
-      name: userRow[nameIndex] || identity.name,
+      email,
+      name: userRow[nameIndex],
       message: 'Tu usuario está inactivo.'
     };
   }
 
   return {
     authenticated: true,
-    email: identity.email,
-    name: userRow[nameIndex] || identity.name,
-    role: userRow[roleIndex],
-    picture: identity.picture,
-    hostedDomain: identity.hostedDomain
+    email,
+    name: userRow[nameIndex],
+    role: userRow[roleIndex]
   };
-}
-
-function requireCurrentUser(idToken) {
-  const currentUser = getCurrentUser(idToken);
-
-  if (!currentUser.authenticated) {
-    throw new Error(currentUser.message);
-  }
-
-  return currentUser;
 }
 
 function parseSheetDate(value) {
@@ -317,8 +237,12 @@ function getMatches() {
   });
 }
 
-function getMatchesWithMyPredictions(idToken) {
-  const currentUser = requireCurrentUser(idToken);
+function getMatchesWithMyPredictions() {
+  const currentUser = getCurrentUser();
+
+  if (!currentUser.authenticated) {
+    return [];
+  }
 
   refreshPointsIfNeeded(false);
 
@@ -387,8 +311,8 @@ function getMatchesWithMyPredictions(idToken) {
   });
 }
 
-function submitPrediction(idToken, matchId, predScoreA, predScoreB) {
-  const currentUser = getCurrentUser(idToken);
+function submitPrediction(matchId, predScoreA, predScoreB) {
+  const currentUser = getCurrentUser();
 
   if (!currentUser.authenticated) {
     return {
@@ -563,8 +487,12 @@ function getResult(scoreA, scoreB) {
   return 'DRAW';
 }
 
-function getLeaderboard(idToken) {
-  requireCurrentUser(idToken);
+function getLeaderboard() {
+  const currentUser = getCurrentUser();
+
+  if (!currentUser.authenticated) {
+    throw new Error(currentUser.message);
+  }
 
   refreshPointsIfNeeded(false);
 
@@ -623,15 +551,16 @@ function getLeaderboard(idToken) {
     .sort((a, b) => b.points - a.points);
 }
 
-function getCurrentUser(idToken) {
-  try {
-    const identity = verifyGoogleIdToken(idToken);
-    return getRegisteredUser(identity);
-  } catch (error) {
+function getCurrentUser() {
+  const email = normalizeEmail(Session.getActiveUser().getEmail());
+
+  if (!email) {
     return {
       authenticated: false,
-      code: 'GOOGLE_LOGIN_REQUIRED',
-      message: error.message
+      code: 'EMAIL_UNAVAILABLE',
+      message: 'No se pudo detectar tu correo. Debes ingresar con una cuenta de Google.'
     };
   }
+
+  return getRegisteredUserByEmail(email);
 }

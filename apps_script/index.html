@@ -2,7 +2,6 @@
 <html>
 <head>
   <base target="_top">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     * {
       box-sizing: border-box;
@@ -74,29 +73,6 @@
       color: #4b5563;
       margin-top: 2px;
       overflow-wrap: anywhere;
-    }
-
-    .account-actions {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 8px;
-    }
-
-    .google-signin {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 8px;
-    }
-
-    .signout-button {
-      background: #f3f4f6;
-      color: #374151;
-      padding: 8px 10px;
-      font-size: 12px;
-    }
-
-    .signout-button:hover {
-      background: #e5e7eb;
     }
 
     .tabs {
@@ -425,11 +401,6 @@
         text-align: left;
       }
 
-      .account-actions,
-      .google-signin {
-        justify-content: flex-start;
-      }
-
       .tabs {
         width: 100%;
       }
@@ -528,8 +499,6 @@
   <script>
     let currentUser = null;
     let matchesById = {};
-    let googleClientId = '';
-    let googleIdToken = sessionStorage.getItem('googleIdToken') || '';
 
     function showTab(tabName) {
       document.querySelectorAll('.tab-button').forEach(button => {
@@ -548,134 +517,7 @@
       }
     }
 
-    function initializeApp() {
-      renderSignedOut('Preparando inicio de sesión...');
-
-      google.script.run
-        .withSuccessHandler(function(config) {
-          googleClientId = config.googleClientId || '';
-
-          if (!config.authConfigured) {
-            renderConfigNotice();
-            return;
-          }
-
-          waitForGoogleIdentity();
-
-          if (googleIdToken) {
-            loadUser();
-          } else {
-            renderSignedOut();
-          }
-        })
-        .withFailureHandler(function(error) {
-          document.getElementById('matches').innerHTML =
-            `<div class="notice error">Error cargando configuración: ${escapeHtml(error.message)}</div>`;
-        })
-        .getAuthConfig();
-    }
-
-    function waitForGoogleIdentity(attempt) {
-      if (window.google && google.accounts && google.accounts.id) {
-        google.accounts.id.initialize({
-          client_id: googleClientId,
-          callback: handleGoogleCredential,
-          auto_select: false
-        });
-
-        renderGoogleButton();
-        return;
-      }
-
-      if ((attempt || 0) > 50) {
-        document.getElementById('matches').innerHTML = `
-          <div class="notice error">
-            No se pudo cargar el botón de Google. Revisa que el navegador permita scripts de accounts.google.com.
-          </div>
-        `;
-        return;
-      }
-
-      setTimeout(() => waitForGoogleIdentity((attempt || 0) + 1), 100);
-    }
-
-    function renderGoogleButton() {
-      const buttonContainer = document.getElementById('googleSignInButton');
-
-      if (!buttonContainer || !window.google || !google.accounts || !google.accounts.id) {
-        return;
-      }
-
-      buttonContainer.innerHTML = '';
-      google.accounts.id.renderButton(buttonContainer, {
-        theme: 'outline',
-        size: 'large',
-        text: 'signin_with',
-        shape: 'rectangular'
-      });
-    }
-
-    function handleGoogleCredential(response) {
-      googleIdToken = response.credential;
-      sessionStorage.setItem('googleIdToken', googleIdToken);
-      loadUser();
-    }
-
-    function signOut() {
-      googleIdToken = '';
-      currentUser = null;
-      matchesById = {};
-      sessionStorage.removeItem('googleIdToken');
-
-      if (window.google && google.accounts && google.accounts.id) {
-        google.accounts.id.disableAutoSelect();
-      }
-
-      renderSignedOut('Sesión cerrada.');
-      renderGoogleButton();
-    }
-
-    function renderSignedOut(message) {
-      document.getElementById('accountBox').innerHTML = `
-        <span>Mi cuenta</span>
-        <strong>Iniciar sesión</strong>
-        <small>${escapeHtml(message || 'Usa tu cuenta de Google para continuar.')}</small>
-        <div id="googleSignInButton" class="google-signin"></div>
-      `;
-
-      document.getElementById('matches').innerHTML = `
-        <div class="notice">
-          <h3>Inicia sesión con Google</h3>
-          <p>La app verificará tu correo y lo comparará contra el tab <strong>Users</strong>.</p>
-        </div>
-      `;
-
-      document.getElementById('leaderboard').innerHTML =
-        'Inicia sesión para ver el ranking.';
-    }
-
-    function renderConfigNotice() {
-      document.getElementById('accountBox').innerHTML = `
-        <span>Mi cuenta</span>
-        <strong class="error">Config pendiente</strong>
-        <small>Falta el Google Client ID.</small>
-      `;
-
-      document.getElementById('matches').innerHTML = `
-        <div class="notice">
-          <h3>Falta configurar Google Login</h3>
-          <p>Reemplaza <strong>GOOGLE_CLIENT_ID</strong> en <strong>Code.gs</strong> con el OAuth Client ID de tipo Web application.</p>
-        </div>
-      `;
-    }
-
     function loadUser() {
-      if (!googleIdToken) {
-        renderSignedOut();
-        renderGoogleButton();
-        return;
-      }
-
       google.script.run
         .withSuccessHandler(function(user) {
           currentUser = user;
@@ -686,7 +528,6 @@
               renderAuthNotice(user);
             document.getElementById('leaderboard').innerHTML =
               `<p class="error">${escapeHtml(user.message)}</p>`;
-            renderGoogleButton();
             return;
           }
 
@@ -699,7 +540,7 @@
             <small>${escapeHtml(error.message)}</small>
           `;
         })
-        .getCurrentUser(googleIdToken);
+        .getCurrentUser();
     }
 
     function renderAccount(user) {
@@ -710,9 +551,6 @@
           <span>Mi cuenta</span>
           <strong class="error">No autorizado</strong>
           <small>${escapeHtml(user.email || '')}</small>
-          <div class="account-actions">
-            <button type="button" class="signout-button" onclick="signOut()">Cambiar cuenta</button>
-          </div>
         `;
         return;
       }
@@ -721,34 +559,24 @@
         <span>Mi cuenta</span>
         <strong>${escapeHtml(user.name)}</strong>
         <small>${escapeHtml(user.email)}</small>
-        <div class="account-actions">
-          <button type="button" class="signout-button" onclick="signOut()">Salir</button>
-        </div>
       `;
     }
 
     function renderAuthNotice(user) {
-      if (user.code !== 'GOOGLE_LOGIN_REQUIRED') {
+      if (user.code !== 'EMAIL_UNAVAILABLE') {
         return `<div class="notice error">${escapeHtml(user.message)}</div>`;
       }
 
       return `
         <div class="notice">
-          <h3>No se pudo validar tu sesión</h3>
+          <h3>No se pudo detectar tu correo</h3>
           <p class="error">${escapeHtml(user.message)}</p>
-          <p>Vuelve a iniciar sesión con Google para continuar.</p>
-          <div id="googleSignInButton" class="google-signin"></div>
+          <p>Abre la web app con una cuenta de Google que esté registrada en el tab <strong>Users</strong>.</p>
         </div>
       `;
     }
 
     function loadMatches() {
-      if (!googleIdToken) {
-        renderSignedOut();
-        renderGoogleButton();
-        return;
-      }
-
       google.script.run
         .withSuccessHandler(function(matches) {
           const container = document.getElementById('matches');
@@ -876,7 +704,7 @@
           document.getElementById('matches').innerHTML =
             `<div class="notice error">Error cargando partidos: ${escapeHtml(error.message)}</div>`;
         })
-        .getMatchesWithMyPredictions(googleIdToken);
+        .getMatchesWithMyPredictions();
     }
 
     function getStatusLabel(status) {
@@ -923,12 +751,6 @@
     }
 
     function loadLeaderboard() {
-      if (!googleIdToken) {
-        renderSignedOut();
-        renderGoogleButton();
-        return;
-      }
-
       const container = document.getElementById('leaderboard');
       container.className = 'leaderboard notice';
       container.innerHTML = 'Actualizando ranking...';
@@ -976,16 +798,10 @@
           container.innerHTML =
             `<p class="error">Error cargando ranking: ${escapeHtml(error.message)}</p>`;
         })
-        .getLeaderboard(googleIdToken);
+        .getLeaderboard();
     }
 
     function submit(matchId) {
-      if (!googleIdToken) {
-        renderSignedOut();
-        renderGoogleButton();
-        return;
-      }
-
       const predA = document.getElementById('a_' + matchId).value;
       const predB = document.getElementById('b_' + matchId).value;
       const match = matchesById[matchId];
@@ -1015,7 +831,7 @@
           restoreSaveButton(saveButton, match);
           alert('Error: ' + error.message);
         })
-        .submitPrediction(googleIdToken, matchId, predA, predB);
+        .submitPrediction(matchId, predA, predB);
     }
 
     function startEdit(matchId) {
@@ -1077,7 +893,7 @@
         .replace(/'/g, '&#39;');
     }
 
-    initializeApp();
+    loadUser();
   </script>
 </body>
 </html>
