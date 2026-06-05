@@ -251,10 +251,7 @@ export default function Home() {
     setLeaderboardError('');
 
     try {
-      const { data, error: leaderboardQueryError } = await supabase
-        .from('leaderboard')
-        .select('user_id,email,name,points')
-        .order('points', { ascending: false });
+      const { data, error: leaderboardQueryError } = await fetchLeaderboardRows();
 
       if (leaderboardQueryError) {
         throw leaderboardQueryError;
@@ -274,6 +271,23 @@ export default function Home() {
     } finally {
       setLeaderboardLoading(false);
     }
+  }
+
+  async function fetchLeaderboardRows() {
+    if (!supabase) {
+      return { data: [], error: null };
+    }
+
+    const rpcResult = await supabase.rpc('get_leaderboard');
+
+    if (!rpcResult.error || !isMissingDatabaseFunction(rpcResult.error)) {
+      return rpcResult;
+    }
+
+    return supabase
+      .from('leaderboard')
+      .select('user_id,email,name,points')
+      .order('points', { ascending: false });
   }
 
   async function handleAuth(event: FormEvent<HTMLFormElement>) {
@@ -957,6 +971,17 @@ function shouldReturnToAuth(message: string) {
     message.includes('ya está vinculado') ||
     message.includes('Debes ingresar con un correo')
   );
+}
+
+function isMissingDatabaseFunction(error: unknown) {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+
+  const code = 'code' in error ? String((error as { code?: unknown }).code || '') : '';
+  const message = 'message' in error ? String((error as { message?: unknown }).message || '') : '';
+
+  return code === 'PGRST202' || message.includes('get_leaderboard');
 }
 
 function onlyDigits(value: string) {
