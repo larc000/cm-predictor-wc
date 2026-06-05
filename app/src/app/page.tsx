@@ -89,6 +89,16 @@ export default function Home() {
       }, {});
   }, [matches, appUser?.timezone]);
 
+  const myPoints = useMemo(() => {
+    const leaderboardRow = leaderboard.find((row) => row.user_id === appUser?.id);
+
+    if (leaderboardRow) {
+      return leaderboardRow.points || 0;
+    }
+
+    return matches.reduce((total, match) => total + (Number(match.myPoints) || 0), 0);
+  }, [appUser?.id, leaderboard, matches]);
+
   async function loadProfileAndData(user: User) {
     setError('');
     setMessage('');
@@ -444,29 +454,36 @@ export default function Home() {
 
   return (
     <Shell appUser={appUser} onSignOut={signOut}>
-      <nav className="tabs" aria-label="Secciones">
-        <button
-          className={`tab-button ${activeTab === 'quiniela' ? 'active' : ''}`}
-          type="button"
-          onClick={() => changeTab('quiniela')}
-        >
-          Mi Quiniela
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'reglas' ? 'active' : ''}`}
-          type="button"
-          onClick={() => changeTab('reglas')}
-        >
-          Reglas
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'ranking' ? 'active' : ''}`}
-          type="button"
-          onClick={() => changeTab('ranking')}
-        >
-          Ranking
-        </button>
-      </nav>
+      <div className="sticky-nav">
+        <nav className="tabs" aria-label="Secciones">
+          <button
+            className={`tab-button ${activeTab === 'quiniela' ? 'active' : ''}`}
+            type="button"
+            onClick={() => changeTab('quiniela')}
+          >
+            Mi Quiniela
+          </button>
+          <button
+            className={`tab-button ${activeTab === 'reglas' ? 'active' : ''}`}
+            type="button"
+            onClick={() => changeTab('reglas')}
+          >
+            Reglas
+          </button>
+          <button
+            className={`tab-button ${activeTab === 'ranking' ? 'active' : ''}`}
+            type="button"
+            onClick={() => changeTab('ranking')}
+          >
+            Ranking
+          </button>
+        </nav>
+
+        <div className="score-summary" aria-label="Mi puntaje">
+          <span>Mi Puntaje</span>
+          <strong>{myPoints} pts</strong>
+        </div>
+      </div>
 
       {error ? <p className="error">{error}</p> : null}
 
