@@ -97,7 +97,7 @@ button {
 
 .brand-mark {
   flex: 0 0 auto;
-  width: 92px;
+  width: 160px;
   height: auto;
   object-fit: contain;
 }
@@ -642,7 +642,7 @@ h2 {
   }
 
   .brand-mark {
-    width: 175px;
+    width: 160px;
   }
 
   h1 {

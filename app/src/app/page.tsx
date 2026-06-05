@@ -28,6 +28,8 @@ export default function Home() {
   const [appUser, setAppUser] = useState<AppUser | null>(null);
   const [matches, setMatches] = useState<MatchWithPrediction[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardRow[]>([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(false);
+  const [leaderboardError, setLeaderboardError] = useState('');
   const [draftScores, setDraftScores] = useState<DraftScores>({});
   const [editing, setEditing] = useState<EditingMap>({});
   const [authForm, setAuthForm] = useState({ name: '', email: '', password: '' });
@@ -126,7 +128,7 @@ export default function Home() {
       }
 
       setAppUser(profile);
-      await Promise.all([loadMatches(profile), loadLeaderboard()]);
+      await Promise.all([loadMatches(profile), loadLeaderboard().catch(() => undefined)]);
     } catch (caught) {
       const nextError = getErrorMessage(caught);
       setError(nextError);
@@ -245,16 +247,33 @@ export default function Home() {
       return;
     }
 
-    const { data, error: leaderboardError } = await supabase
-      .from('leaderboard')
-      .select('*')
-      .order('points', { ascending: false });
+    setLeaderboardLoading(true);
+    setLeaderboardError('');
 
-    if (leaderboardError) {
-      throw leaderboardError;
+    try {
+      const { data, error: leaderboardQueryError } = await supabase
+        .from('leaderboard')
+        .select('user_id,email,name,points')
+        .order('points', { ascending: false });
+
+      if (leaderboardQueryError) {
+        throw leaderboardQueryError;
+      }
+
+      const rows = ((data || []) as LeaderboardRow[])
+        .map((row) => ({
+          ...row,
+          points: Number(row.points) || 0
+        }))
+        .sort((a, b) => b.points - a.points);
+
+      setLeaderboard(rows);
+    } catch (caught) {
+      setLeaderboardError(getErrorMessage(caught));
+      throw caught;
+    } finally {
+      setLeaderboardLoading(false);
     }
-
-    setLeaderboard((data || []) as LeaderboardRow[]);
   }
 
   async function handleAuth(event: FormEvent<HTMLFormElement>) {
@@ -320,6 +339,8 @@ export default function Home() {
     setAppUser(null);
     setMatches([]);
     setLeaderboard([]);
+    setLeaderboardError('');
+    setLeaderboardLoading(false);
     setDraftScores({});
     setEditing({});
   }
@@ -369,7 +390,10 @@ export default function Home() {
       }
 
       setToast(match.hasPrediction ? 'Pronóstico actualizado.' : 'Pronóstico guardado.');
-      await Promise.all([loadMatches(), activeTab === 'ranking' ? loadLeaderboard() : Promise.resolve()]);
+      await Promise.all([
+        loadMatches(),
+        activeTab === 'ranking' ? loadLeaderboard().catch(() => undefined) : Promise.resolve()
+      ]);
     } catch (caught) {
       setToast(getErrorMessage(caught));
     } finally {
@@ -402,7 +426,7 @@ export default function Home() {
     setActiveTab(tab);
 
     if (tab === 'ranking' && appUser) {
-      loadLeaderboard().catch((caught) => setError(getErrorMessage(caught)));
+      loadLeaderboard().catch(() => undefined);
     }
   }
 
@@ -532,7 +556,14 @@ export default function Home() {
 
       {activeTab === 'reglas' ? <Rules /> : null}
 
-      {activeTab === 'ranking' ? <Ranking leaderboard={leaderboard} /> : null}
+      {activeTab === 'ranking' ? (
+        <Ranking
+          leaderboard={leaderboard}
+          loading={leaderboardLoading}
+          error={leaderboardError}
+          onRefresh={() => loadLeaderboard().catch(() => undefined)}
+        />
+      ) : null}
 
       <div id="toast" style={{ display: toast ? 'block' : 'none' }}>
         {toast}
@@ -818,7 +849,17 @@ function Rules() {
   );
 }
 
-function Ranking({ leaderboard }: { leaderboard: LeaderboardRow[] }) {
+function Ranking({
+  leaderboard,
+  loading,
+  error,
+  onRefresh
+}: {
+  leaderboard: LeaderboardRow[];
+  loading: boolean;
+  error: string;
+  onRefresh: () => void;
+}) {
   return (
     <section>
       <div className="section-heading">
@@ -826,11 +867,18 @@ function Ranking({ leaderboard }: { leaderboard: LeaderboardRow[] }) {
           <h2>Ranking</h2>
           <p className="section-copy">Puntos acumulados por participante.</p>
         </div>
+        <button className="button subtle" type="button" disabled={loading} onClick={onRefresh}>
+          {loading ? 'Cargando...' : 'Actualizar'}
+        </button>
       </div>
 
       <div className="leaderboard">
-        {leaderboard.length === 0 ? (
-          <div className="notice">Todavía no hay puntos registrados.</div>
+        {error ? (
+          <div className="notice error">No se pudo cargar el ranking: {error}</div>
+        ) : loading && leaderboard.length === 0 ? (
+          <div className="notice">Cargando ranking...</div>
+        ) : leaderboard.length === 0 ? (
+          <div className="notice">Todavía no hay participantes en el ranking.</div>
         ) : (
           <table className="ranking-table">
             <thead>
