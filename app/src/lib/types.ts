@@ -1,20 +1,23 @@
 export type AppUser = {
   id: string;
+  auth_user_id: string | null;
   email: string;
   name: string | null;
   role: string | null;
   active: boolean;
+  timezone: string | null;
 };
 
 export type Match = {
   match_id: string;
   group_name: string | null;
+  stage: string | null;
   date_time: string;
   team_a: string;
   team_b: string;
   score_a: number | null;
   score_b: number | null;
-  status: 'Open' | 'Closed' | 'Final' | string;
+  status: 'Open' | 'Closed' | 'Final' | 'pending_teams' | string;
 };
 
 export type Prediction = {

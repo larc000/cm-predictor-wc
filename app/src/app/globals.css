@@ -391,6 +391,20 @@ h2 {
   border-radius: 8px;
 }
 
+.match-stage {
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.status-pending {
+  background: #f3e8ff;
+  color: #6b21a8;
+}
+
 @media (max-width: 720px) {
   .app-shell {
     padding: 18px;

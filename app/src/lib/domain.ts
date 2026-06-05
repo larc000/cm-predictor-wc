@@ -5,10 +5,19 @@ export function isAllowedEmail(email: string, domain: string) {
 }
 
 export function getMatchEditState(match: Match) {
-  if (match.status !== 'Open') {
+  const status = String(match.status || '').toLowerCase();
+
+  if (status === 'pending_teams') {
     return {
       canEdit: false,
-      reason: 'Este partido ya no está abierto para predicciones.'
+      reason: 'Los equipos de este partido todavía están por definirse.'
+    };
+  }
+
+  if (status !== 'open') {
+    return {
+      canEdit: false,
+      reason: 'Este partido no está abierto para predicciones.'
     };
   }
 
@@ -60,9 +69,48 @@ export function mergeMatchesWithPredictions(
   });
 }
 
-export function formatMatchDate(value: string) {
+export function formatMatchDate(dateTime: string, timezone = 'America/Costa_Rica') {
   return new Intl.DateTimeFormat('es-CR', {
+    timeZone: timezone,
     dateStyle: 'medium',
-    timeStyle: 'short'
-  }).format(new Date(value));
+    timeStyle: 'short',
+  }).format(new Date(dateTime));
+}
+
+export function getMatchDateGroup(dateTime: string, timezone = 'America/Costa_Rica') {
+  return new Intl.DateTimeFormat('es-CR', {
+    timeZone: timezone,
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(dateTime));
+}
+
+export function getMatchDateKey(dateTime: string, timezone = 'America/Costa_Rica') {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: timezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date(dateTime));
+
+  const year = parts.find((p) => p.type === 'year')?.value;
+  const month = parts.find((p) => p.type === 'month')?.value;
+  const day = parts.find((p) => p.type === 'day')?.value;
+
+  return `${year}-${month}-${day}`;
+}
+
+export function getStageLabel(stage?: string | null) {
+  const value = String(stage || '').toLowerCase();
+
+  if (value === 'group') return 'Fase de grupos';
+  if (value === 'round_of_32') return 'Dieciseisavos';
+  if (value === 'round_of_16') return 'Octavos de final';
+  if (value === 'quarterfinal') return 'Cuartos de final';
+  if (value === 'semifinal') return 'Semifinal';
+  if (value === 'third_place') return 'Tercer lugar';
+  if (value === 'final') return 'Final';
+
+  return stage;
 }

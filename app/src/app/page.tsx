@@ -4,7 +4,14 @@ import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { allowedEmailDomain, isSupabaseConfigured, supabase } from '@/lib/supabase';
-import { formatMatchDate, isAllowedEmail, mergeMatchesWithPredictions } from '@/lib/domain';
+import {
+  formatMatchDate,
+  getMatchDateGroup,
+  getMatchDateKey,
+  getStageLabel,
+  isAllowedEmail,
+  mergeMatchesWithPredictions
+} from '@/lib/domain';
 import type { AppUser, LeaderboardRow, Match, MatchWithPrediction, Prediction } from '@/lib/types';
 
 type Tab = 'quiniela' | 'reglas' | 'ranking';
@@ -70,13 +77,17 @@ export default function Home() {
   }, [toast]);
 
   const groupedMatches = useMemo(() => {
-    return matches.reduce<Record<string, MatchWithPrediction[]>>((groups, match) => {
-      const group = match.group_name || 'Sin grupo';
-      groups[group] = groups[group] || [];
-      groups[group].push(match);
-      return groups;
-    }, {});
-  }, [matches]);
+    const timezone = appUser?.timezone || 'America/Costa_Rica';
+
+    return [...matches]
+      .sort((a, b) => new Date(a.date_time).getTime() - new Date(b.date_time).getTime())
+      .reduce<Record<string, MatchWithPrediction[]>>((groups, match) => {
+        const key = getMatchDateKey(match.date_time, timezone);
+        groups[key] = groups[key] || [];
+        groups[key].push(match);
+        return groups;
+      }, {});
+  }, [matches, appUser?.timezone]);
 
   async function loadProfileAndData(user: User) {
     setError('');
@@ -105,7 +116,14 @@ export default function Home() {
       setAppUser(profile);
       await Promise.all([loadMatches(profile), loadLeaderboard()]);
     } catch (caught) {
-      setError(getErrorMessage(caught));
+      const nextError = getErrorMessage(caught);
+      setError(nextError);
+
+      if (shouldReturnToAuth(nextError) && supabase) {
+        await supabase.auth.signOut();
+        setSessionUser(null);
+        clearSessionData();
+      }
     } finally {
       setLoading(false);
     }
@@ -116,19 +134,39 @@ export default function Home() {
       throw new Error('Supabase no está configurado.');
     }
 
-    const email = user.email || '';
-    const { data: existing, error: existingError } = await supabase
+    const email = (user.email || '').trim().toLowerCase();
+    const { data: linkedProfile, error: linkedError } = await supabase
       .from('users')
       .select('*')
-      .eq('id', user.id)
+      .eq('auth_user_id', user.id)
       .maybeSingle();
 
-    if (existingError) {
-      throw existingError;
+    if (linkedError) {
+      throw linkedError;
     }
 
-    if (existing) {
-      return existing as AppUser;
+    if (linkedProfile) {
+      return linkedProfile as AppUser;
+    }
+
+    const { data: allowedProfile, error: allowedError } = await supabase
+      .from('users')
+      .select('*')
+      .ilike('email', email)
+      .maybeSingle();
+
+    if (allowedError) {
+      throw allowedError;
+    }
+
+    if (!allowedProfile) {
+      throw new Error('Tu correo no está registrado para participar en la quiniela.');
+    }
+
+    const profile = allowedProfile as AppUser;
+
+    if (profile.auth_user_id && profile.auth_user_id !== user.id) {
+      throw new Error('Este correo ya está vinculado a otra cuenta.');
     }
 
     const name =
@@ -136,23 +174,21 @@ export default function Home() {
       (user.user_metadata?.full_name as string | undefined) ||
       email.split('@')[0];
 
-    const { data: inserted, error: insertError } = await supabase
+    const { data: updatedProfile, error: updateError } = await supabase
       .from('users')
-      .insert({
-        id: user.id,
-        email,
-        name,
-        role: 'Player',
-        active: true
+      .update({
+        auth_user_id: user.id,
+        name: profile.name || name
       })
+      .eq('id', profile.id)
       .select('*')
       .single();
 
-    if (insertError) {
-      throw insertError;
+    if (updateError) {
+      throw updateError;
     }
 
-    return inserted as AppUser;
+    return updatedProfile as AppUser;
   }
 
   async function loadMatches(profile = appUser) {
@@ -236,12 +272,15 @@ export default function Home() {
       });
 
       if (signUpError) {
-        setError(signUpError.message);
+        setError(getErrorMessage(signUpError));
         return;
       }
 
       if (!data.session) {
-        setMessage('Revisa tu correo para confirmar la cuenta.');
+        setError(
+          'La cuenta se creó, pero Supabase no inició sesión automáticamente. Desactiva "Confirm email" en Supabase Auth para que el registro no dependa de correos.'
+        );
+        return;
       }
 
       return;
@@ -253,7 +292,7 @@ export default function Home() {
     });
 
     if (signInError) {
-      setError(signInError.message);
+      setError(getErrorMessage(signInError));
     }
   }
 
@@ -444,16 +483,22 @@ export default function Home() {
           ) : (
             Object.keys(groupedMatches)
               .sort()
-              .map((group) => (
-                <div key={group}>
-                  <h3 className="group-title">Grupo {group}</h3>
-                  {groupedMatches[group].map((match) => (
+              .map((dateKey) => (
+                <div key={dateKey}>
+                  <h3 className="group-title">
+                    {getMatchDateGroup(
+                      groupedMatches[dateKey][0].date_time,
+                      appUser?.timezone || 'America/Costa_Rica'
+                    )}
+                  </h3>
+                  {groupedMatches[dateKey].map((match) => (
                     <MatchCard
                       key={match.match_id}
                       match={match}
                       draft={draftScores[match.match_id] || { a: '', b: '' }}
                       editing={Boolean(editing[match.match_id])}
                       saving={savingMatchId === match.match_id}
+                      timezone={appUser?.timezone || 'America/Costa_Rica'}
                       onDraftChange={updateDraft}
                       onSubmit={submitPrediction}
                       onEdit={startEdit}
@@ -593,6 +638,7 @@ function MatchCard({
   draft,
   editing,
   saving,
+  timezone,
   onDraftChange,
   onSubmit,
   onEdit,
@@ -602,6 +648,7 @@ function MatchCard({
   draft: { a: string; b: string };
   editing: boolean;
   saving: boolean;
+  timezone: string;
   onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
   onSubmit: (match: MatchWithPrediction) => void;
   onEdit: (match: MatchWithPrediction) => void;
@@ -609,11 +656,19 @@ function MatchCard({
 }) {
   const saved = match.hasPrediction;
   const inputDisabled = !match.canEdit || (saved && !editing);
+  const normalizedStatus = match.status.toLowerCase();
+
   const statusClass =
-    match.status === 'Open' ? 'status-open' : match.status === 'Final' ? 'status-final' : 'status-closed';
+    normalizedStatus === 'open'
+      ? 'status-open'
+      : normalizedStatus === 'final'
+        ? 'status-final'
+        : normalizedStatus === 'pending_teams'
+          ? 'status-pending'
+          : 'status-closed';
   const pointsLabel = !saved
     ? 'Sin pronóstico'
-    : match.status === 'Final'
+    : normalizedStatus === 'final'
       ? `Puntos: ${match.myPoints || 0}`
       : 'Puntos pendientes';
 
@@ -621,15 +676,20 @@ function MatchCard({
     <article className="match">
       <div className="match-header">
         <div>
+          <div className="match-stage">
+            {getStageLabel(match.stage)}
+            {match.group_name ? ` - Grupo ${match.group_name}` : ''}
+          </div>
+
           <div className="teams">
             {match.team_a} vs {match.team_b}
           </div>
-          <div className="date">Fecha: {formatMatchDate(match.date_time)}</div>
+          <div className="date">Fecha: {formatMatchDate(match.date_time, timezone)}</div>
           <div className="match-meta">
             <span className={`status-chip ${statusClass}`}>{getStatusLabel(match.status)}</span>
             <span className="points-chip">{pointsLabel}</span>
           </div>
-          {match.status === 'Final' && match.score_a !== null && match.score_b !== null ? (
+          {normalizedStatus === 'final' && match.score_a !== null && match.score_b !== null ? (
             <div className="match-note">
               Resultado final: {match.team_a} {match.score_a} - {match.score_b} {match.team_b}
             </div>
@@ -711,7 +771,7 @@ function Rules() {
 
       <div className="rules-grid">
         <div className="rule-card">
-          <strong>3 pts</strong>
+          <strong>1 pt</strong>
           <p>Por acertar el resultado: ganador, perdedor o empate.</p>
         </div>
         <div className="rule-card">
@@ -770,15 +830,52 @@ function Ranking({ leaderboard }: { leaderboard: LeaderboardRow[] }) {
 }
 
 function getStatusLabel(status: string) {
-  if (status === 'Open') return 'Abierto';
-  if (status === 'Final') return 'Final';
+  const value = status.toLowerCase();
+
+  if (value === 'open') return 'Abierto';
+  if (value === 'pending_teams') return 'Equipos por definir';
+  if (value === 'final') return 'Final';
   return 'Cerrado';
 }
 
 function getErrorMessage(error: unknown) {
   if (error instanceof Error) {
-    return error.message;
+    return normalizeSupabaseMessage(error.message);
+  }
+
+  if (error && typeof error === 'object' && 'message' in error) {
+    const message = (error as { message?: unknown }).message;
+
+    if (typeof message === 'string' && message.trim() !== '') {
+      return normalizeSupabaseMessage(message);
+    }
   }
 
   return 'Ocurrió un error inesperado.';
+}
+
+function normalizeSupabaseMessage(message: string) {
+  const normalized = message.toLowerCase();
+
+  if (normalized.includes('email not confirmed')) {
+    return 'Tu cuenta existe, pero Supabase todavía está pidiendo confirmación por correo. Desactiva "Confirm email" en Supabase Auth.';
+  }
+
+  if (normalized.includes('invalid login credentials')) {
+    return 'Correo o contraseña incorrectos.';
+  }
+
+  if (normalized.includes('user already registered') || normalized.includes('already registered')) {
+    return 'Este correo ya tiene cuenta. Ingresa con tu contraseña.';
+  }
+
+  return message;
+}
+
+function shouldReturnToAuth(message: string) {
+  return (
+    message.includes('no está registrado') ||
+    message.includes('ya está vinculado') ||
+    message.includes('Debes ingresar con un correo')
+  );
 }
