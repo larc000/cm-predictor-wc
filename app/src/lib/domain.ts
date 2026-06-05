@@ -72,8 +72,12 @@ export function mergeMatchesWithPredictions(
 export function formatMatchDate(dateTime: string, timezone = 'America/Costa_Rica') {
   return new Intl.DateTimeFormat('es-CR', {
     timeZone: timezone,
-    dateStyle: 'medium',
-    timeStyle: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZoneName: 'short',
   }).format(new Date(dateTime));
 }
 

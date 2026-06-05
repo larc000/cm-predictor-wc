@@ -310,6 +310,17 @@ h2 {
   font-size: 16px;
 }
 
+.score-box input[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.score-box input[type='number']::-webkit-inner-spin-button,
+.score-box input[type='number']::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
 .separator {
   padding-bottom: 10px;
   font-size: 22px;

@@ -701,11 +701,13 @@ function MatchCard({
         <div className="score-box">
           <label>{match.team_a}</label>
           <input
-            type="number"
-            min="0"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoComplete="off"
             value={draft.a}
             disabled={inputDisabled}
-            onChange={(event) => onDraftChange(match.match_id, 'a', event.target.value)}
+            onChange={(event) => onDraftChange(match.match_id, 'a', onlyDigits(event.target.value))}
           />
         </div>
 
@@ -714,11 +716,13 @@ function MatchCard({
         <div className="score-box">
           <label>{match.team_b}</label>
           <input
-            type="number"
-            min="0"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoComplete="off"
             value={draft.b}
             disabled={inputDisabled}
-            onChange={(event) => onDraftChange(match.match_id, 'b', event.target.value)}
+            onChange={(event) => onDraftChange(match.match_id, 'b', onlyDigits(event.target.value))}
           />
         </div>
 
@@ -878,4 +882,8 @@ function shouldReturnToAuth(message: string) {
     message.includes('ya está vinculado') ||
     message.includes('Debes ingresar con un correo')
   );
+}
+
+function onlyDigits(value: string) {
+  return value.replace(/\D/g, '');
 }
