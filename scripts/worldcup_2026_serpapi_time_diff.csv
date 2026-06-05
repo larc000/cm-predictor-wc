@@ -1,0 +1,105 @@
+match_id,stage,team_a_sql,team_b_sql,old_utc,old_google_tz,serpapi_found,google_local,new_utc,delta_minutes,serpapi_team_a,serpapi_team_b,stadium,query
+M001,group,México,Sudáfrica,2026-06-11T21:00:00+00:00,2026-06-11T15:00:00-06:00,no,,,,,,,México vs Sudáfrica FIFA World Cup 2026 kickoff time
+M002,group,Corea del Sur,Chequia,2026-06-12T04:00:00+00:00,2026-06-11T22:00:00-06:00,no,,,,,,,Corea del Sur vs Chequia FIFA World Cup 2026 kickoff time
+M003,group,Canadá,Bosnia y Herzegovina,2026-06-12T20:00:00+00:00,2026-06-12T14:00:00-06:00,yes,2026-06-12T13:00:00-06:00,2026-06-12T19:00:00+00:00,-60,Canada,Bosnia and Herzegovina,BMO Field,Canadá vs Bosnia y Herzegovina FIFA World Cup 2026 kickoff time
+M004,group,Catar,Suiza,2026-06-13T23:00:00+00:00,2026-06-13T17:00:00-06:00,yes,2026-06-13T13:00:00-06:00,2026-06-13T19:00:00+00:00,-240,Qatar,Switzerland,Levi's Stadium,Catar vs Suiza FIFA World Cup 2026 kickoff time
+M005,group,Brasil,Marruecos,2026-06-13T23:00:00+00:00,2026-06-13T17:00:00-06:00,yes,2026-06-13T16:00:00-06:00,2026-06-13T22:00:00+00:00,-60,Brazil,Morocco,MetLife Stadium,Brasil vs Marruecos FIFA World Cup 2026 kickoff time
+M006,group,Haití,Escocia,2026-06-14T02:00:00+00:00,2026-06-13T20:00:00-06:00,yes,2026-06-13T19:00:00-06:00,2026-06-14T01:00:00+00:00,-60,Haiti,Scotland,Gillette Stadium,Haití vs Escocia FIFA World Cup 2026 kickoff time
+M007,group,Estados Unidos,Paraguay,2026-06-13T05:00:00+00:00,2026-06-12T23:00:00-06:00,yes,2026-06-12T19:00:00-06:00,2026-06-13T01:00:00+00:00,-240,USA,Paraguay,SoFi Stadium,Estados Unidos vs Paraguay FIFA World Cup 2026 kickoff time
+M008,group,Australia,Turquía,2026-06-14T08:00:00+00:00,2026-06-14T02:00:00-06:00,yes,2026-06-13T22:00:00-06:00,2026-06-14T04:00:00+00:00,-240,Australia,Türkiye,BC Place,Australia vs Turquía FIFA World Cup 2026 kickoff time
+M009,group,Alemania,Curazao,2026-06-14T19:00:00+00:00,2026-06-14T13:00:00-06:00,yes,2026-06-14T11:00:00-06:00,2026-06-14T17:00:00+00:00,-120,Germany,Curaçao,NRG Stadium,Alemania vs Curazao FIFA World Cup 2026 kickoff time
+M010,group,Costa de Marfil,Ecuador,2026-06-15T00:00:00+00:00,2026-06-14T18:00:00-06:00,no,,,,,,,Costa de Marfil vs Ecuador FIFA World Cup 2026 kickoff time
+M011,group,Países Bajos,Japón,2026-06-14T22:00:00+00:00,2026-06-14T16:00:00-06:00,yes,2026-06-14T14:00:00-06:00,2026-06-14T20:00:00+00:00,-120,Netherlands,Japan,AT&T Stadium,Países Bajos vs Japón FIFA World Cup 2026 kickoff time
+M012,group,Suecia,Túnez,2026-06-15T04:00:00+00:00,2026-06-14T22:00:00-06:00,yes,2026-06-14T20:00:00-06:00,2026-06-15T02:00:00+00:00,-120,Sweden,Tunisia,Estadio BBVA,Suecia vs Túnez FIFA World Cup 2026 kickoff time
+M013,group,Irán,Nueva Zelanda,2026-06-16T05:00:00+00:00,2026-06-15T23:00:00-06:00,yes,2026-06-15T19:00:00-06:00,2026-06-16T01:00:00+00:00,-240,Iran,New Zealand,SoFi Stadium,Irán vs Nueva Zelanda FIFA World Cup 2026 kickoff time
+M014,group,Bélgica,Egipto,2026-06-15T23:00:00+00:00,2026-06-15T17:00:00-06:00,yes,2026-06-15T13:00:00-06:00,2026-06-15T19:00:00+00:00,-240,Belgium,Egypt,Lumen Field,Bélgica vs Egipto FIFA World Cup 2026 kickoff time
+M015,group,España,Cabo Verde,2026-06-15T17:00:00+00:00,2026-06-15T11:00:00-06:00,yes,2026-06-15T10:00:00-06:00,2026-06-15T16:00:00+00:00,-60,Spain,Cape Verde,Mercedes-Benz Stadium,España vs Cabo Verde FIFA World Cup 2026 kickoff time
+M016,group,Arabia Saudita,Uruguay,2026-06-15T23:00:00+00:00,2026-06-15T17:00:00-06:00,no,,,,,,,Arabia Saudita vs Uruguay FIFA World Cup 2026 kickoff time
+M017,group,Chequia,Sudáfrica,2026-06-18T17:00:00+00:00,2026-06-18T11:00:00-06:00,yes,2026-06-18T10:00:00-06:00,2026-06-18T16:00:00+00:00,-60,Czechia,South Africa,Mercedes-Benz Stadium,Chequia vs Sudáfrica FIFA World Cup 2026 kickoff time
+M018,group,México,Corea del Sur,2026-06-19T03:00:00+00:00,2026-06-18T21:00:00-06:00,yes,2026-06-18T19:00:00-06:00,2026-06-19T01:00:00+00:00,-120,Mexico,South Korea,Akron Stadium,México vs Corea del Sur FIFA World Cup 2026 kickoff time
+M019,group,Suiza,Bosnia y Herzegovina,2026-06-18T23:00:00+00:00,2026-06-18T17:00:00-06:00,yes,2026-06-18T13:00:00-06:00,2026-06-18T19:00:00+00:00,-240,Switzerland,Bosnia and Herzegovina,SoFi Stadium,Suiza vs Bosnia y Herzegovina FIFA World Cup 2026 kickoff time
+M020,group,Canadá,Catar,2026-06-19T02:00:00+00:00,2026-06-18T20:00:00-06:00,yes,2026-06-18T16:00:00-06:00,2026-06-18T22:00:00+00:00,-240,Canada,Qatar,BC Place,Canadá vs Catar FIFA World Cup 2026 kickoff time
+M021,group,Francia,Senegal,2026-06-16T20:00:00+00:00,2026-06-16T14:00:00-06:00,yes,2026-06-16T13:00:00-06:00,2026-06-16T19:00:00+00:00,-60,France,Senegal,MetLife Stadium,Francia vs Senegal FIFA World Cup 2026 kickoff time
+M022,group,Irak,Noruega,2026-06-16T23:00:00+00:00,2026-06-16T17:00:00-06:00,yes,2026-06-16T16:00:00-06:00,2026-06-16T22:00:00+00:00,-60,Iraq,Norway,Gillette Stadium,Irak vs Noruega FIFA World Cup 2026 kickoff time
+M023,group,Argentina,Argelia,2026-06-17T03:00:00+00:00,2026-06-16T21:00:00-06:00,yes,2026-06-16T19:00:00-06:00,2026-06-17T01:00:00+00:00,-120,Argentina,Algeria,Arrowhead Stadium,Argentina vs Argelia FIFA World Cup 2026 kickoff time
+M024,group,Austria,Jordania,2026-06-17T08:00:00+00:00,2026-06-17T02:00:00-06:00,yes,2026-06-16T22:00:00-06:00,2026-06-17T04:00:00+00:00,-240,Austria,Jordan,Levi's Stadium,Austria vs Jordania FIFA World Cup 2026 kickoff time
+M025,group,Portugal,República Democrática del Congo,2026-06-17T19:00:00+00:00,2026-06-17T13:00:00-06:00,yes,2026-06-17T11:00:00-06:00,2026-06-17T17:00:00+00:00,-120,Portugal,DR Congo,NRG Stadium,Portugal vs República Democrática del Congo FIFA World Cup 2026 kickoff time
+M026,group,Uzbekistán,Colombia,2026-06-18T04:00:00+00:00,2026-06-17T22:00:00-06:00,yes,2026-06-17T20:00:00-06:00,2026-06-18T02:00:00+00:00,-120,Uzbekistan,Colombia,Estadio Banorte,Uzbekistán vs Colombia FIFA World Cup 2026 kickoff time
+M027,group,Escocia,Marruecos,2026-06-19T23:00:00+00:00,2026-06-19T17:00:00-06:00,yes,2026-06-19T16:00:00-06:00,2026-06-19T22:00:00+00:00,-60,Scotland,Morocco,Gillette Stadium,Escocia vs Marruecos FIFA World Cup 2026 kickoff time
+M028,group,Brasil,Haití,2026-06-20T02:00:00+00:00,2026-06-19T20:00:00-06:00,yes,2026-06-19T18:30:00-06:00,2026-06-20T00:30:00+00:00,-90,Brazil,Haiti,Lincoln Financial Field,Brasil vs Haití FIFA World Cup 2026 kickoff time
+M029,group,Estados Unidos,Australia,2026-06-19T23:00:00+00:00,2026-06-19T17:00:00-06:00,yes,2026-06-19T13:00:00-06:00,2026-06-19T19:00:00+00:00,-240,USA,Australia,Lumen Field,Estados Unidos vs Australia FIFA World Cup 2026 kickoff time
+M030,group,Turquía,Paraguay,2026-06-20T08:00:00+00:00,2026-06-20T02:00:00-06:00,yes,2026-06-19T21:00:00-06:00,2026-06-20T03:00:00+00:00,-300,Türkiye,Paraguay,Levi's Stadium,Turquía vs Paraguay FIFA World Cup 2026 kickoff time
+M031,group,Alemania,Costa de Marfil,2026-06-20T21:00:00+00:00,2026-06-20T15:00:00-06:00,yes,2026-06-20T14:00:00-06:00,2026-06-20T20:00:00+00:00,-60,Germany,Ivory Coast,BMO Field,Alemania vs Costa de Marfil FIFA World Cup 2026 kickoff time
+M032,group,Ecuador,Curazao,2026-06-21T04:00:00+00:00,2026-06-20T22:00:00-06:00,yes,2026-06-20T18:00:00-06:00,2026-06-21T00:00:00+00:00,-240,Ecuador,Curaçao,Arrowhead Stadium,Ecuador vs Curazao FIFA World Cup 2026 kickoff time
+M033,group,Países Bajos,Suecia,2026-06-20T19:00:00+00:00,2026-06-20T13:00:00-06:00,yes,2026-06-20T11:00:00-06:00,2026-06-20T17:00:00+00:00,-120,Netherlands,Sweden,NRG Stadium,Países Bajos vs Suecia FIFA World Cup 2026 kickoff time
+M034,group,Túnez,Japón,2026-06-21T06:00:00+00:00,2026-06-21T00:00:00-06:00,yes,2026-06-20T22:00:00-06:00,2026-06-21T04:00:00+00:00,-120,Tunisia,Japan,Estadio BBVA,Túnez vs Japón FIFA World Cup 2026 kickoff time
+M035,group,Inglaterra,Croacia,2026-06-17T22:00:00+00:00,2026-06-17T16:00:00-06:00,yes,2026-06-17T14:00:00-06:00,2026-06-17T20:00:00+00:00,-120,England,Croatia,AT&T Stadium,Inglaterra vs Croacia FIFA World Cup 2026 kickoff time
+M036,group,Ghana,Panamá,2026-06-18T00:00:00+00:00,2026-06-17T18:00:00-06:00,yes,2026-06-17T17:00:00-06:00,2026-06-17T23:00:00+00:00,-60,Ghana,Panama,BMO Field,Ghana vs Panamá FIFA World Cup 2026 kickoff time
+M037,group,Bélgica,Irán,2026-06-21T23:00:00+00:00,2026-06-21T17:00:00-06:00,yes,2026-06-21T13:00:00-06:00,2026-06-21T19:00:00+00:00,-240,Belgium,Iran,SoFi Stadium,Bélgica vs Irán FIFA World Cup 2026 kickoff time
+M038,group,Nueva Zelanda,Egipto,2026-06-22T05:00:00+00:00,2026-06-21T23:00:00-06:00,yes,2026-06-21T19:00:00-06:00,2026-06-22T01:00:00+00:00,-240,New Zealand,Egypt,BC Place,Nueva Zelanda vs Egipto FIFA World Cup 2026 kickoff time
+M039,group,España,Arabia Saudita,2026-06-21T17:00:00+00:00,2026-06-21T11:00:00-06:00,no,,,,,,,España vs Arabia Saudita FIFA World Cup 2026 kickoff time
+M040,group,Uruguay,Cabo Verde,2026-06-21T23:00:00+00:00,2026-06-21T17:00:00-06:00,yes,2026-06-21T16:00:00-06:00,2026-06-21T22:00:00+00:00,-60,Uruguay,Cape Verde,Hard Rock Stadium,Uruguay vs Cabo Verde FIFA World Cup 2026 kickoff time
+M041,group,Francia,Irak,2026-06-22T22:00:00+00:00,2026-06-22T16:00:00-06:00,yes,2026-06-22T15:00:00-06:00,2026-06-22T21:00:00+00:00,-60,France,Iraq,Lincoln Financial Field,Francia vs Irak FIFA World Cup 2026 kickoff time
+M042,group,Noruega,Senegal,2026-06-23T01:00:00+00:00,2026-06-22T19:00:00-06:00,yes,2026-06-22T18:00:00-06:00,2026-06-23T00:00:00+00:00,-60,Norway,Senegal,MetLife Stadium,Noruega vs Senegal FIFA World Cup 2026 kickoff time
+M043,group,Argentina,Austria,2026-06-22T19:00:00+00:00,2026-06-22T13:00:00-06:00,yes,2026-06-22T11:00:00-06:00,2026-06-22T17:00:00+00:00,-120,Argentina,Austria,AT&T Stadium,Argentina vs Austria FIFA World Cup 2026 kickoff time
+M044,group,Jordania,Argelia,2026-06-23T07:00:00+00:00,2026-06-23T01:00:00-06:00,yes,2026-06-22T21:00:00-06:00,2026-06-23T03:00:00+00:00,-240,Jordan,Algeria,Levi's Stadium,Jordania vs Argelia FIFA World Cup 2026 kickoff time
+M045,group,Portugal,Uzbekistán,2026-06-23T19:00:00+00:00,2026-06-23T13:00:00-06:00,yes,2026-06-23T11:00:00-06:00,2026-06-23T17:00:00+00:00,-120,Portugal,Uzbekistan,NRG Stadium,Portugal vs Uzbekistán FIFA World Cup 2026 kickoff time
+M046,group,Colombia,República Democrática del Congo,2026-06-24T04:00:00+00:00,2026-06-23T22:00:00-06:00,yes,2026-06-23T20:00:00-06:00,2026-06-24T02:00:00+00:00,-120,Colombia,DR Congo,Akron Stadium,Colombia vs República Democrática del Congo FIFA World Cup 2026 kickoff time
+M047,group,Inglaterra,Ghana,2026-06-23T21:00:00+00:00,2026-06-23T15:00:00-06:00,yes,2026-06-23T14:00:00-06:00,2026-06-23T20:00:00+00:00,-60,England,Ghana,Gillette Stadium,Inglaterra vs Ghana FIFA World Cup 2026 kickoff time
+M048,group,Panamá,Croacia,2026-06-24T00:00:00+00:00,2026-06-23T18:00:00-06:00,yes,2026-06-23T17:00:00-06:00,2026-06-23T23:00:00+00:00,-60,Panama,Croatia,BMO Field,Panamá vs Croacia FIFA World Cup 2026 kickoff time
+M049,group,Chequia,México,2026-06-25T03:00:00+00:00,2026-06-24T21:00:00-06:00,yes,2026-06-24T19:00:00-06:00,2026-06-25T01:00:00+00:00,-120,Czechia,Mexico,Estadio Banorte,Chequia vs México FIFA World Cup 2026 kickoff time
+M050,group,Sudáfrica,Corea del Sur,2026-06-25T03:00:00+00:00,2026-06-24T21:00:00-06:00,yes,2026-06-24T19:00:00-06:00,2026-06-25T01:00:00+00:00,-120,South Africa,South Korea,Estadio BBVA,Sudáfrica vs Corea del Sur FIFA World Cup 2026 kickoff time
+M051,group,Suiza,Canadá,2026-06-24T23:00:00+00:00,2026-06-24T17:00:00-06:00,yes,2026-06-24T13:00:00-06:00,2026-06-24T19:00:00+00:00,-240,Switzerland,Canada,BC Place,Suiza vs Canadá FIFA World Cup 2026 kickoff time
+M052,group,Bosnia y Herzegovina,Catar,2026-06-24T23:00:00+00:00,2026-06-24T17:00:00-06:00,yes,2026-06-24T13:00:00-06:00,2026-06-24T19:00:00+00:00,-240,Bosnia and Herzegovina,Qatar,Lumen Field,Bosnia y Herzegovina vs Catar FIFA World Cup 2026 kickoff time
+M053,group,Escocia,Brasil,2026-06-24T23:00:00+00:00,2026-06-24T17:00:00-06:00,yes,2026-06-24T16:00:00-06:00,2026-06-24T22:00:00+00:00,-60,Scotland,Brazil,Hard Rock Stadium,Escocia vs Brasil FIFA World Cup 2026 kickoff time
+M054,group,Marruecos,Haití,2026-06-24T23:00:00+00:00,2026-06-24T17:00:00-06:00,yes,2026-06-24T16:00:00-06:00,2026-06-24T22:00:00+00:00,-60,Morocco,Haiti,Mercedes-Benz Stadium,Marruecos vs Haití FIFA World Cup 2026 kickoff time
+M055,group,Ecuador,Alemania,2026-06-25T21:00:00+00:00,2026-06-25T15:00:00-06:00,yes,2026-06-25T14:00:00-06:00,2026-06-25T20:00:00+00:00,-60,Ecuador,Germany,MetLife Stadium,Ecuador vs Alemania FIFA World Cup 2026 kickoff time
+M056,group,Curazao,Costa de Marfil,2026-06-25T21:00:00+00:00,2026-06-25T15:00:00-06:00,no,,,,,,,Curazao vs Costa de Marfil FIFA World Cup 2026 kickoff time
+M057,group,Panamá,Inglaterra,2026-06-27T22:00:00+00:00,2026-06-27T16:00:00-06:00,yes,2026-06-27T15:00:00-06:00,2026-06-27T21:00:00+00:00,-60,Panama,England,MetLife Stadium,Panamá vs Inglaterra FIFA World Cup 2026 kickoff time
+M058,group,Croacia,Ghana,2026-06-27T22:00:00+00:00,2026-06-27T16:00:00-06:00,yes,2026-06-27T15:00:00-06:00,2026-06-27T21:00:00+00:00,-60,Croatia,Ghana,Lincoln Financial Field,Croacia vs Ghana FIFA World Cup 2026 kickoff time
+M059,group,Turquía,Estados Unidos,2026-06-26T06:00:00+00:00,2026-06-26T00:00:00-06:00,yes,2026-06-25T20:00:00-06:00,2026-06-26T02:00:00+00:00,-240,Türkiye,USA,SoFi Stadium,Turquía vs Estados Unidos FIFA World Cup 2026 kickoff time
+M060,group,Paraguay,Australia,2026-06-26T06:00:00+00:00,2026-06-26T00:00:00-06:00,yes,2026-06-25T20:00:00-06:00,2026-06-26T02:00:00+00:00,-240,Paraguay,Australia,Levi's Stadium,Paraguay vs Australia FIFA World Cup 2026 kickoff time
+M061,group,Japón,Suecia,2026-06-26T01:00:00+00:00,2026-06-25T19:00:00-06:00,no,,,,,,,Japón vs Suecia FIFA World Cup 2026 kickoff time
+M062,group,Túnez,Países Bajos,2026-06-26T01:00:00+00:00,2026-06-25T19:00:00-06:00,yes,2026-06-25T17:00:00-06:00,2026-06-25T23:00:00+00:00,-120,Tunisia,Netherlands,Arrowhead Stadium,Túnez vs Países Bajos FIFA World Cup 2026 kickoff time
+M063,group,Colombia,Portugal,2026-06-28T02:30:00+00:00,2026-06-27T20:30:00-06:00,yes,2026-06-27T17:30:00-06:00,2026-06-27T23:30:00+00:00,-180,Colombia,Portugal,Hard Rock Stadium,Colombia vs Portugal FIFA World Cup 2026 kickoff time
+M064,group,República Democrática del Congo,Uzbekistán,2026-06-28T02:30:00+00:00,2026-06-27T20:30:00-06:00,yes,2026-06-27T17:30:00-06:00,2026-06-27T23:30:00+00:00,-180,DR Congo,Uzbekistan,Mercedes-Benz Stadium,República Democrática del Congo vs Uzbekistán FIFA World Cup 2026 kickoff time
+M065,group,Noruega,Francia,2026-06-26T20:00:00+00:00,2026-06-26T14:00:00-06:00,yes,2026-06-26T13:00:00-06:00,2026-06-26T19:00:00+00:00,-60,Norway,France,Gillette Stadium,Noruega vs Francia FIFA World Cup 2026 kickoff time
+M066,group,Senegal,Irak,2026-06-26T20:00:00+00:00,2026-06-26T14:00:00-06:00,yes,2026-06-26T13:00:00-06:00,2026-06-26T19:00:00+00:00,-60,Senegal,Iraq,BMO Field,Senegal vs Irak FIFA World Cup 2026 kickoff time
+M067,group,Egipto,Irán,2026-06-27T07:00:00+00:00,2026-06-27T01:00:00-06:00,yes,2026-06-26T21:00:00-06:00,2026-06-27T03:00:00+00:00,-240,Egypt,Iran,Lumen Field,Egipto vs Irán FIFA World Cup 2026 kickoff time
+M068,group,Nueva Zelanda,Bélgica,2026-06-27T07:00:00+00:00,2026-06-27T01:00:00-06:00,yes,2026-06-26T21:00:00-06:00,2026-06-27T03:00:00+00:00,-240,New Zealand,Belgium,BC Place,Nueva Zelanda vs Bélgica FIFA World Cup 2026 kickoff time
+M069,group,Cabo Verde,Arabia Saudita,2026-06-27T02:00:00+00:00,2026-06-26T20:00:00-06:00,yes,2026-06-26T18:00:00-06:00,2026-06-27T00:00:00+00:00,-120,Cape Verde,Saudi Arabia,NRG Stadium,Cabo Verde vs Arabia Saudita FIFA World Cup 2026 kickoff time
+M070,group,Uruguay,España,2026-06-27T02:00:00+00:00,2026-06-26T20:00:00-06:00,no,,,,,,,Uruguay vs España FIFA World Cup 2026 kickoff time
+M071,group,Argelia,Austria,2026-06-28T04:00:00+00:00,2026-06-27T22:00:00-06:00,no,,,,,,,Argelia vs Austria FIFA World Cup 2026 kickoff time
+M072,group,Jordania,Argentina,2026-06-28T04:00:00+00:00,2026-06-27T22:00:00-06:00,yes,2026-06-27T20:00:00-06:00,2026-06-28T02:00:00+00:00,-120,Jordan,Argentina,AT&T Stadium,Jordania vs Argentina FIFA World Cup 2026 kickoff time
+M073,round_of_32,TBD,TBD,2026-06-28T23:00:00+00:00,2026-06-28T17:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 73 round of 32 kickoff time
+M074,round_of_32,TBD,TBD,2026-06-29T19:00:00+00:00,2026-06-29T13:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 74 round of 32 kickoff time
+M075,round_of_32,TBD,TBD,2026-06-29T22:30:00+00:00,2026-06-29T16:30:00-06:00,no,,,,,,,FIFA World Cup 2026 match 75 round of 32 kickoff time
+M076,round_of_32,TBD,TBD,2026-06-30T03:00:00+00:00,2026-06-29T21:00:00-06:00,yes,2026-06-11T12:00:00-06:00,2026-06-11T18:00:00+00:00,-26460,Mexico,South Africa,,FIFA World Cup 2026 match 76 round of 32 kickoff time
+M077,round_of_32,TBD,TBD,2026-06-30T19:00:00+00:00,2026-06-30T13:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 77 round of 32 kickoff time
+M078,round_of_32,TBD,TBD,2026-06-30T22:00:00+00:00,2026-06-30T16:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 78 round of 32 kickoff time
+M079,round_of_32,TBD,TBD,2026-07-01T03:00:00+00:00,2026-06-30T21:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 79 round of 32 kickoff time
+M080,round_of_32,TBD,TBD,2026-07-01T17:00:00+00:00,2026-07-01T11:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 80 round of 32 kickoff time
+M081,round_of_32,TBD,TBD,2026-07-02T00:00:00+00:00,2026-07-01T18:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 81 round of 32 kickoff time
+M082,round_of_32,TBD,TBD,2026-07-02T04:00:00+00:00,2026-07-01T22:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 82 round of 32 kickoff time
+M083,round_of_32,TBD,TBD,2026-07-02T23:00:00+00:00,2026-07-02T17:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 83 round of 32 kickoff time
+M084,round_of_32,TBD,TBD,2026-07-03T00:00:00+00:00,2026-07-02T18:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 84 round of 32 kickoff time
+M085,round_of_32,TBD,TBD,2026-07-03T07:00:00+00:00,2026-07-03T01:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 85 round of 32 kickoff time
+M086,round_of_32,TBD,TBD,2026-07-03T21:00:00+00:00,2026-07-03T15:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 86 round of 32 kickoff time
+M087,round_of_32,TBD,TBD,2026-07-03T23:00:00+00:00,2026-07-03T17:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 87 round of 32 kickoff time
+M088,round_of_32,TBD,TBD,2026-07-04T03:30:00+00:00,2026-07-03T21:30:00-06:00,no,,,,,,,FIFA World Cup 2026 match 88 round of 32 kickoff time
+M089,round_of_16,TBD,TBD,2026-07-04T19:00:00+00:00,2026-07-04T13:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 89 round of 16 kickoff time
+M090,round_of_16,TBD,TBD,2026-07-04T22:00:00+00:00,2026-07-04T16:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 90 round of 16 kickoff time
+M091,round_of_16,TBD,TBD,2026-07-05T21:00:00+00:00,2026-07-05T15:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 91 round of 16 kickoff time
+M092,round_of_16,TBD,TBD,2026-07-06T02:00:00+00:00,2026-07-05T20:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 92 round of 16 kickoff time
+M093,round_of_16,TBD,TBD,2026-07-06T21:00:00+00:00,2026-07-06T15:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 93 round of 16 kickoff time
+M094,round_of_16,TBD,TBD,2026-07-07T04:00:00+00:00,2026-07-06T22:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 94 round of 16 kickoff time
+M095,round_of_16,TBD,TBD,2026-07-07T17:00:00+00:00,2026-07-07T11:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 95 round of 16 kickoff time
+M096,round_of_16,TBD,TBD,2026-07-08T00:00:00+00:00,2026-07-07T18:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 96 round of 16 kickoff time
+M097,quarterfinal,TBD,TBD,2026-07-09T21:00:00+00:00,2026-07-09T15:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 97 quarterfinal kickoff time
+M098,quarterfinal,TBD,TBD,2026-07-10T23:00:00+00:00,2026-07-10T17:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 98 quarterfinal kickoff time
+M099,quarterfinal,TBD,TBD,2026-07-11T22:00:00+00:00,2026-07-11T16:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 99 quarterfinal kickoff time
+M100,quarterfinal,TBD,TBD,2026-07-12T03:00:00+00:00,2026-07-11T21:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 100 quarterfinal kickoff time
+M101,semifinal,TBD,TBD,2026-07-14T21:00:00+00:00,2026-07-14T15:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 101 semifinal kickoff time
+M102,semifinal,TBD,TBD,2026-07-15T20:00:00+00:00,2026-07-15T14:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 102 semifinal kickoff time
+M103,third_place,TBD,TBD,2026-07-18T22:00:00+00:00,2026-07-18T16:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 103 third place kickoff time
+M104,final,TBD,TBD,2026-07-19T20:00:00+00:00,2026-07-19T14:00:00-06:00,no,,,,,,,FIFA World Cup 2026 match 104 final kickoff time

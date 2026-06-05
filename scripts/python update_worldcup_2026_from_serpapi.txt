@@ -1,0 +1,6 @@
+python update_worldcup_2026_from_serpapi.py \
+  --input "worldcup_2026_matches_es_utc_complete.sql" \
+  --output "worldcup_2026_matches_es_utc_serpapi.sql" \
+  --google-timezone America/Costa_Rica \
+  --location "San Jose, Costa Rica" \
+  --apply

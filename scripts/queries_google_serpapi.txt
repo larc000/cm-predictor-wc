@@ -1,0 +1,104 @@
+Querying M001: México vs Sudáfrica FIFA World Cup 2026 kickoff time
+Querying M002: Corea del Sur vs Chequia FIFA World Cup 2026 kickoff time
+Querying M003: Canadá vs Bosnia y Herzegovina FIFA World Cup 2026 kickoff time
+Querying M004: Catar vs Suiza FIFA World Cup 2026 kickoff time
+Querying M005: Brasil vs Marruecos FIFA World Cup 2026 kickoff time
+Querying M006: Haití vs Escocia FIFA World Cup 2026 kickoff time
+Querying M007: Estados Unidos vs Paraguay FIFA World Cup 2026 kickoff time
+Querying M008: Australia vs Turquía FIFA World Cup 2026 kickoff time
+Querying M009: Alemania vs Curazao FIFA World Cup 2026 kickoff time
+Querying M010: Costa de Marfil vs Ecuador FIFA World Cup 2026 kickoff time
+Querying M011: Países Bajos vs Japón FIFA World Cup 2026 kickoff time
+Querying M012: Suecia vs Túnez FIFA World Cup 2026 kickoff time
+Querying M013: Irán vs Nueva Zelanda FIFA World Cup 2026 kickoff time
+Querying M014: Bélgica vs Egipto FIFA World Cup 2026 kickoff time
+Querying M015: España vs Cabo Verde FIFA World Cup 2026 kickoff time
+Querying M016: Arabia Saudita vs Uruguay FIFA World Cup 2026 kickoff time
+Querying M017: Chequia vs Sudáfrica FIFA World Cup 2026 kickoff time
+Querying M018: México vs Corea del Sur FIFA World Cup 2026 kickoff time
+Querying M019: Suiza vs Bosnia y Herzegovina FIFA World Cup 2026 kickoff time
+Querying M020: Canadá vs Catar FIFA World Cup 2026 kickoff time
+Querying M021: Francia vs Senegal FIFA World Cup 2026 kickoff time
+Querying M022: Irak vs Noruega FIFA World Cup 2026 kickoff time
+Querying M023: Argentina vs Argelia FIFA World Cup 2026 kickoff time
+Querying M024: Austria vs Jordania FIFA World Cup 2026 kickoff time
+Querying M025: Portugal vs República Democrática del Congo FIFA World Cup 2026 kickoff time
+Querying M026: Uzbekistán vs Colombia FIFA World Cup 2026 kickoff time
+Querying M027: Escocia vs Marruecos FIFA World Cup 2026 kickoff time
+Querying M028: Brasil vs Haití FIFA World Cup 2026 kickoff time
+Querying M029: Estados Unidos vs Australia FIFA World Cup 2026 kickoff time
+Querying M030: Turquía vs Paraguay FIFA World Cup 2026 kickoff time
+Querying M031: Alemania vs Costa de Marfil FIFA World Cup 2026 kickoff time
+Querying M032: Ecuador vs Curazao FIFA World Cup 2026 kickoff time
+Querying M033: Países Bajos vs Suecia FIFA World Cup 2026 kickoff time
+Querying M034: Túnez vs Japón FIFA World Cup 2026 kickoff time
+Querying M035: Inglaterra vs Croacia FIFA World Cup 2026 kickoff time
+Querying M036: Ghana vs Panamá FIFA World Cup 2026 kickoff time
+Querying M037: Bélgica vs Irán FIFA World Cup 2026 kickoff time
+Querying M038: Nueva Zelanda vs Egipto FIFA World Cup 2026 kickoff time
+Querying M039: España vs Arabia Saudita FIFA World Cup 2026 kickoff time
+Querying M040: Uruguay vs Cabo Verde FIFA World Cup 2026 kickoff time
+Querying M041: Francia vs Irak FIFA World Cup 2026 kickoff time
+Querying M042: Noruega vs Senegal FIFA World Cup 2026 kickoff time
+Querying M043: Argentina vs Austria FIFA World Cup 2026 kickoff time
+Querying M044: Jordania vs Argelia FIFA World Cup 2026 kickoff time
+Querying M045: Portugal vs Uzbekistán FIFA World Cup 2026 kickoff time
+Querying M046: Colombia vs República Democrática del Congo FIFA World Cup 2026 kickoff time
+Querying M047: Inglaterra vs Ghana FIFA World Cup 2026 kickoff time
+Querying M048: Panamá vs Croacia FIFA World Cup 2026 kickoff time
+Querying M049: Chequia vs México FIFA World Cup 2026 kickoff time
+Querying M050: Sudáfrica vs Corea del Sur FIFA World Cup 2026 kickoff time
+Querying M051: Suiza vs Canadá FIFA World Cup 2026 kickoff time
+Querying M052: Bosnia y Herzegovina vs Catar FIFA World Cup 2026 kickoff time
+Querying M053: Escocia vs Brasil FIFA World Cup 2026 kickoff time
+Querying M054: Marruecos vs Haití FIFA World Cup 2026 kickoff time
+Querying M055: Ecuador vs Alemania FIFA World Cup 2026 kickoff time
+Querying M056: Curazao vs Costa de Marfil FIFA World Cup 2026 kickoff time
+Querying M057: Panamá vs Inglaterra FIFA World Cup 2026 kickoff time
+Querying M058: Croacia vs Ghana FIFA World Cup 2026 kickoff time
+Querying M059: Turquía vs Estados Unidos FIFA World Cup 2026 kickoff time
+Querying M060: Paraguay vs Australia FIFA World Cup 2026 kickoff time
+Querying M061: Japón vs Suecia FIFA World Cup 2026 kickoff time
+Querying M062: Túnez vs Países Bajos FIFA World Cup 2026 kickoff time
+Querying M063: Colombia vs Portugal FIFA World Cup 2026 kickoff time
+Querying M064: República Democrática del Congo vs Uzbekistán FIFA World Cup 2026 kickoff time
+Querying M065: Noruega vs Francia FIFA World Cup 2026 kickoff time
+Querying M066: Senegal vs Irak FIFA World Cup 2026 kickoff time
+Querying M067: Egipto vs Irán FIFA World Cup 2026 kickoff time
+Querying M068: Nueva Zelanda vs Bélgica FIFA World Cup 2026 kickoff time
+Querying M069: Cabo Verde vs Arabia Saudita FIFA World Cup 2026 kickoff time
+Querying M070: Uruguay vs España FIFA World Cup 2026 kickoff time
+Querying M071: Argelia vs Austria FIFA World Cup 2026 kickoff time
+Querying M072: Jordania vs Argentina FIFA World Cup 2026 kickoff time
+Querying M073: FIFA World Cup 2026 match 73 round of 32 kickoff time
+Querying M074: FIFA World Cup 2026 match 74 round of 32 kickoff time
+Querying M075: FIFA World Cup 2026 match 75 round of 32 kickoff time
+Querying M076: FIFA World Cup 2026 match 76 round of 32 kickoff time
+Querying M077: FIFA World Cup 2026 match 77 round of 32 kickoff time
+Querying M078: FIFA World Cup 2026 match 78 round of 32 kickoff time
+Querying M079: FIFA World Cup 2026 match 79 round of 32 kickoff time
+Querying M080: FIFA World Cup 2026 match 80 round of 32 kickoff time
+Querying M081: FIFA World Cup 2026 match 81 round of 32 kickoff time
+Querying M082: FIFA World Cup 2026 match 82 round of 32 kickoff time
+Querying M083: FIFA World Cup 2026 match 83 round of 32 kickoff time
+Querying M084: FIFA World Cup 2026 match 84 round of 32 kickoff time
+Querying M085: FIFA World Cup 2026 match 85 round of 32 kickoff time
+Querying M086: FIFA World Cup 2026 match 86 round of 32 kickoff time
+Querying M087: FIFA World Cup 2026 match 87 round of 32 kickoff time
+Querying M088: FIFA World Cup 2026 match 88 round of 32 kickoff time
+Querying M089: FIFA World Cup 2026 match 89 round of 16 kickoff time
+Querying M090: FIFA World Cup 2026 match 90 round of 16 kickoff time
+Querying M091: FIFA World Cup 2026 match 91 round of 16 kickoff time
+Querying M092: FIFA World Cup 2026 match 92 round of 16 kickoff time
+Querying M093: FIFA World Cup 2026 match 93 round of 16 kickoff time
+Querying M094: FIFA World Cup 2026 match 94 round of 16 kickoff time
+Querying M095: FIFA World Cup 2026 match 95 round of 16 kickoff time
+Querying M096: FIFA World Cup 2026 match 96 round of 16 kickoff time
+Querying M097: FIFA World Cup 2026 match 97 quarterfinal kickoff time
+Querying M098: FIFA World Cup 2026 match 98 quarterfinal kickoff time
+Querying M099: FIFA World Cup 2026 match 99 quarterfinal kickoff time
+Querying M100: FIFA World Cup 2026 match 100 quarterfinal kickoff time
+Querying M101: FIFA World Cup 2026 match 101 semifinal kickoff time
+Querying M102: FIFA World Cup 2026 match 102 semifinal kickoff time
+Querying M103: FIFA World Cup 2026 match 103 third place kickoff time
+Querying M104: FIFA World Cup 2026 match 104 final kickoff time
