@@ -1,8 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import type { User } from '@supabase/supabase-js';
+import quinelaLogo from '@/assets/QuinelaLogo.png';
 import { allowedEmailDomain, isSupabaseConfigured, supabase } from '@/lib/supabase';
 import {
   formatMatchDate,
@@ -551,13 +553,21 @@ function Shell({
   return (
     <main className="app-shell">
       <header className="topbar">
-        <div>
-          <h1>Quiniela Mundialista 2026 - CM LATAM</h1>
-          <p className="subtitle">Registra y edita tus marcadores antes del cierre de cada partido.</p>
+        <div className="brand-lockup">
+          <Image
+            className="brand-mark"
+            src={quinelaLogo}
+            alt="Quiniela CM LATAM"
+            priority
+          />
+          <div>
+            <h1>Quiniela Mundialista 2026</h1>
+            <p className="subtitle">Pronostica el resultado, suma puntos y demuestra quién es el verdadero experto del Mundial</p>
+          </div>
         </div>
 
         <div className="account-box">
-          <span>Mi cuenta</span>
+        
           <strong>{appUser?.name || (appUser ? appUser.email : 'Sin sesión')}</strong>
           <small>{appUser?.email || `Requiere correo @${allowedEmailDomain}`}</small>
           {appUser ? (
@@ -786,7 +796,7 @@ function Rules() {
       <div className="section-heading">
         <div>
           <h2>Reglas</h2>
-          <p className="section-copy">La edición cierra 24 horas antes de cada partido.</p>
+          <p className="section-copy">Es importante tener en cuenta las siguientes reglas para participar en la quiniela:</p>
         </div>
       </div>
 
