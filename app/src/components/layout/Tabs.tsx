@@ -8,7 +8,7 @@ type TabsProps = {
 const tabs: Array<{ id: Tab; label: string }> = [
   { id: 'quiniela', label: 'Mi Quiniela' },
   { id: 'reglas', label: 'Reglas' },
-  { id: 'ranking', label: 'Ranking' }
+  { id: 'ranking', label: 'Leaderboard' }
 ];
 
 export function Tabs({ activeTab, onTabChange }: TabsProps) {

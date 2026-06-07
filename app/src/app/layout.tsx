@@ -17,8 +17,8 @@ const bebasNeue = Bebas_Neue({
 });
 
 export const metadata: Metadata = {
-  title: 'Quiniela Mundialista 2026 - CM LATAM',
-  description: 'Quiniela corporativa para registrar pronosticos y ranking.'
+  title: 'Quiniela CM LATAM - COPA MUNDIAL FIFA 2026',
+  description: 'Quiniela de la empresa para registrar pronosticos y leaderboard.'
 };
 
 export default function RootLayout({
