@@ -1,25 +1,32 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
-import type { FormEvent, ReactNode } from 'react';
+import type { FormEvent } from 'react';
 import type { User } from '@supabase/supabase-js';
-import quinelaLogo from '@/assets/QuinelaLogo.png';
+import { AuthCard } from '@/components/auth/AuthCard';
+import { Toast } from '@/components/feedback/Toast';
+import { Shell } from '@/components/layout/Shell';
+import { Tabs } from '@/components/layout/Tabs';
+import { MatchList } from '@/components/matches/MatchList';
+import { RankingTable } from '@/components/ranking/RankingTable';
+import { Rules } from '@/components/rules/Rules';
 import { allowedEmailDomain, isSupabaseConfigured, supabase } from '@/lib/supabase';
 import {
-  formatMatchDate,
-  getMatchDateGroup,
   getMatchDateKey,
-  getStageLabel,
   isAllowedEmail,
   mergeMatchesWithPredictions
 } from '@/lib/domain';
-import type { AppUser, LeaderboardRow, Match, MatchWithPrediction, Prediction } from '@/lib/types';
-
-type Tab = 'quiniela' | 'reglas' | 'ranking';
-type AuthMode = 'sign-in' | 'sign-up';
-type DraftScores = Record<string, { a: string; b: string }>;
-type EditingMap = Record<string, boolean>;
+import type {
+  AppUser,
+  AuthMode,
+  DraftScores,
+  EditingMap,
+  LeaderboardRow,
+  Match,
+  MatchWithPrediction,
+  Prediction,
+  Tab
+} from '@/lib/types';
 
 export default function QuinielaClient() {
   const [activeTab, setActiveTab] = useState<Tab>('quiniela');
@@ -446,7 +453,7 @@ export default function QuinielaClient() {
 
   if (!isSupabaseConfigured) {
     return (
-      <Shell appUser={appUser} onSignOut={signOut}>
+      <Shell appUser={appUser} allowedEmailDomain={allowedEmailDomain} onSignOut={signOut}>
         <div className="notice">
           <h3>Falta configurar Supabase</h3>
           <p>
@@ -459,7 +466,7 @@ export default function QuinielaClient() {
 
   if (loading) {
     return (
-      <Shell appUser={appUser} onSignOut={signOut}>
+      <Shell appUser={appUser} allowedEmailDomain={allowedEmailDomain} onSignOut={signOut}>
         <div className="notice">Cargando...</div>
       </Shell>
     );
@@ -467,7 +474,7 @@ export default function QuinielaClient() {
 
   if (sessionUser && appUser && !appUser.active) {
     return (
-      <Shell appUser={appUser} onSignOut={signOut}>
+      <Shell appUser={appUser} allowedEmailDomain={allowedEmailDomain} onSignOut={signOut}>
         <div className="notice">
           <h3>Usuario inactivo</h3>
           <p>Tu cuenta existe, pero está inactiva para participar en la quiniela.</p>
@@ -478,9 +485,10 @@ export default function QuinielaClient() {
 
   if (!sessionUser) {
     return (
-      <Shell appUser={appUser} onSignOut={signOut}>
+      <Shell appUser={appUser} allowedEmailDomain={allowedEmailDomain} onSignOut={signOut}>
         <AuthCard
           authMode={authMode}
+          allowedEmailDomain={allowedEmailDomain}
           form={authForm}
           error={error}
           message={message}
@@ -493,45 +501,16 @@ export default function QuinielaClient() {
   }
 
   return (
-    <Shell appUser={appUser} onSignOut={signOut}>
+    <Shell appUser={appUser} allowedEmailDomain={allowedEmailDomain} onSignOut={signOut}>
       <div className="sticky-nav">
-        <nav className="tabs" aria-label="Secciones">
-          <button
-            className={`tab-button ${activeTab === 'quiniela' ? 'active' : ''}`}
-            type="button"
-            onClick={() => changeTab('quiniela')}
-          >
-            Mi Quiniela
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'reglas' ? 'active' : ''}`}
-            type="button"
-            onClick={() => changeTab('reglas')}
-          >
-            Reglas
-          </button>
-          <button
-            className={`tab-button ${activeTab === 'ranking' ? 'active' : ''}`}
-            type="button"
-            onClick={() => changeTab('ranking')}
-          >
-            Ranking
-          </button>
-        </nav>
+        <Tabs activeTab={activeTab} onTabChange={changeTab} />
 
         <div className="score-summary" aria-label="Mi puntaje">
           <span>Mi Puntaje</span>
           <strong>{myPoints} pts</strong>
         </div>
 
-        <div
-          id="toast"
-          className={toast ? 'toast-visible' : ''}
-          role="status"
-          aria-live="polite"
-        >
-          {toast}
-        </div>
+        <Toast message={toast} />
       </div>
 
       {error ? <p className="error">{error}</p> : null}
@@ -544,43 +523,24 @@ export default function QuinielaClient() {
               <p className="section-copy">Tus marcadores, estados y puntos por partido.</p>
             </div>
           </div>
-          {Object.keys(groupedMatches).length === 0 ? (
-            <div className="notice">No hay partidos disponibles.</div>
-          ) : (
-            Object.keys(groupedMatches)
-              .sort()
-              .map((dateKey) => (
-                <div key={dateKey}>
-                  <h3 className="group-title">
-                    {getMatchDateGroup(
-                      groupedMatches[dateKey][0].date_time,
-                      appUser?.timezone || 'America/Costa_Rica'
-                    )}
-                  </h3>
-                  {groupedMatches[dateKey].map((match) => (
-                    <MatchCard
-                      key={match.match_id}
-                      match={match}
-                      draft={draftScores[match.match_id] || { a: '', b: '' }}
-                      editing={Boolean(editing[match.match_id])}
-                      saving={savingMatchId === match.match_id}
-                      timezone={appUser?.timezone || 'America/Costa_Rica'}
-                      onDraftChange={updateDraft}
-                      onSubmit={submitPrediction}
-                      onEdit={startEdit}
-                      onCancel={cancelEdit}
-                    />
-                  ))}
-                </div>
-              ))
-          )}
+          <MatchList
+            groupedMatches={groupedMatches}
+            draftScores={draftScores}
+            editing={editing}
+            savingMatchId={savingMatchId}
+            timezone={appUser?.timezone || 'America/Costa_Rica'}
+            onDraftChange={updateDraft}
+            onSubmitPrediction={submitPrediction}
+            onEditPrediction={startEdit}
+            onCancelEdit={cancelEdit}
+          />
         </section>
       ) : null}
 
       {activeTab === 'reglas' ? <Rules /> : null}
 
       {activeTab === 'ranking' ? (
-        <Ranking
+        <RankingTable
           leaderboard={leaderboard}
           loading={leaderboardLoading}
           error={leaderboardError}
@@ -590,379 +550,6 @@ export default function QuinielaClient() {
 
     </Shell>
   );
-}
-
-function Shell({
-  appUser,
-  onSignOut,
-  children
-}: {
-  appUser: AppUser | null;
-  onSignOut: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <main className="app-shell">
-      <header className="topbar">
-        <div className="brand-lockup">
-          <Image
-            className="brand-mark"
-            src={quinelaLogo}
-            alt="Quiniela CM LATAM"
-            sizes="160px"
-            priority
-          />
-          <div>
-            <h1>Copa Mundial FIFA 2026</h1>
-            <p className="subtitle">Pronostica el resultado, suma puntos y demuestra quién es el verdadero experto del Mundial</p>
-          </div>
-        </div>
-
-        <div className="account-box">
-        
-          <strong>{appUser?.name || (appUser ? appUser.email : 'Sin sesión')}</strong>
-          <small>{appUser?.email || `Requiere correo @${allowedEmailDomain}`}</small>
-          {appUser ? (
-            <button className="button subtle" type="button" onClick={onSignOut}>
-              Salir
-            </button>
-          ) : null}
-        </div>
-      </header>
-
-      {children}
-    </main>
-  );
-}
-
-function AuthCard({
-  authMode,
-  form,
-  error,
-  message,
-  onModeChange,
-  onFormChange,
-  onSubmit
-}: {
-  authMode: AuthMode;
-  form: { name: string; email: string; password: string };
-  error: string;
-  message: string;
-  onModeChange: (mode: AuthMode) => void;
-  onFormChange: (form: { name: string; email: string; password: string }) => void;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
-}) {
-  return (
-    <section className="auth-card">
-      <h2>{authMode === 'sign-in' ? 'Ingresar' : 'Crear cuenta'}</h2>
-      <p className="section-copy">Usa tu correo corporativo @{allowedEmailDomain}.</p>
-
-      <form className="form-stack" onSubmit={onSubmit}>
-        {authMode === 'sign-up' ? (
-          <div className="form-field">
-            <label htmlFor="name">Nombre</label>
-            <input
-              id="name"
-              value={form.name}
-              onChange={(event) => onFormChange({ ...form, name: event.target.value })}
-              required
-            />
-          </div>
-        ) : null}
-
-        <div className="form-field">
-          <label htmlFor="email">Correo</label>
-          <input
-            id="email"
-            type="email"
-            value={form.email}
-            onChange={(event) => onFormChange({ ...form, email: event.target.value })}
-            required
-          />
-        </div>
-
-        <div className="form-field">
-          <label htmlFor="password">Contraseña</label>
-          <input
-            id="password"
-            type="password"
-            minLength={8}
-            value={form.password}
-            onChange={(event) => onFormChange({ ...form, password: event.target.value })}
-            required
-          />
-        </div>
-
-        {error ? <p className="error">{error}</p> : null}
-        {message ? <p className="success">{message}</p> : null}
-
-        <button className="button" type="submit">
-          {authMode === 'sign-in' ? 'Ingresar' : 'Crear cuenta'}
-        </button>
-      </form>
-
-      <button
-        className="button subtle"
-        type="button"
-        onClick={() => onModeChange(authMode === 'sign-in' ? 'sign-up' : 'sign-in')}
-      >
-        {authMode === 'sign-in' ? 'Crear cuenta nueva' : 'Ya tengo cuenta'}
-      </button>
-    </section>
-  );
-}
-
-function MatchCard({
-  match,
-  draft,
-  editing,
-  saving,
-  timezone,
-  onDraftChange,
-  onSubmit,
-  onEdit,
-  onCancel
-}: {
-  match: MatchWithPrediction;
-  draft: { a: string; b: string };
-  editing: boolean;
-  saving: boolean;
-  timezone: string;
-  onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
-  onSubmit: (match: MatchWithPrediction) => void;
-  onEdit: (match: MatchWithPrediction) => void;
-  onCancel: (match: MatchWithPrediction) => void;
-}) {
-  const saved = match.hasPrediction;
-  const inputDisabled = !match.canEdit || (saved && !editing);
-  const normalizedStatus = match.status.toLowerCase();
-
-  const statusClass =
-    normalizedStatus === 'open'
-      ? 'status-open'
-      : normalizedStatus === 'final'
-        ? 'status-final'
-        : normalizedStatus === 'pending_teams'
-          ? 'status-pending'
-          : 'status-closed';
-  const pointsLabel = !saved
-    ? 'Sin pronóstico'
-    : normalizedStatus === 'final'
-      ? `Puntos: ${match.myPoints || 0}`
-      : 'Puntos pendientes';
-
-  return (
-    <article className="match">
-      <div className="match-header">
-        <div>
-          <div className="match-stage">
-            {getStageLabel(match.stage)}
-            {match.group_name ? ` - Grupo ${match.group_name}` : ''}
-          </div>
-
-          <div className="teams">
-            {match.team_a} vs {match.team_b}
-          </div>
-          <div className="date">Fecha: {formatMatchDate(match.date_time, timezone)}</div>
-          <div className="match-meta">
-            <span className={`status-chip ${statusClass}`}>{getStatusLabel(match.status)}</span>
-            <span className="points-chip">{pointsLabel}</span>
-          </div>
-          {normalizedStatus === 'final' && match.score_a !== null && match.score_b !== null ? (
-            <div className="match-note">
-              Resultado final: {match.team_a} {match.score_a} - {match.score_b} {match.team_b}
-            </div>
-          ) : null}
-        </div>
-      </div>
-
-      <div className="prediction-row">
-        <div className="score-box">
-          <label>{match.team_a}</label>
-          <input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            autoComplete="off"
-            value={draft.a}
-            disabled={inputDisabled}
-            onChange={(event) => onDraftChange(match.match_id, 'a', onlyDigits(event.target.value))}
-          />
-        </div>
-
-        <div className="separator">-</div>
-
-        <div className="score-box">
-          <label>{match.team_b}</label>
-          <input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            autoComplete="off"
-            value={draft.b}
-            disabled={inputDisabled}
-            onChange={(event) => onDraftChange(match.match_id, 'b', onlyDigits(event.target.value))}
-          />
-        </div>
-
-        <div className="actions">
-          {!saved || editing ? (
-            <button
-              className="button"
-              type="button"
-              disabled={!match.canEdit || saving}
-              onClick={() => onSubmit(match)}
-            >
-              {saving ? 'Guardando...' : saved ? 'Guardar cambios' : 'Guardar'}
-            </button>
-          ) : null}
-
-          {saved && match.canEdit && !editing ? (
-            <button className="button secondary" type="button" onClick={() => onEdit(match)}>
-              Editar
-            </button>
-          ) : null}
-
-          {saved && editing ? (
-            <button className="button secondary" type="button" onClick={() => onCancel(match)}>
-              Cancelar
-            </button>
-          ) : null}
-
-          {saved && !match.canEdit ? (
-            <button className="button" type="button" disabled>
-              Guardado
-            </button>
-          ) : null}
-        </div>
-      </div>
-
-      {!match.canEdit ? <div className="match-note">{match.lockReason}</div> : null}
-    </article>
-  );
-}
-
-function Rules() {
-  return (
-    <section>
-      <div className="section-heading">
-        <div>
-          <h2>Reglas</h2>
-          <p className="section-copy">Es importante tener en cuenta las siguientes reglas para participar en la quiniela:</p>
-        </div>
-      </div>
-      <h3>General</h3>
-      <div className="rules-grid">
-        <div className="rule-card">
-          <strong>24 h</strong>
-          <p>Antes del partido se bloquea el registro y la edición.</p>
-        </div>
-      </div>
-
-      <h3>Puntuación - FASE DE GRUPOS</h3>
-      <div className="rules-grid">
-        
-        <div className="rule-card">
-          <strong>+1 pt</strong>
-          <p>Por acertar el resultado: ganador, perdedor o empate.</p>
-        </div>
-        <div className="rule-card">
-          <strong>+2 pts</strong>
-          <p>Extra por acertar el marcador exacto del partido.</p>
-        </div>
-      </div>
-
-      <h3>Puntuación - FASE DE ELIMINACIÓN DIRECTA (dieciseisavos, octavos, cuartos, semifinales y final)</h3>
-      <div className="rules-grid">
-        
-        <div className="rule-card">
-          <strong>+1 pt</strong>
-          <p>Por acertar el resultado: ganador, perdedor o empate.</p>
-        </div>
-        <div className="rule-card">
-          <strong>+2 pts</strong>
-          <p>Extra por acertar el marcador exacto del partido.</p>
-        </div>
-        <div className="rule-card">
-          <strong>+1 pt</strong>
-          <p>Por acertar ganador en caso de penales.</p>
-        </div>
-      </div>
-      <h3>Importante sobre la fase de eliminación directa</h3>
-        <ul>
-          <li>En la fase de eliminación directa, si el usuario predice un empate (por ejemplo 2-2) para un partido que termina empatado en el tiempo regular, entonces su predicción avanzará a la ronda de penales.</li>
-          <li>Si el usuario predice un ganador directo (por ejemplo 2-1) para un partido que termina empatado en el tiempo regular, entonces su predicción no avanzará a la ronda de penales y no podrá ganar puntos por esa fase.</li>
-        </ul>
-    </section>
-  );
-}
-
-function Ranking({
-  leaderboard,
-  loading,
-  error,
-  onRefresh
-}: {
-  leaderboard: LeaderboardRow[];
-  loading: boolean;
-  error: string;
-  onRefresh: () => void;
-}) {
-  return (
-    <section>
-      <div className="section-heading">
-        <div>
-          <h2>Leaderboard</h2>
-          <p className="section-copy">Puntos acumulados por participante.</p>
-        </div>
-        <button className="button subtle" type="button" disabled={loading} onClick={onRefresh}>
-          {loading ? 'Cargando...' : 'Actualizar'}
-        </button>
-      </div>
-
-      <div className="leaderboard">
-        {error ? (
-          <div className="notice error">No se pudo cargar el ranking: {error}</div>
-        ) : loading && leaderboard.length === 0 ? (
-          <div className="notice">Cargando ranking...</div>
-        ) : leaderboard.length === 0 ? (
-          <div className="notice">Todavía no hay participantes en el ranking.</div>
-        ) : (
-          <table className="ranking-table">
-            <thead>
-              <tr>
-                <th>Posición</th>
-                <th>Participante</th>
-                <th className="points-cell">Puntos</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leaderboard.map((row, index) => (
-                <tr key={row.user_id}>
-                  <td>{index + 1}</td>
-                  <td>
-                    <strong>{row.name || row.email}</strong>
-                    <br />
-                    <small>{row.email}</small>
-                  </td>
-                  <td className="points-cell">{row.points || 0}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </section>
-  );
-}
-
-function getStatusLabel(status: string) {
-  const value = status.toLowerCase();
-
-  if (value === 'open') return 'Abierto';
-  if (value === 'pending_teams') return 'Equipos por definir';
-  if (value === 'final') return 'Final';
-  return 'Cerrado';
 }
 
 function getErrorMessage(error: unknown) {
@@ -1016,8 +603,4 @@ function isMissingDatabaseFunction(error: unknown) {
   const message = 'message' in error ? String((error as { message?: unknown }).message || '') : '';
 
   return code === 'PGRST202' || message.includes('get_leaderboard');
-}
-
-function onlyDigits(value: string) {
-  return value.replace(/\D/g, '');
 }

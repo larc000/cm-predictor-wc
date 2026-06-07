@@ -39,6 +39,19 @@ export type MatchWithPrediction = Match & {
   lockReason: string;
 };
 
+export type Tab = 'quiniela' | 'reglas' | 'ranking';
+
+export type AuthMode = 'sign-in' | 'sign-up';
+
+export type ScoreDraft = {
+  a: string;
+  b: string;
+};
+
+export type DraftScores = Record<string, ScoreDraft>;
+
+export type EditingMap = Record<string, boolean>;
+
 export type LeaderboardRow = {
   user_id: string;
   email: string;
