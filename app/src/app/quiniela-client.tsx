@@ -120,6 +120,12 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     return matches.reduce((total, match) => total + (Number(match.myPoints) || 0), 0);
   }, [appUser?.id, leaderboard, matches]);
 
+  const myLeaderboardPosition = useMemo(() => {
+    const index = leaderboard.findIndex((row) => row.user_id === appUser?.id);
+
+    return index === -1 ? null : index + 1;
+  }, [appUser?.id, leaderboard]);
+
   async function loadProfileAndData(user: User) {
     setError('');
     setMessage('');
@@ -508,8 +514,14 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         <MainNav />
 
         <div className="score-summary" aria-label="Mi puntaje">
-          <span>Mi Puntaje</span>
-          <strong>{myPoints} pts</strong>
+          <div className="score-summary-item">
+            <span>Mi Puntaje</span>
+            <strong>{myPoints} pts</strong>
+          </div>
+          <div className="score-summary-item">
+            <span>Posición</span>
+            <strong>{myLeaderboardPosition ? `#${myLeaderboardPosition}` : '-'}</strong>
+          </div>
         </div>
 
         <Toast message={toast} />
@@ -546,6 +558,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
           leaderboard={leaderboard}
           loading={leaderboardLoading}
           error={leaderboardError}
+          activeUserId={appUser?.id || ''}
           onRefresh={() => loadLeaderboard().catch(() => undefined)}
         />
       ) : null}

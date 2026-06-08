@@ -250,29 +250,36 @@ h2 {
 .score-summary {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  min-width: 160px;
-  padding: 8px 12px;
+  justify-content: flex-start;
+  gap: 14px;
+  min-width: 0;
+  padding: 7px 10px;
   background: var(--brand-surface);
   border: 1px solid var(--brand-line);
   border-radius: 8px;
   box-shadow: 0 10px 24px rgba(6, 29, 99, 0.1);
 }
 
-.score-summary span {
+.score-summary-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.score-summary-item span {
   color: var(--brand-blue);
   font-family: var(--font-condensed);
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: 0;
   text-transform: uppercase;
 }
 
-.score-summary strong {
+.score-summary-item strong {
   color: var(--brand-orange);
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 400;
   white-space: nowrap;
 }
@@ -665,9 +672,57 @@ h2 {
   border-bottom: 0;
 }
 
+.ranking-table-current-user td {
+  background: #fff3eb;
+  border-bottom-color: rgba(255, 90, 0, 0.22);
+  box-shadow: inset 4px 0 0 var(--brand-orange);
+}
+
+.ranking-table-separator td {
+  padding: 8px 14px;
+  background: #f6f7fb;
+  color: var(--brand-muted);
+  font-family: var(--font-display);
+  font-size: 20px;
+  text-align: center;
+}
+
+.ranking-participant {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.current-user-chip {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  background: var(--brand-orange);
+  color: #fff;
+  border-radius: 999px;
+  font-family: var(--font-condensed);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
 .points-cell {
   font-weight: 700;
   text-align: right;
+}
+
+.leaderboard-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.leaderboard-preview-copy {
+  color: var(--brand-muted);
+  font-size: 14px;
 }
 
 .rules-grid {
@@ -796,7 +851,8 @@ h2 {
 
   .score-summary {
     width: 100%;
-    font-size: 18px;
+    justify-content: center;
+    gap: 16px;
   }
 
   #toast {
