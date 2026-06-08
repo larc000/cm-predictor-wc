@@ -5,8 +5,8 @@ import type { FormEvent } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { AuthCard } from '@/components/auth/AuthCard';
 import { Toast } from '@/components/feedback/Toast';
+import { MainNav } from '@/components/layout/MainNav';
 import { Shell } from '@/components/layout/Shell';
-import { Tabs } from '@/components/layout/Tabs';
 import { MatchList } from '@/components/matches/MatchList';
 import { RankingTable } from '@/components/ranking/RankingTable';
 import { Rules } from '@/components/rules/Rules';
@@ -18,18 +18,21 @@ import {
 } from '@/lib/domain';
 import type {
   AppUser,
+  AppSection,
   AuthMode,
   DraftScores,
   EditingMap,
   LeaderboardRow,
   Match,
   MatchWithPrediction,
-  Prediction,
-  Tab
+  Prediction
 } from '@/lib/types';
 
-export default function QuinielaClient() {
-  const [activeTab, setActiveTab] = useState<Tab>('quiniela');
+type QuinielaClientProps = {
+  activeSection: AppSection;
+};
+
+export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   const [authMode, setAuthMode] = useState<AuthMode>('sign-in');
   const [sessionUser, setSessionUser] = useState<User | null>(null);
   const [appUser, setAppUser] = useState<AppUser | null>(null);
@@ -86,6 +89,13 @@ export default function QuinielaClient() {
       return () => window.clearTimeout(timeout);
     }
   }, [toast]);
+
+  useEffect(() => {
+    if (activeSection === 'leaderboard' && appUser) {
+      loadLeaderboard().catch(() => undefined);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSection, appUser?.id]);
 
   const groupedMatches = useMemo(() => {
     const timezone = appUser?.timezone || 'America/Costa_Rica';
@@ -413,7 +423,7 @@ export default function QuinielaClient() {
       setToast(match.hasPrediction ? 'Pronóstico actualizado.' : 'Pronóstico guardado.');
       await Promise.all([
         loadMatches(),
-        activeTab === 'ranking' ? loadLeaderboard().catch(() => undefined) : Promise.resolve()
+        activeSection === 'leaderboard' ? loadLeaderboard().catch(() => undefined) : Promise.resolve()
       ]);
     } catch (caught) {
       setToast(getErrorMessage(caught));
@@ -441,14 +451,6 @@ export default function QuinielaClient() {
       ...current,
       [match.match_id]: false
     }));
-  }
-
-  function changeTab(tab: Tab) {
-    setActiveTab(tab);
-
-    if (tab === 'ranking' && appUser) {
-      loadLeaderboard().catch(() => undefined);
-    }
   }
 
   if (!isSupabaseConfigured) {
@@ -503,7 +505,7 @@ export default function QuinielaClient() {
   return (
     <Shell appUser={appUser} allowedEmailDomain={allowedEmailDomain} onSignOut={signOut}>
       <div className="sticky-nav">
-        <Tabs activeTab={activeTab} onTabChange={changeTab} />
+        <MainNav />
 
         <div className="score-summary" aria-label="Mi puntaje">
           <span>Mi Puntaje</span>
@@ -515,7 +517,7 @@ export default function QuinielaClient() {
 
       {error ? <p className="error">{error}</p> : null}
 
-      {activeTab === 'quiniela' ? (
+      {activeSection === 'quiniela' ? (
         <section>
           <div className="section-heading">
             <div>
@@ -537,9 +539,9 @@ export default function QuinielaClient() {
         </section>
       ) : null}
 
-      {activeTab === 'reglas' ? <Rules /> : null}
+      {activeSection === 'reglas' ? <Rules /> : null}
 
-      {activeTab === 'ranking' ? (
+      {activeSection === 'leaderboard' ? (
         <RankingTable
           leaderboard={leaderboard}
           loading={leaderboardLoading}

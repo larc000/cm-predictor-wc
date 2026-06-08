@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&display=swap');
+
 :root {
   --brand-navy: #061d63;
   --brand-navy-deep: #041447;
@@ -9,8 +11,8 @@
   --brand-line: #d9deeb;
   --brand-surface: #ffffff;
   --brand-bg: #f6f7fb;
-  --font-display: var(--font-anton), Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  --font-condensed: var(--font-bebas-neue), 'Arial Narrow', Arial, sans-serif;
+  --font-display: 'Anton', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  --font-condensed: 'Bebas Neue', 'Arial Narrow', Arial, sans-serif;
   --font-body: Arial, sans-serif;
 }
 

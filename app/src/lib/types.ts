@@ -39,7 +39,7 @@ export type MatchWithPrediction = Match & {
   lockReason: string;
 };
 
-export type Tab = 'quiniela' | 'reglas' | 'ranking';
+export type AppSection = 'quiniela' | 'reglas' | 'leaderboard';
 
 export type AuthMode = 'sign-in' | 'sign-up';
 

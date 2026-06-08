@@ -6,7 +6,7 @@ export default function NotFound() {
       <section className="notice">
         <h2>Página no encontrada</h2>
         <p>La sección que buscás no existe en esta quiniela.</p>
-        <Link className="button" href="/">
+        <Link className="button" href="/quiniela">
           Volver a Mi Quiniela
         </Link>
       </section>

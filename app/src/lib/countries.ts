@@ -48,3 +48,13 @@ export const COUNTRY_CODES: Record<string, string> = {
   'Uruguay': 'uy',
   'Uzbekistán': 'uz',
 };
+
+export function getFlagUrl(country: string) {
+  const code = COUNTRY_CODES[country];
+
+  if (!code) {
+    return '/images/unknown-flag.svg';
+  }
+
+  return `https://flagcdn.com/w40/${code}.png`;
+}
