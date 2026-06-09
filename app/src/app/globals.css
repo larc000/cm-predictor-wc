@@ -697,12 +697,18 @@ h2 {
 }
 
 .table-scroll {
+  width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .ranking-table {
   width: 100%;
   border-collapse: collapse;
+}
+
+.leaderboard-table {
+  min-width: 640px;
 }
 
 .ranking-table th,
@@ -953,6 +959,18 @@ h2 {
   .account-box {
     max-width: none;
     text-align: left;
+  }
+
+  .leaderboard {
+    overflow: hidden;
+  }
+
+  .leaderboard-table {
+    min-width: 620px;
+  }
+
+  .prediction-audit-table {
+    min-width: 860px;
   }
 
   .sticky-nav {

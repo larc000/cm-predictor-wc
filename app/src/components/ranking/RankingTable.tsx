@@ -74,31 +74,33 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
         ) : leaderboard.length === 0 ? (
           <div className="notice">Todavía no hay participantes en el ranking.</div>
         ) : (
-          <table className="ranking-table">
-            <thead>
-              <tr>
-                <th>Posición</th>
-                <th>Participante</th>
-                <th>Ubicación</th>
-                <th className="points-cell">Puntos</th>
-              </tr>
-            </thead>
-            <tbody>
-              {displayRows.map(({ row, rank }) => renderRankingRow(row, rank, activeUserId))}
-              {shouldShowCurrentUserPreview ? (
-                <>
-                  <tr className="ranking-table-separator" aria-hidden="true">
-                    <td colSpan={4}>...</td>
-                  </tr>
-                  {renderRankingRow(
-                    leaderboard[(currentUserRank || 1) - 1],
-                    currentUserRank || leaderboard.length,
-                    activeUserId
-                  )}
-                </>
-              ) : null}
-            </tbody>
-          </table>
+          <div className="table-scroll">
+            <table className="ranking-table leaderboard-table">
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Participante</th>
+                  <th>Ubicación</th>
+                  <th className="points-cell">Puntos</th>
+                </tr>
+              </thead>
+              <tbody>
+                {displayRows.map(({ row, rank }) => renderRankingRow(row, rank, activeUserId))}
+                {shouldShowCurrentUserPreview ? (
+                  <>
+                    <tr className="ranking-table-separator" aria-hidden="true">
+                      <td colSpan={4}>...</td>
+                    </tr>
+                    {renderRankingRow(
+                      leaderboard[(currentUserRank || 1) - 1],
+                      currentUserRank || leaderboard.length,
+                      activeUserId
+                    )}
+                  </>
+                ) : null}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
 
