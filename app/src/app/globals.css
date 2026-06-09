@@ -279,7 +279,7 @@ h2 {
 .score-summary-item strong {
   color: var(--brand-orange);
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 400;
   white-space: nowrap;
 }
@@ -675,7 +675,6 @@ h2 {
 .ranking-table-current-user td {
   background: #fff3eb;
   border-bottom-color: rgba(255, 90, 0, 0.22);
-  box-shadow: inset 4px 0 0 var(--brand-orange);
 }
 
 .ranking-table-separator td {
@@ -705,6 +704,12 @@ h2 {
   font-weight: 700;
   line-height: 1;
   text-transform: uppercase;
+}
+
+.ranking-location-cell {
+  color: var(--brand-muted);
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .points-cell {

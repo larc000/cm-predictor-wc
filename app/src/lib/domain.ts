@@ -105,6 +105,13 @@ export function getMatchDateKey(dateTime: string, timezone = 'America/Costa_Rica
   return `${year}-${month}-${day}`;
 }
 
+export function getLocationFromTimezone(timezone?: string | null) {
+  if (timezone === 'America/Costa_Rica') return 'Costa Rica';
+  if (timezone === 'America/Bogota') return 'Colombia';
+
+  return 'Sin ubicación';
+}
+
 export function getStageLabel(stage?: string | null) {
   const value = String(stage || '').toLowerCase();
 

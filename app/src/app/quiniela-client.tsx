@@ -280,12 +280,13 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         throw leaderboardQueryError;
       }
 
-      const rows = ((data || []) as LeaderboardRow[])
+      const rows = await hydrateLeaderboardTimezones(((data || []) as LeaderboardRow[])
         .map((row) => ({
           ...row,
+          timezone: row.timezone || null,
           points: Number(row.points) || 0
         }))
-        .sort((a, b) => b.points - a.points);
+        .sort((a, b) => b.points - a.points));
 
       setLeaderboard(rows);
     } catch (caught) {
@@ -311,6 +312,31 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
       .from('leaderboard')
       .select('user_id,email,name,points')
       .order('points', { ascending: false });
+  }
+
+  async function hydrateLeaderboardTimezones(rows: LeaderboardRow[]) {
+    if (!supabase || rows.length === 0) {
+      return rows;
+    }
+
+    const userIds = rows.map((row) => row.user_id);
+    const { data, error: usersError } = await supabase
+      .from('users')
+      .select('id,timezone')
+      .in('id', userIds);
+
+    if (usersError) {
+      throw usersError;
+    }
+
+    const timezoneByUserId = new Map(
+      (data || []).map((row) => [row.id, row.timezone || null])
+    );
+
+    return rows.map((row) => ({
+      ...row,
+      timezone: row.timezone || timezoneByUserId.get(row.user_id) || null
+    }));
   }
 
   async function handleAuth(event: FormEvent<HTMLFormElement>) {

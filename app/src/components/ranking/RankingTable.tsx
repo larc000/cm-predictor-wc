@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { getLocationFromTimezone } from '@/lib/domain';
 import type { LeaderboardRow } from '@/lib/types';
 
 const PREVIEW_LIMIT = 10;
@@ -72,6 +73,7 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
               <tr>
                 <th>Posición</th>
                 <th>Participante</th>
+                <th>Ubicación</th>
                 <th className="points-cell">Puntos</th>
               </tr>
             </thead>
@@ -80,7 +82,7 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
               {shouldShowCurrentUserPreview ? (
                 <>
                   <tr className="ranking-table-separator" aria-hidden="true">
-                    <td colSpan={3}>...</td>
+                    <td colSpan={4}>...</td>
                   </tr>
                   {renderRankingRow(
                     leaderboard[(currentUserRank || 1) - 1],
@@ -130,6 +132,7 @@ function renderRankingRow(row: LeaderboardRow, rank: number, activeUserId: strin
           {isActiveUser ? <span className="current-user-chip">Tú</span> : null}
         </div>
       </td>
+      <td className="ranking-location-cell">{getLocationFromTimezone(row.timezone)}</td>
       <td className="points-cell">{row.points || 0}</td>
     </tr>
   );

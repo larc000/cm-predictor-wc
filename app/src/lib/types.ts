@@ -56,5 +56,6 @@ export type LeaderboardRow = {
   user_id: string;
   email: string;
   name: string | null;
+  timezone: string | null;
   points: number;
 };
