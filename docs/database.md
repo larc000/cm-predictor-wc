@@ -1,5 +1,13 @@
 # Database
 
+## New environment setup
+
+Use `app/supabase/setup.sql` to create the full database baseline in a new Supabase environment.
+It includes tables, indexes, constraints, RLS policies, grants, views, functions, and triggers.
+
+Match seed files such as `matches_rows.sql` and `worldcup_2026_matches_es_utc_complete.sql`
+are intentionally kept separate from the schema setup.
+
 ## Tables
 
 - `users`
