@@ -34,7 +34,7 @@ type QuinielaClientProps = {
   activeSection: AppSection;
 };
 
-const PREDICTION_CLOSED_MESSAGE = 'La ventana para enviar pronósticos ha finalizado.';
+const PREDICTION_CLOSED_MESSAGE = 'Cerró 24 horas antes del partido.';
 
 export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   const [authMode, setAuthMode] = useState<AuthMode>('sign-in');
@@ -245,7 +245,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     return updatedProfile as AppUser;
   }
 
-  async function loadMatches(profile = appUser) {
+  async function loadMatches(profile = appUser, options: { preserveDrafts?: boolean } = {}) {
     if (!supabase || !profile) {
       return;
     }
@@ -271,16 +271,32 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
     setMatches(merged);
 
-    const nextDrafts: DraftScores = {};
-    merged.forEach((match) => {
-      nextDrafts[match.match_id] = {
-        a: match.myPredScoreA === '' ? '' : String(match.myPredScoreA),
-        b: match.myPredScoreB === '' ? '' : String(match.myPredScoreB),
-        penaltyWinner: match.myPredPenaltyWinner
-      };
+    setDraftScores((currentDrafts) => {
+      const nextDrafts: DraftScores = {};
+
+      merged.forEach((match) => {
+        nextDrafts[match.match_id] =
+          options.preserveDrafts && currentDrafts[match.match_id]
+            ? currentDrafts[match.match_id]
+            : getInitialDraft(match);
+      });
+
+      return nextDrafts;
     });
-    setDraftScores(nextDrafts);
-    setEditing({});
+
+    setEditing((currentEditing) => {
+      if (!options.preserveDrafts) {
+        return {};
+      }
+
+      return merged.reduce<EditingMap>((nextEditing, match) => {
+        if (match.canEdit && currentEditing[match.match_id]) {
+          nextEditing[match.match_id] = true;
+        }
+
+        return nextEditing;
+      }, {});
+    });
   }
 
   async function loadLeaderboard() {
@@ -322,7 +338,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
     const rpcResult = await supabase.rpc('get_leaderboard');
 
-    if (!rpcResult.error || !isMissingDatabaseFunction(rpcResult.error)) {
+    if (!rpcResult.error || !isMissingDatabaseFunction(rpcResult.error, 'get_leaderboard')) {
       return rpcResult;
     }
 
@@ -438,6 +454,13 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
     if (requiresPenaltyWinner(match, draft) && !draft.penaltyWinner) {
       setToast('Selecciona quién gana por penales.');
+      return;
+    }
+
+    try {
+      await refreshMatchPredictionStatuses();
+    } catch (caught) {
+      setToast(getErrorMessage(caught));
       return;
     }
 
@@ -668,6 +691,26 @@ function getPenaltyWinnerForSubmission(match: MatchWithPrediction, draft: DraftS
   return draft.penaltyWinner;
 }
 
+function getInitialDraft(match: MatchWithPrediction) {
+  return {
+    a: match.myPredScoreA === '' ? '' : String(match.myPredScoreA),
+    b: match.myPredScoreB === '' ? '' : String(match.myPredScoreB),
+    penaltyWinner: match.myPredPenaltyWinner
+  };
+}
+
+async function refreshMatchPredictionStatuses() {
+  if (!supabase) {
+    return;
+  }
+
+  const { error } = await supabase.rpc('refresh_match_prediction_statuses');
+
+  if (error && !isMissingDatabaseFunction(error, 'refresh_match_prediction_statuses')) {
+    throw error;
+  }
+}
+
 function requiresPenaltyWinner(match: MatchWithPrediction, draft: DraftScores[string]) {
   const stage = String(match.stage || '').toLowerCase();
   const isKnockoutMatch = stage !== '' && stage !== 'group';
@@ -742,7 +785,7 @@ function shouldReturnToAuth(message: string) {
   );
 }
 
-function isMissingDatabaseFunction(error: unknown) {
+function isMissingDatabaseFunction(error: unknown, functionName: string) {
   if (!error || typeof error !== 'object') {
     return false;
   }
@@ -750,5 +793,5 @@ function isMissingDatabaseFunction(error: unknown) {
   const code = 'code' in error ? String((error as { code?: unknown }).code || '') : '';
   const message = 'message' in error ? String((error as { message?: unknown }).message || '') : '';
 
-  return code === 'PGRST202' || message.includes('get_leaderboard');
+  return code === 'PGRST202' || message.includes(functionName);
 }

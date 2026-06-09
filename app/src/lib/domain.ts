@@ -19,7 +19,7 @@ export function getMatchEditState(match: Match) {
   if (hoursBeforeMatch < 24) {
     return {
       canEdit: false,
-      reason: 'La ventana para enviar pronósticos ha finalizado.'
+      reason: 'Cerró 24 horas antes del partido.'
     };
   }
 
