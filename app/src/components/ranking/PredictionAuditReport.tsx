@@ -29,7 +29,9 @@ export function PredictionAuditReport({
   onRefresh
 }: PredictionAuditReportProps) {
   const [visibleGroupCount, setVisibleGroupCount] = useState(MATCH_GROUPS_PER_PAGE);
-  const groupedRows = useMemo(() => groupPredictionRows(rows), [rows]);
+  const [userSearch, setUserSearch] = useState('');
+  const filteredRows = useMemo(() => filterRowsByUser(rows, userSearch), [rows, userSearch]);
+  const groupedRows = useMemo(() => groupPredictionRows(filteredRows), [filteredRows]);
   const visibleGroups = groupedRows.slice(0, visibleGroupCount);
   const hasMoreGroups = visibleGroupCount < groupedRows.length;
 
@@ -50,6 +52,20 @@ export function PredictionAuditReport({
         </div>
       </div>
 
+      <div className="prediction-audit-filters">
+        <label htmlFor="prediction-audit-user-search">Buscar usuario</label>
+        <input
+          id="prediction-audit-user-search"
+          type="search"
+          placeholder="Nombre o correo"
+          value={userSearch}
+          onChange={(event) => {
+            setUserSearch(event.target.value);
+            setVisibleGroupCount(MATCH_GROUPS_PER_PAGE);
+          }}
+        />
+      </div>
+
       <div className="leaderboard prediction-audit">
         {error ? (
           <div className="notice error">No se pudo cargar el reporte: {error}</div>
@@ -57,6 +73,8 @@ export function PredictionAuditReport({
           <div className="notice">Cargando pronósticos...</div>
         ) : rows.length === 0 ? (
           <div className="notice">Todavía no hay pronósticos registrados.</div>
+        ) : filteredRows.length === 0 ? (
+          <div className="notice">No hay pronósticos para ese usuario.</div>
         ) : (
           <div className="table-scroll">
             <table className="ranking-table prediction-audit-table">
@@ -168,6 +186,21 @@ function groupPredictionRows(rows: PredictionAuditRow[]) {
   return Array.from(groups.values()).sort(
     (a, b) => new Date(b.match.date_time).getTime() - new Date(a.match.date_time).getTime()
   );
+}
+
+function filterRowsByUser(rows: PredictionAuditRow[], search: string) {
+  const normalizedSearch = search.trim().toLowerCase();
+
+  if (!normalizedSearch) {
+    return rows;
+  }
+
+  return rows.filter((row) => {
+    const name = String(row.user_name || '').toLowerCase();
+    const email = row.user_email.toLowerCase();
+
+    return name.includes(normalizedSearch) || email.includes(normalizedSearch);
+  });
 }
 
 function TeamResult({ teamName, score }: { teamName: string; score: number | null }) {

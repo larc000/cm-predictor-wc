@@ -223,7 +223,8 @@ h2 {
 
 .form-field input,
 .score-box input,
-.penalty-winner-field select {
+.penalty-winner-field select,
+.prediction-audit-filters input {
   border: 1px solid #b7bfd5;
   border-radius: 8px;
   padding: 10px;
@@ -771,6 +772,21 @@ h2 {
 
 .prediction-audit-table {
   min-width: 860px;
+}
+
+.prediction-audit-filters {
+  display: grid;
+  gap: 6px;
+  max-width: 360px;
+  margin-bottom: 14px;
+}
+
+.prediction-audit-filters label {
+  color: var(--brand-ink);
+  font-family: var(--font-condensed);
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .prediction-audit-match-row td {
