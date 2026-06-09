@@ -31,15 +31,15 @@ export function Shell({ appUser, allowedEmailDomain, onSignOut, children }: Shel
           </div>
         </div>
 
-        <div className="account-box">
-          <strong>{appUser?.name || (appUser ? appUser.email : 'Sin sesión')}</strong>
-          <small>{appUser?.email || `Requiere correo @${allowedEmailDomain}`}</small>
-          {appUser ? (
+        {appUser ? (
+          <div className="account-box">
+            <strong>{appUser.name || appUser.email}</strong>
+            <small>{appUser.email || `Requiere correo @${allowedEmailDomain}`}</small>
             <button className="button subtle" type="button" onClick={onSignOut}>
               Salir
             </button>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </header>
 
       {children}

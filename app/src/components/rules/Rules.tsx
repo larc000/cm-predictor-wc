@@ -10,8 +10,8 @@ export function Rules() {
           <ul>
             <li className="section-copy">La quiniela se juega durante 24 horas antes del inicio del partido.Es importante registrar o actualizar tus pronósticos antes de que se cierre el registro para cada partido, ya que una vez cerrado no podrás hacer cambios ni registrar pronósticos para ese partido.</li>
             <li className="section-copy">Los puntos se asignan según el resultado final del partido y la fase del torneo, con reglas específicas para la fase de eliminación directa.</li>
-            <li className="section-copy">En caso de empate en puntos, el desempate se realizará considerando el número total de aciertos de resultado (ganador, perdedor o empate) y luego el número total de aciertos de marcador exacto.</li>
             <li className="section-copy">Es responsabilidad de cada participante asegurarse de que sus pronósticos estén registrados correctamente antes del cierre para cada partido.</li>
+            <li className="section-copy">En caso de empate en puntos al finalizar la quiniela, el desempate se realizará por medio de un sorteo.</li>
           </ul>        
           <p className="section-copy">Recuerda que el objetivo principal es divertirse y disfrutar del torneo, así que ¡a jugar y que gane el mejor!</p>
         </div>
@@ -57,7 +57,7 @@ export function Rules() {
       <h3>Importante sobre la fase de eliminación directa</h3>
       <ul>
         <li>
-          En la fase de eliminación directa, si el usuario predice un empate (por ejemplo 2-2) para
+          En la fase de eliminación directa, si el usuario predice un empate (por ejemplo 1-1) para
           un partido que termina empatado en el tiempo regular, entonces su predicción avanzará a la
           ronda de penales.
         </li>

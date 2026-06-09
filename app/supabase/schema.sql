@@ -21,6 +21,7 @@ CREATE TABLE public.matches (
   team_b text NOT NULL,
   score_a integer,
   score_b integer,
+  penalty_winner text CHECK (penalty_winner = ANY (ARRAY['team_a'::text, 'team_b'::text])),
   status text NOT NULL DEFAULT 'open'::text CHECK (status = ANY (ARRAY['open'::text, 'closed'::text, 'pending_teams'::text, 'final'::text])),
   stage text DEFAULT 'group'::text,
   CONSTRAINT matches_pkey PRIMARY KEY (match_id)
@@ -31,6 +32,7 @@ CREATE TABLE public.predictions (
   match_id text NOT NULL,
   pred_score_a integer NOT NULL CHECK (pred_score_a >= 0),
   pred_score_b integer NOT NULL CHECK (pred_score_b >= 0),
+  pred_penalty_winner text CHECK (pred_penalty_winner = ANY (ARRAY['team_a'::text, 'team_b'::text])),
   submitted_at timestamp with time zone NOT NULL DEFAULT now(),
   points integer NOT NULL DEFAULT 0,
   CONSTRAINT predictions_pkey PRIMARY KEY (id),

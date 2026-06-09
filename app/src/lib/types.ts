@@ -17,8 +17,11 @@ export type Match = {
   team_b: string;
   score_a: number | null;
   score_b: number | null;
+  penalty_winner: PenaltyWinner;
   status: 'Open' | 'Closed' | 'Final' | 'pending_teams' | string;
 };
+
+export type PenaltyWinner = 'team_a' | 'team_b' | null;
 
 export type Prediction = {
   id: string;
@@ -26,6 +29,7 @@ export type Prediction = {
   match_id: string;
   pred_score_a: number;
   pred_score_b: number;
+  pred_penalty_winner: PenaltyWinner;
   submitted_at: string;
   points: number;
 };
@@ -34,18 +38,20 @@ export type MatchWithPrediction = Match & {
   hasPrediction: boolean;
   myPredScoreA: number | '';
   myPredScoreB: number | '';
+  myPredPenaltyWinner: PenaltyWinner;
   myPoints: number;
   canEdit: boolean;
   lockReason: string;
 };
 
-export type AppSection = 'quiniela' | 'reglas' | 'leaderboard';
+export type AppSection = 'fase-grupos' | 'fase-eliminatoria' | 'reglas' | 'leaderboard';
 
 export type AuthMode = 'sign-in' | 'sign-up';
 
 export type ScoreDraft = {
   a: string;
   b: string;
+  penaltyWinner: PenaltyWinner;
 };
 
 export type DraftScores = Record<string, ScoreDraft>;

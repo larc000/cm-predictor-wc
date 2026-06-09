@@ -24,6 +24,20 @@
 - `third_place`
 - `final`
 
+## Matches
+
+- `penalty_winner`: actual penalty shootout winner for knockout matches.
+  - Allowed values: `team_a`, `team_b`, `null`.
+  - Use `null` when the match did not go to penalties or the winner is not loaded yet.
+
+## Predictions
+
+- `pred_score_a`: predicted score for team A.
+- `pred_score_b`: predicted score for team B.
+- `pred_penalty_winner`: optional penalty winner prediction for knockout matches.
+  - Allowed values: `team_a`, `team_b`, `null`.
+  - Adds 1 point when it matches `matches.penalty_winner`.
+
 ## Time policy
 
 All `matches.date_time` values are stored in UTC.

@@ -13,6 +13,7 @@
 
 ## Scoring
 
-- Correct result: 1 points.
+- Correct result: 1 point.
 - Exact score: +2 points.
-- Maximum per match: 3 points.
+- Correct penalty winner: +1 point.
+- Maximum per match: 4 points.

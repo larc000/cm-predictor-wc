@@ -31,7 +31,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -185,8 +186,19 @@ h2 {
 
 .auth-card {
   max-width: 440px;
+  margin: 32px auto 0;
   padding: 20px;
   border-top: 6px solid var(--brand-orange);
+}
+
+.auth-card .button {
+  width: min(100%, 260px);
+  justify-self: center;
+}
+
+.auth-card > .button {
+  display: flex;
+  margin: 12px auto 0;
 }
 
 .form-stack {
@@ -210,7 +222,8 @@ h2 {
 }
 
 .form-field input,
-.score-box input {
+.score-box input,
+.penalty-winner-field select {
   border: 1px solid #b7bfd5;
   border-radius: 8px;
   padding: 10px;
@@ -504,6 +517,28 @@ h2 {
   flex-wrap: wrap;
 }
 
+.penalty-winner-field {
+  display: grid;
+  gap: 5px;
+  max-width: 320px;
+  margin-top: 12px;
+}
+
+.penalty-winner-field label {
+  color: var(--brand-muted);
+  font-family: var(--font-condensed);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.penalty-winner-field select {
+  width: 100%;
+  background: #fff;
+  color: var(--brand-ink);
+}
+
 .score-box {
   display: flex;
   flex-direction: column;
@@ -663,7 +698,7 @@ h2 {
   background: var(--brand-navy);
   color: #fff;
   font-family: var(--font-condensed);
-  font-size: 13px;
+  font-size: 16px;
   letter-spacing: 0;
   text-transform: uppercase;
 }

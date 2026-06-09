@@ -1,5 +1,5 @@
 import { getMatchDateGroup } from '@/lib/domain';
-import type { DraftScores, EditingMap, MatchWithPrediction } from '@/lib/types';
+import type { DraftScores, EditingMap, MatchWithPrediction, PenaltyWinner } from '@/lib/types';
 import { MatchCard } from './MatchCard';
 
 type MatchListProps = {
@@ -9,6 +9,7 @@ type MatchListProps = {
   savingMatchId: string;
   timezone: string;
   onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
+  onPenaltyWinnerChange: (matchId: string, penaltyWinner: PenaltyWinner) => void;
   onSubmitPrediction: (match: MatchWithPrediction) => void;
   onEditPrediction: (match: MatchWithPrediction) => void;
   onCancelEdit: (match: MatchWithPrediction) => void;
@@ -21,6 +22,7 @@ export function MatchList({
   savingMatchId,
   timezone,
   onDraftChange,
+  onPenaltyWinnerChange,
   onSubmitPrediction,
   onEditPrediction,
   onCancelEdit
@@ -40,11 +42,12 @@ export function MatchList({
         <MatchCard
           key={match.match_id}
           match={match}
-          draft={draftScores[match.match_id] || { a: '', b: '' }}
+          draft={draftScores[match.match_id] || { a: '', b: '', penaltyWinner: null }}
           editing={Boolean(editing[match.match_id])}
           saving={savingMatchId === match.match_id}
           timezone={timezone}
           onDraftChange={onDraftChange}
+          onPenaltyWinnerChange={onPenaltyWinnerChange}
           onSubmitPrediction={onSubmitPrediction}
           onEditPrediction={onEditPrediction}
           onCancelEdit={onCancelEdit}

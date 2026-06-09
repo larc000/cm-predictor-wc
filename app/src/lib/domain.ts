@@ -62,6 +62,7 @@ export function mergeMatchesWithPredictions(
       hasPrediction: Boolean(prediction),
       myPredScoreA: prediction ? prediction.pred_score_a : '',
       myPredScoreB: prediction ? prediction.pred_score_b : '',
+      myPredPenaltyWinner: prediction ? prediction.pred_penalty_winner : null,
       myPoints: prediction ? prediction.points : 0,
       canEdit: editState.canEdit,
       lockReason: editState.reason

@@ -6,7 +6,9 @@ begin
       pred_score_a,
       pred_score_b,
       new.score_a,
-      new.score_b
+      new.score_b,
+      pred_penalty_winner,
+      new.penalty_winner
     )
     where match_id = new.match_id;
   else

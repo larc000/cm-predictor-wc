@@ -25,6 +25,7 @@ import type {
   LeaderboardRow,
   Match,
   MatchWithPrediction,
+  PenaltyWinner,
   Prediction
 } from '@/lib/types';
 
@@ -100,7 +101,20 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   const groupedMatches = useMemo(() => {
     const timezone = appUser?.timezone || 'America/Costa_Rica';
 
-    return [...matches]
+    return matches
+      .filter((match) => {
+        const stage = String(match.stage || '').toLowerCase();
+
+        if (activeSection === 'fase-grupos') {
+          return stage === 'group';
+        }
+
+        if (activeSection === 'fase-eliminatoria') {
+          return stage !== '' && stage !== 'group';
+        }
+
+        return true;
+      })
       .sort((a, b) => new Date(a.date_time).getTime() - new Date(b.date_time).getTime())
       .reduce<Record<string, MatchWithPrediction[]>>((groups, match) => {
         const key = getMatchDateKey(match.date_time, timezone);
@@ -108,7 +122,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         groups[key].push(match);
         return groups;
       }, {});
-  }, [matches, appUser?.timezone]);
+  }, [activeSection, matches, appUser?.timezone]);
 
   const myPoints = useMemo(() => {
     const leaderboardRow = leaderboard.find((row) => row.user_id === appUser?.id);
@@ -258,7 +272,8 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     merged.forEach((match) => {
       nextDrafts[match.match_id] = {
         a: match.myPredScoreA === '' ? '' : String(match.myPredScoreA),
-        b: match.myPredScoreB === '' ? '' : String(match.myPredScoreB)
+        b: match.myPredScoreB === '' ? '' : String(match.myPredScoreB),
+        penaltyWinner: match.myPredPenaltyWinner
       };
     });
     setDraftScores(nextDrafts);
@@ -280,13 +295,13 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         throw leaderboardQueryError;
       }
 
-      const rows = await hydrateLeaderboardTimezones(((data || []) as LeaderboardRow[])
+      const rows = ((data || []) as LeaderboardRow[])
         .map((row) => ({
           ...row,
           timezone: row.timezone || null,
           points: Number(row.points) || 0
         }))
-        .sort((a, b) => b.points - a.points));
+        .sort((a, b) => b.points - a.points);
 
       setLeaderboard(rows);
     } catch (caught) {
@@ -310,33 +325,8 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
     return supabase
       .from('leaderboard')
-      .select('user_id,email,name,points')
+      .select('user_id,email,name,points,timezone')
       .order('points', { ascending: false });
-  }
-
-  async function hydrateLeaderboardTimezones(rows: LeaderboardRow[]) {
-    if (!supabase || rows.length === 0) {
-      return rows;
-    }
-
-    const userIds = rows.map((row) => row.user_id);
-    const { data, error: usersError } = await supabase
-      .from('users')
-      .select('id,timezone')
-      .in('id', userIds);
-
-    if (usersError) {
-      throw usersError;
-    }
-
-    const timezoneByUserId = new Map(
-      (data || []).map((row) => [row.id, row.timezone || null])
-    );
-
-    return rows.map((row) => ({
-      ...row,
-      timezone: row.timezone || timezoneByUserId.get(row.user_id) || null
-    }));
   }
 
   async function handleAuth(event: FormEvent<HTMLFormElement>) {
@@ -414,7 +404,19 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
       [matchId]: {
         a: current[matchId]?.a || '',
         b: current[matchId]?.b || '',
+        penaltyWinner: current[matchId]?.penaltyWinner || null,
         [side]: value
+      }
+    }));
+  }
+
+  function updatePenaltyWinner(matchId: string, penaltyWinner: PenaltyWinner) {
+    setDraftScores((current) => ({
+      ...current,
+      [matchId]: {
+        a: current[matchId]?.a || '',
+        b: current[matchId]?.b || '',
+        penaltyWinner
       }
     }));
   }
@@ -424,10 +426,15 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
       return;
     }
 
-    const draft = draftScores[match.match_id] || { a: '', b: '' };
+    const draft = draftScores[match.match_id] || { a: '', b: '', penaltyWinner: null };
 
     if (draft.a === '' || draft.b === '') {
       setToast('Completa el marcador.');
+      return;
+    }
+
+    if (requiresPenaltyWinner(match, draft) && !draft.penaltyWinner) {
+      setToast('Selecciona quién gana por penales.');
       return;
     }
 
@@ -440,6 +447,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
           match_id: match.match_id,
           pred_score_a: Number(draft.a),
           pred_score_b: Number(draft.b),
+          pred_penalty_winner: getPenaltyWinnerForSubmission(match, draft),
           submitted_at: new Date().toISOString(),
           points: 0
         },
@@ -476,7 +484,8 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
       ...current,
       [match.match_id]: {
         a: match.myPredScoreA === '' ? '' : String(match.myPredScoreA),
-        b: match.myPredScoreB === '' ? '' : String(match.myPredScoreB)
+        b: match.myPredScoreB === '' ? '' : String(match.myPredScoreB),
+        penaltyWinner: match.myPredPenaltyWinner
       }
     }));
     setEditing((current) => ({
@@ -546,7 +555,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
           </div>
           <div className="score-summary-item">
             <span>Posición</span>
-            <strong>{myLeaderboardPosition ? `#${myLeaderboardPosition}` : '-'}</strong>
+            <strong>{myLeaderboardPosition ? `# ${myLeaderboardPosition}` : '-'}</strong>
           </div>
         </div>
 
@@ -555,11 +564,11 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
       {error ? <p className="error">{error}</p> : null}
 
-      {activeSection === 'quiniela' ? (
+      {activeSection === 'fase-grupos' ? (
         <section>
           <div className="section-heading">
             <div>
-              <h2>Mi Quiniela</h2>
+              <h2>Fase de Grupos</h2>
               <p className="section-copy">Tus marcadores, estados y puntos por partido.</p>
             </div>
           </div>
@@ -570,6 +579,30 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
             savingMatchId={savingMatchId}
             timezone={appUser?.timezone || 'America/Costa_Rica'}
             onDraftChange={updateDraft}
+            onPenaltyWinnerChange={updatePenaltyWinner}
+            onSubmitPrediction={submitPrediction}
+            onEditPrediction={startEdit}
+            onCancelEdit={cancelEdit}
+          />
+        </section>
+      ) : null}
+
+      {activeSection === 'fase-eliminatoria' ? (
+        <section>
+          <div className="section-heading">
+            <div>
+              <h2>Fase Eliminatoria</h2>
+              <p className="section-copy">Tus marcadores, estados y puntos por partido.</p>
+            </div>
+          </div>
+          <MatchList
+            groupedMatches={groupedMatches}
+            draftScores={draftScores}
+            editing={editing}
+            savingMatchId={savingMatchId}
+            timezone={appUser?.timezone || 'America/Costa_Rica'}
+            onDraftChange={updateDraft}
+            onPenaltyWinnerChange={updatePenaltyWinner}
             onSubmitPrediction={submitPrediction}
             onEditPrediction={startEdit}
             onCancelEdit={cancelEdit}
@@ -591,6 +624,22 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
     </Shell>
   );
+}
+
+function getPenaltyWinnerForSubmission(match: MatchWithPrediction, draft: DraftScores[string]) {
+  if (!requiresPenaltyWinner(match, draft)) {
+    return null;
+  }
+
+  return draft.penaltyWinner;
+}
+
+function requiresPenaltyWinner(match: MatchWithPrediction, draft: DraftScores[string]) {
+  const stage = String(match.stage || '').toLowerCase();
+  const isKnockoutMatch = stage !== '' && stage !== 'group';
+  const isTiedScore = draft.a !== '' && draft.b !== '' && Number(draft.a) === Number(draft.b);
+
+  return isKnockoutMatch && isTiedScore;
 }
 
 function getErrorMessage(error: unknown) {

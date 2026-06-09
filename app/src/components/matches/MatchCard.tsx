@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { formatMatchDate, getStageLabel } from '@/lib/domain';
 import { COUNTRY_CODES } from '@/lib/countries';
-import type { MatchWithPrediction, ScoreDraft } from '@/lib/types';
+import type { MatchWithPrediction, PenaltyWinner, ScoreDraft } from '@/lib/types';
 
 type MatchCardProps = {
   match: MatchWithPrediction;
@@ -10,6 +10,7 @@ type MatchCardProps = {
   saving: boolean;
   timezone: string;
   onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
+  onPenaltyWinnerChange: (matchId: string, penaltyWinner: PenaltyWinner) => void;
   onSubmitPrediction: (match: MatchWithPrediction) => void;
   onEditPrediction: (match: MatchWithPrediction) => void;
   onCancelEdit: (match: MatchWithPrediction) => void;
@@ -22,6 +23,7 @@ export function MatchCard({
   saving,
   timezone,
   onDraftChange,
+  onPenaltyWinnerChange,
   onSubmitPrediction,
   onEditPrediction,
   onCancelEdit
@@ -29,6 +31,9 @@ export function MatchCard({
   const saved = match.hasPrediction;
   const inputDisabled = !match.canEdit || (saved && !editing);
   const normalizedStatus = match.status.toLowerCase();
+  const isKnockoutMatch = isKnockoutStage(match.stage);
+  const hasTiedDraftScore = draft.a !== '' && draft.b !== '' && Number(draft.a) === Number(draft.b);
+  const showPenaltyWinnerSelector = isKnockoutMatch && hasTiedDraftScore;
 
   const statusClass =
     normalizedStatus === 'open'
@@ -49,8 +54,10 @@ export function MatchCard({
       <div className="match-header">
         <div className="match-heading">
           <div className="match-stage">
-            {getStageLabel(match.stage)}
-            {match.group_name ? ` - Grupo ${match.group_name}` : ''}
+            {match.stage === 'group'
+              ? `Grupo ${match.group_name}`
+              : `${getStageLabel(match.stage)}${match.group_name ? ` - Grupo ${match.group_name}` : ''}`
+            }
           </div>
 
           <div className="teams">
@@ -125,6 +132,24 @@ export function MatchCard({
             ) : null}
           </div>
         </div>
+
+        {showPenaltyWinnerSelector ? (
+          <div className="penalty-winner-field">
+            <label htmlFor={`penalty_${match.match_id}`}>¿Quién gana por penales?</label>
+            <select
+              id={`penalty_${match.match_id}`}
+              value={draft.penaltyWinner || ''}
+              disabled={inputDisabled}
+              onChange={(event) =>
+                onPenaltyWinnerChange(match.match_id, normalizePenaltyWinner(event.target.value))
+              }
+            >
+              <option value="">Seleccionar</option>
+              <option value="team_a">{match.team_a}</option>
+              <option value="team_b">{match.team_b}</option>
+            </select>
+          </div>
+        ) : null}
 
         {!match.canEdit ? <div className="match-lock-message">{match.lockReason}</div> : null}
       </div>
@@ -222,4 +247,18 @@ function getStatusLabel(status: string) {
 
 function onlyDigits(value: string) {
   return value.replace(/\D/g, '');
+}
+
+function isKnockoutStage(stage?: string | null) {
+  const value = String(stage || '').toLowerCase();
+
+  return value !== '' && value !== 'group';
+}
+
+function normalizePenaltyWinner(value: string): PenaltyWinner {
+  if (value === 'team_a' || value === 'team_b') {
+    return value;
+  }
+
+  return null;
 }
