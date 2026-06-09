@@ -29,6 +29,10 @@
 - `penalty_winner`: actual penalty shootout winner for knockout matches.
   - Allowed values: `team_a`, `team_b`, `null`.
   - Use `null` when the match did not go to penalties or the winner is not loaded yet.
+- `created_at`: timestamp for when the match row was created.
+- `updated_at`: timestamp for the last update to the match row.
+  - Maintained automatically by `set_matches_updated_at_trigger`.
+  - Intended to support future admin workflows and audit visibility.
 
 ## Predictions
 

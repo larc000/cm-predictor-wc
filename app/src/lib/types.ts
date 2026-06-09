@@ -19,6 +19,8 @@ export type Match = {
   score_b: number | null;
   penalty_winner: PenaltyWinner;
   status: 'Open' | 'Closed' | 'Final' | 'pending_teams' | string;
+  created_at: string;
+  updated_at: string;
 };
 
 export type PenaltyWinner = 'team_a' | 'team_b' | null;

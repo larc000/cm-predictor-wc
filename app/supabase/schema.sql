@@ -24,6 +24,8 @@ CREATE TABLE public.matches (
   penalty_winner text CHECK (penalty_winner = ANY (ARRAY['team_a'::text, 'team_b'::text])),
   status text NOT NULL DEFAULT 'open'::text CHECK (status = ANY (ARRAY['open'::text, 'closed'::text, 'pending_teams'::text, 'final'::text])),
   stage text DEFAULT 'group'::text,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
   CONSTRAINT matches_pkey PRIMARY KEY (match_id)
 );
 CREATE TABLE public.predictions (

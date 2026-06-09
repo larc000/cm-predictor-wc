@@ -12,6 +12,7 @@ import { RankingTable } from '@/components/ranking/RankingTable';
 import { Rules } from '@/components/rules/Rules';
 import { allowedEmailDomain, isSupabaseConfigured, supabase } from '@/lib/supabase';
 import {
+  getMatchEditState,
   getMatchDateKey,
   isAllowedEmail,
   mergeMatchesWithPredictions
@@ -32,6 +33,8 @@ import type {
 type QuinielaClientProps = {
   activeSection: AppSection;
 };
+
+const PREDICTION_CLOSED_MESSAGE = 'La ventana para enviar pronósticos ha finalizado.';
 
 export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   const [authMode, setAuthMode] = useState<AuthMode>('sign-in');
@@ -438,6 +441,12 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
       return;
     }
 
+    if (!getMatchEditState(match).canEdit) {
+      lockMatchForPredictions(match.match_id);
+      setToast(PREDICTION_CLOSED_MESSAGE);
+      return;
+    }
+
     setSavingMatchId(match.match_id);
 
     try {
@@ -466,10 +475,35 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         activeSection === 'leaderboard' ? loadLeaderboard().catch(() => undefined) : Promise.resolve()
       ]);
     } catch (caught) {
-      setToast(getErrorMessage(caught));
+      const nextError = getErrorMessage(caught);
+
+      if (isPredictionPolicyError(caught)) {
+        lockMatchForPredictions(match.match_id);
+      }
+
+      setToast(nextError);
     } finally {
       setSavingMatchId('');
     }
+  }
+
+  function lockMatchForPredictions(matchId: string) {
+    setMatches((currentMatches) =>
+      currentMatches.map((match) =>
+        match.match_id === matchId
+          ? {
+            ...match,
+            status: 'closed',
+            canEdit: false,
+            lockReason: PREDICTION_CLOSED_MESSAGE
+          }
+          : match
+      )
+    );
+    setEditing((current) => ({
+      ...current,
+      [matchId]: false
+    }));
   }
 
   function startEdit(match: MatchWithPrediction) {
@@ -673,7 +707,31 @@ function normalizeSupabaseMessage(message: string) {
     return 'Este correo ya tiene cuenta. Ingresa con tu contraseña.';
   }
 
+  if (isPredictionPolicyMessage(message)) {
+    return PREDICTION_CLOSED_MESSAGE;
+  }
+
   return message;
+}
+
+function isPredictionPolicyError(error: unknown) {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+
+  const message = 'message' in error ? String((error as { message?: unknown }).message || '') : '';
+  const code = 'code' in error ? String((error as { code?: unknown }).code || '') : '';
+
+  return code === '42501' || isPredictionPolicyMessage(message);
+}
+
+function isPredictionPolicyMessage(message: string) {
+  const normalized = message.toLowerCase();
+
+  return (
+    normalized.includes('row-level security') &&
+    normalized.includes('predictions')
+  );
 }
 
 function shouldReturnToAuth(message: string) {

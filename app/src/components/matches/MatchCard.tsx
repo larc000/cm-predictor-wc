@@ -162,6 +162,7 @@ export function MatchCard({
 function FinalResultColumn({ match, pointsLabel }: { match: MatchWithPrediction; pointsLabel: string }) {
   const isFinal = match.status.toLowerCase() === 'final';
   const hasFinalScore = isFinal && match.score_a !== null && match.score_b !== null;
+  const showPenaltyWinner = hasFinalScore && isKnockoutStage(match.stage) && Boolean(match.penalty_winner);
 
   return (
     <aside className={`match-result-panel ${hasFinalScore ? 'is-final' : 'is-pending'}`}>
@@ -175,19 +176,38 @@ function FinalResultColumn({ match, pointsLabel }: { match: MatchWithPrediction;
       </div>
 
       <div className="result-scoreboard" aria-label="Resultado del partido">
-        <ResultTeamRow teamName={match.team_a} score={hasFinalScore ? match.score_a : null} />
-        <ResultTeamRow teamName={match.team_b} score={hasFinalScore ? match.score_b : null} />
+        <ResultTeamRow
+          teamName={match.team_a}
+          score={hasFinalScore ? match.score_a : null}
+          wonOnPenalties={showPenaltyWinner && match.penalty_winner === 'team_a'}
+        />
+        <ResultTeamRow
+          teamName={match.team_b}
+          score={hasFinalScore ? match.score_b : null}
+          wonOnPenalties={showPenaltyWinner && match.penalty_winner === 'team_b'}
+        />
       </div>
 
     </aside>
   );
 }
 
-function ResultTeamRow({ teamName, score }: { teamName: string; score: number | null }) {
+function ResultTeamRow({
+  teamName,
+  score,
+  wonOnPenalties = false
+}: {
+  teamName: string;
+  score: number | null;
+  wonOnPenalties?: boolean;
+}) {
   return (
     <div className="result-team-row">
       <TeamFlag teamName={teamName} />
-      <span className="result-team-name">{teamName}</span>
+      <span className="result-team-name">
+        {teamName}
+        {wonOnPenalties ? <span className="penalty-winner-mark">*</span> : null}
+      </span>
       <strong className="result-team-score">{score ?? '-'}</strong>
     </div>
   );

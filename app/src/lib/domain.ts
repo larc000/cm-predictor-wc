@@ -13,15 +13,31 @@ export function getMatchEditState(match: Match) {
       reason: 'Los equipos de este partido todavía están por definirse.'
     };
   }
+  const matchDate = new Date(match.date_time);
+  const hoursBeforeMatch = (matchDate.getTime() - Date.now()) / (1000 * 60 * 60);
+
+  if (hoursBeforeMatch < 24) {
+    return {
+      canEdit: false,
+      reason: 'La ventana para enviar pronósticos ha finalizado.'
+    };
+  }
+
+  if (status === 'final') {
+    return {
+      canEdit: false,
+      reason: 'Este partido ya finalizó.'
+    };
+  }
 
   if (status !== 'open') {
     return {
       canEdit: false,
-      reason: 'Este partido no está abierto para predicciones.'
+      reason: 'Este partido ya no admite cambios ni nuevas predicciones.'
     };
   }
 
-  const matchDate = new Date(match.date_time);
+  
 
   if (Number.isNaN(matchDate.getTime())) {
     return {
@@ -30,14 +46,7 @@ export function getMatchEditState(match: Match) {
     };
   }
 
-  const hoursBeforeMatch = (matchDate.getTime() - Date.now()) / (1000 * 60 * 60);
-
-  if (hoursBeforeMatch < 24) {
-    return {
-      canEdit: false,
-      reason: 'Cerró 24 horas antes del partido.'
-    };
-  }
+  
 
   return {
     canEdit: true,
@@ -78,7 +87,6 @@ export function formatMatchDate(dateTime: string, timezone = 'America/Costa_Rica
     year: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
-    timeZoneName: 'short',
   }).format(new Date(dateTime));
 }
 

@@ -283,7 +283,7 @@ h2 {
 .score-summary-item span {
   color: var(--brand-blue);
   font-family: var(--font-condensed);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: 0;
   text-transform: uppercase;
@@ -292,7 +292,7 @@ h2 {
 .score-summary-item strong {
   color: var(--brand-orange);
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   white-space: nowrap;
 }
@@ -305,7 +305,7 @@ h2 {
   padding: 11px 16px;
   border-radius: 8px;
   font-family: var(--font-condensed);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: 0;
   cursor: pointer;
@@ -649,6 +649,11 @@ h2 {
   text-overflow: ellipsis;
   text-transform: uppercase;
   white-space: nowrap;
+}
+
+.penalty-winner-mark {
+  color: var(--brand-orange);
+  margin-left: 3px;
 }
 
 .result-team-score {
