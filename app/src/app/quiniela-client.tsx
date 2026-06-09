@@ -8,6 +8,7 @@ import { Toast } from '@/components/feedback/Toast';
 import { MainNav } from '@/components/layout/MainNav';
 import { Shell } from '@/components/layout/Shell';
 import { MatchList } from '@/components/matches/MatchList';
+import { PredictionAuditReport } from '@/components/ranking/PredictionAuditReport';
 import { RankingTable } from '@/components/ranking/RankingTable';
 import { Rules } from '@/components/rules/Rules';
 import { allowedEmailDomain, isSupabaseConfigured, supabase } from '@/lib/supabase';
@@ -27,6 +28,7 @@ import type {
   Match,
   MatchWithPrediction,
   PenaltyWinner,
+  PredictionAuditRow,
   Prediction
 } from '@/lib/types';
 
@@ -44,6 +46,9 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   const [leaderboard, setLeaderboard] = useState<LeaderboardRow[]>([]);
   const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [leaderboardError, setLeaderboardError] = useState('');
+  const [predictionAuditRows, setPredictionAuditRows] = useState<PredictionAuditRow[]>([]);
+  const [predictionAuditLoading, setPredictionAuditLoading] = useState(false);
+  const [predictionAuditError, setPredictionAuditError] = useState('');
   const [draftScores, setDraftScores] = useState<DraftScores>({});
   const [editing, setEditing] = useState<EditingMap>({});
   const [authForm, setAuthForm] = useState({ name: '', email: '', password: '' });
@@ -97,6 +102,13 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   useEffect(() => {
     if (activeSection === 'leaderboard' && appUser) {
       loadLeaderboard().catch(() => undefined);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSection, appUser?.id]);
+
+  useEffect(() => {
+    if (activeSection === 'prediction-audit' && appUser) {
+      loadPredictionAudit().catch(() => undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSection, appUser?.id]);
@@ -348,6 +360,30 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
       .order('points', { ascending: false });
   }
 
+  async function loadPredictionAudit() {
+    if (!supabase) {
+      return;
+    }
+
+    setPredictionAuditLoading(true);
+    setPredictionAuditError('');
+
+    try {
+      const { data, error: auditQueryError } = await supabase.rpc('get_predictions_audit');
+
+      if (auditQueryError) {
+        throw auditQueryError;
+      }
+
+      setPredictionAuditRows(((data || []) as PredictionAuditRow[]).map(normalizePredictionAuditRow));
+    } catch (caught) {
+      setPredictionAuditError(getErrorMessage(caught));
+      throw caught;
+    } finally {
+      setPredictionAuditLoading(false);
+    }
+  }
+
   async function handleAuth(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');
@@ -413,6 +449,9 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     setLeaderboard([]);
     setLeaderboardError('');
     setLeaderboardLoading(false);
+    setPredictionAuditRows([]);
+    setPredictionAuditError('');
+    setPredictionAuditLoading(false);
     setDraftScores({});
     setEditing({});
   }
@@ -679,6 +718,16 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         />
       ) : null}
 
+      {activeSection === 'prediction-audit' ? (
+        <PredictionAuditReport
+          rows={predictionAuditRows}
+          loading={predictionAuditLoading}
+          error={predictionAuditError}
+          timezone={appUser?.timezone || 'America/Costa_Rica'}
+          onRefresh={() => loadPredictionAudit().catch(() => undefined)}
+        />
+      ) : null}
+
     </Shell>
   );
 }
@@ -696,6 +745,17 @@ function getInitialDraft(match: MatchWithPrediction) {
     a: match.myPredScoreA === '' ? '' : String(match.myPredScoreA),
     b: match.myPredScoreB === '' ? '' : String(match.myPredScoreB),
     penaltyWinner: match.myPredPenaltyWinner
+  };
+}
+
+function normalizePredictionAuditRow(row: PredictionAuditRow) {
+  return {
+    ...row,
+    score_a: row.score_a === null ? null : Number(row.score_a),
+    score_b: row.score_b === null ? null : Number(row.score_b),
+    pred_score_a: Number(row.pred_score_a),
+    pred_score_b: Number(row.pred_score_b),
+    points: Number(row.points) || 0
   };
 }
 

@@ -8,7 +8,7 @@ export function Rules() {
             Es importante tener en cuenta las siguientes reglas para participar en la quiniela:
           </p>
           <ul>
-            <li className="section-copy">La quiniela se juega durante 24 horas antes del inicio del partido.Es importante registrar o actualizar tus pronósticos antes de que se cierre el registro para cada partido, ya que una vez cerrado no podrás hacer cambios ni registrar pronósticos para ese partido.</li>
+            <li className="section-copy">Es importante registrar o actualizar tus pronósticos antes de que se cierre el registro para cada partido (24 horas antes), ya que una vez cerrado no podrás hacer cambios ni registrar pronósticos para ese partido.</li>
             <li className="section-copy">Los puntos se asignan según el resultado final del partido y la fase del torneo, con reglas específicas para la fase de eliminación directa.</li>
             <li className="section-copy">Es responsabilidad de cada participante asegurarse de que sus pronósticos estén registrados correctamente antes del cierre para cada partido.</li>
             <li className="section-copy">En caso de empate en puntos al finalizar la quiniela, el desempate se realizará por medio de un sorteo.</li>

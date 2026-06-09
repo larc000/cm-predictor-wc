@@ -368,6 +368,14 @@ h2 {
   margin-bottom: 18px;
 }
 
+.section-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .notice {
   padding: 14px 16px;
   color: var(--brand-muted);
@@ -687,6 +695,10 @@ h2 {
   overflow: hidden;
 }
 
+.table-scroll {
+  overflow-x: auto;
+}
+
 .ranking-table {
   width: 100%;
   border-collapse: collapse;
@@ -755,6 +767,47 @@ h2 {
 .points-cell {
   font-weight: 700;
   text-align: right;
+}
+
+.prediction-audit-table {
+  min-width: 860px;
+}
+
+.prediction-audit-match-row td {
+  background: #f6f7fb;
+  color: var(--brand-ink);
+  font-weight: 700;
+}
+
+.prediction-audit-match-row .points-cell {
+  white-space: nowrap;
+}
+
+.prediction-audit-team-result {
+  display: grid;
+  gap: 4px;
+}
+
+.prediction-audit-team-result span {
+  color: var(--brand-navy);
+  font-family: var(--font-condensed);
+  font-size: 18px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.prediction-audit-team-result strong {
+  color: var(--brand-orange);
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.prediction-score-cell {
+  color: var(--brand-navy);
+  font-family: var(--font-display);
+
+  line-height: 1;
 }
 
 .leaderboard-actions {
@@ -854,6 +907,10 @@ h2 {
   .section-heading {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .section-actions {
+    justify-content: flex-start;
   }
 
   .topbar {

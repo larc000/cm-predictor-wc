@@ -46,7 +46,33 @@ export type MatchWithPrediction = Match & {
   lockReason: string;
 };
 
-export type AppSection = 'fase-grupos' | 'fase-eliminatoria' | 'reglas' | 'leaderboard';
+export type AppSection =
+  | 'fase-grupos'
+  | 'fase-eliminatoria'
+  | 'reglas'
+  | 'leaderboard'
+  | 'prediction-audit';
+
+export type PredictionAuditRow = {
+  match_id: string;
+  group_name: string | null;
+  stage: string | null;
+  date_time: string;
+  team_a: string;
+  team_b: string;
+  score_a: number | null;
+  score_b: number | null;
+  penalty_winner: PenaltyWinner;
+  status: string;
+  user_id: string;
+  user_email: string;
+  user_name: string | null;
+  pred_score_a: number;
+  pred_score_b: number;
+  pred_penalty_winner: PenaltyWinner;
+  submitted_at: string;
+  points: number;
+};
 
 export type AuthMode = 'sign-in' | 'sign-up';
 

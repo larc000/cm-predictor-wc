@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { getLocationFromTimezone } from '@/lib/domain';
 import type { LeaderboardRow } from '@/lib/types';
@@ -55,9 +56,14 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
           <h2>Leaderboard</h2>
           <p className="section-copy">Puntos acumulados por participante.</p>
         </div>
-        <button className="button subtle" type="button" disabled={loading} onClick={onRefresh}>
-          {loading ? 'Cargando...' : 'Actualizar'}
-        </button>
+        <div className="section-actions">
+          <Link className="button subtle" href="/leaderboard/todos-los-pronosticos">
+            Todos los pronósticos
+          </Link>
+          <button className="button subtle" type="button" disabled={loading} onClick={onRefresh}>
+            {loading ? 'Cargando...' : 'Actualizar'}
+          </button>
+        </div>
       </div>
 
       <div className="leaderboard">
