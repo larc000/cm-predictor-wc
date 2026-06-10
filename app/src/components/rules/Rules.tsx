@@ -37,7 +37,7 @@ export function Rules() {
       </div>
 
       <h3>
-        Puntuación - FASE DE ELIMINACIÓN DIRECTA (dieciseisavos, octavos, cuartos, semifinales y
+        Puntuación - FASE ELIMINATORIA (dieciseisavos, octavos, cuartos, semifinales, 3er lugar y
         final)
       </h3>
       <div className="rules-grid">
@@ -54,10 +54,10 @@ export function Rules() {
           <p>Por acertar ganador en caso de penales.</p>
         </div>
       </div>
-      <h3>Importante sobre la fase de eliminación directa</h3>
+      <h3>Importante información sobre la fase eliminatoria</h3>
       <ul>
         <li>
-          En la fase de eliminación directa, si el usuario predice un empate (por ejemplo 1-1) para
+          En la fase eliminatoria, si el usuario predice un empate (por ejemplo 1-1) para
           un partido que termina empatado en el tiempo regular, entonces su predicción avanzará a la
           ronda de penales.
         </li>

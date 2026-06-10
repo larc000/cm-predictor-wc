@@ -25,8 +25,7 @@ export function Shell({ appUser, allowedEmailDomain, onSignOut, children }: Shel
           <div>
             <h1>Copa Mundial FIFA 2026</h1>
             <p className="subtitle">
-              Pronostica el resultado, suma puntos y demuestra quién es el verdadero experto del
-              Mundial
+              Pronostica el resultado, suma puntos y demuestra quién es el verdadero experto
             </p>
           </div>
         </div>
