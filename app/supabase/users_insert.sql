@@ -96,5 +96,6 @@ INSERT INTO users (email,name,role,active,timezone) VALUES
 ('maikel.espitia@omc.com','Maikel Espitia','Player',true,'America/Costa_Rica'),
 ('saul.lopez@omc.com','Saul Lopez','Player',true,'America/Costa_Rica'),
 ('alejandro.gutierrez@omc.com','Alejandro Gutierrez','Player',true,'America/Costa_Rica'),
-('luis.leon@omc.com','Luis González','Player',true,'America/Costa_Rica')
+('luis.leon@omc.com','Luis González','Player',true,'America/Costa_Rica'),
+('jonathan.villalobos@omc.com','Jonathan Villalobos','Player',true,'America/Costa_Rica')
 ON CONFLICT (email) DO NOTHING;
