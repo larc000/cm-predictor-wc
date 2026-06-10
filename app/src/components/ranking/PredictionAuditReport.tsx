@@ -40,7 +40,8 @@ export function PredictionAuditReport({
       <div className="section-heading">
         <div>
           <h2>Todos los pronósticos</h2>
-          <p className="section-copy">Reporte de pronósticos de todos los usuarios agrupado por partido. Se muestran una vez el partiod esté Cerrado o Finalizado.</p>
+          <p className="section-copy">Reporte de pronósticos de todos los usuarios agrupado por partido. </p>
+          <p className="section-copy">  Se muestran una vez el partido esté en estado Cerrado o Final.</p>
         </div>
         <div className="section-actions">
           <Link className="button subtle" href="/leaderboard">

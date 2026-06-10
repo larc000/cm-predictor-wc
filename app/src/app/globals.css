@@ -722,7 +722,7 @@ h2 {
   background: var(--brand-navy);
   color: #fff;
   font-family: var(--font-condensed);
-  font-size: 16px;
+  font-size: 18px;
   letter-spacing: 0;
   text-transform: uppercase;
 }
@@ -790,7 +790,7 @@ h2 {
 .prediction-audit-filters label {
   color: var(--brand-ink);
   font-family: var(--font-condensed);
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
   text-transform: uppercase;
 }
