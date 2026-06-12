@@ -36,7 +36,8 @@ type QuinielaClientProps = {
   activeSection: AppSection;
 };
 
-const PREDICTION_CLOSED_MESSAGE = 'Cerró 24 horas antes del partido.';
+const PREDICTION_CLOSED_MESSAGE =
+  'Las predicciones para este partido ya están cerradas. Los pronósticos deben registrarse al menos 24 horas antes del inicio del partido.';
 
 export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   const [authMode, setAuthMode] = useState<AuthMode>('sign-in');
@@ -503,9 +504,11 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
       return;
     }
 
-    if (!getMatchEditState(match).canEdit) {
-      lockMatchForPredictions(match.match_id);
-      setToast(PREDICTION_CLOSED_MESSAGE);
+    const editState = getMatchEditState(match);
+
+    if (!editState.canEdit) {
+      lockMatchForPredictions(match.match_id, editState.reason);
+      setToast(editState.reason);
       return;
     }
 
@@ -540,7 +543,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
       const nextError = getErrorMessage(caught);
 
       if (isPredictionPolicyError(caught)) {
-        lockMatchForPredictions(match.match_id);
+        lockMatchForPredictions(match.match_id, nextError);
       }
 
       setToast(nextError);
@@ -549,7 +552,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     }
   }
 
-  function lockMatchForPredictions(matchId: string) {
+  function lockMatchForPredictions(matchId: string, reason = PREDICTION_CLOSED_MESSAGE) {
     setMatches((currentMatches) =>
       currentMatches.map((match) =>
         match.match_id === matchId
@@ -557,7 +560,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
             ...match,
             status: 'closed',
             canEdit: false,
-            lockReason: PREDICTION_CLOSED_MESSAGE
+            lockReason: reason
           }
           : match
       )
@@ -811,6 +814,15 @@ function normalizeSupabaseMessage(message: string) {
   }
 
   if (isPredictionPolicyMessage(message)) {
+    return PREDICTION_CLOSED_MESSAGE;
+  }
+
+  if (
+    normalized.includes('cerró 24 horas') ||
+    normalized.includes('cerro 24 horas') ||
+    normalized.includes('cerró 24 horas antes') ||
+    normalized.includes('cerro 24 horas antes')
+  ) {
     return PREDICTION_CLOSED_MESSAGE;
   }
 

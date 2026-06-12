@@ -752,6 +752,12 @@ h2 {
   gap: 10px;
 }
 
+.ranking-participant-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
 .current-user-chip {
   flex: 0 0 auto;
   padding: 4px 8px;
@@ -765,10 +771,14 @@ h2 {
   text-transform: uppercase;
 }
 
-.ranking-location-cell {
-  color: var(--brand-muted);
-  font-weight: 700;
-  white-space: nowrap;
+.ranking-location-flag {
+  display: inline-block;
+  width: 22px;
+  height: 15px;
+  border: 1px solid rgba(6, 29, 99, 0.12);
+  border-radius: 2px;
+  object-fit: cover;
+  vertical-align: middle;
 }
 
 .points-cell {

@@ -18,6 +18,7 @@ export type Match = {
   score_a: number | null;
   score_b: number | null;
   penalty_winner: PenaltyWinner;
+  force_open: boolean | null;
   status: 'Open' | 'Closed' | 'Final' | 'pending_teams' | string;
   created_at: string;
   updated_at: string;

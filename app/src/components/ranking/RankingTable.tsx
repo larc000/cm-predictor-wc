@@ -1,8 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import { getLocationFromTimezone } from '@/lib/domain';
 import type { LeaderboardRow } from '@/lib/types';
 
 const PREVIEW_LIMIT = 10;
@@ -80,7 +80,6 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
                 <tr>
                   <th>Posición</th>
                   <th>Participante</th>
-                  <th>Ubicación</th>
                   <th className="points-cell">Puntos</th>
                 </tr>
               </thead>
@@ -89,7 +88,7 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
                 {shouldShowCurrentUserPreview ? (
                   <>
                     <tr className="ranking-table-separator" aria-hidden="true">
-                      <td colSpan={4}>...</td>
+                      <td colSpan={3}>...</td>
                     </tr>
                     {renderRankingRow(
                       leaderboard[(currentUserRank || 1) - 1],
@@ -122,6 +121,7 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
 
 function renderRankingRow(row: LeaderboardRow, rank: number, activeUserId: string) {
   const isActiveUser = row.user_id === activeUserId;
+  const locationFlag = getLocationFlag(row.timezone);
 
   return (
     <tr
@@ -133,15 +133,43 @@ function renderRankingRow(row: LeaderboardRow, rank: number, activeUserId: strin
       <td>
         <div className="ranking-participant">
           <div>
-            <strong>{row.name || row.email}</strong>
+            <div className="ranking-participant-name">
+              {locationFlag ? (
+                <Image
+                  className="ranking-location-flag"
+                  src={locationFlag.src}
+                  alt={locationFlag.alt}
+                  width={22}
+                  height={15}
+                />
+              ) : null}
+              <strong>{row.name || row.email}</strong>
+            </div>
             <br />
             <small>{row.email}</small>
           </div>
           {isActiveUser ? <span className="current-user-chip">Tú</span> : null}
         </div>
       </td>
-      <td className="ranking-location-cell">{getLocationFromTimezone(row.timezone)}</td>
       <td className="points-cell">{row.points || 0}</td>
     </tr>
   );
+}
+
+function getLocationFlag(timezone?: string | null) {
+  if (timezone === 'America/Costa_Rica') {
+    return {
+      src: '/cr.png',
+      alt: 'Costa Rica'
+    };
+  }
+
+  if (timezone === 'America/Bogota') {
+    return {
+      src: '/co.png',
+      alt: 'Colombia'
+    };
+  }
+
+  return null;
 }

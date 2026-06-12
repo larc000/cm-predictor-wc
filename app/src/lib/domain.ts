@@ -13,15 +13,6 @@ export function getMatchEditState(match: Match) {
       reason: 'Los equipos de este partido todavía están por definirse.'
     };
   }
-  const matchDate = new Date(match.date_time);
-  const hoursBeforeMatch = (matchDate.getTime() - Date.now()) / (1000 * 60 * 60);
-
-  if (hoursBeforeMatch < 24) {
-    return {
-      canEdit: false,
-      reason: 'Cerró 24 horas antes del partido.'
-    };
-  }
 
   if (status === 'final') {
     return {
@@ -37,7 +28,7 @@ export function getMatchEditState(match: Match) {
     };
   }
 
-  
+  const matchDate = new Date(match.date_time);
 
   if (Number.isNaN(matchDate.getTime())) {
     return {
@@ -46,7 +37,31 @@ export function getMatchEditState(match: Match) {
     };
   }
 
-  
+  const millisecondsBeforeMatch = matchDate.getTime() - Date.now();
+
+  if (millisecondsBeforeMatch <= 0) {
+    return {
+      canEdit: false,
+      reason: 'El partido ya inició. No se permiten nuevas predicciones.'
+    };
+  }
+
+  if (match.force_open) {
+    return {
+      canEdit: true,
+      reason: ''
+    };
+  }
+
+  const hoursBeforeMatch = millisecondsBeforeMatch / (1000 * 60 * 60);
+
+  if (hoursBeforeMatch < 24) {
+    return {
+      canEdit: false,
+      reason:
+        'Las predicciones para este partido ya están cerradas. Los pronósticos deben registrarse al menos 24 horas antes del inicio del partido.'
+    };
+  }
 
   return {
     canEdit: true,

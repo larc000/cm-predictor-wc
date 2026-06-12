@@ -21,3 +21,4 @@
 - Pages may load data and manage page-level state.
 - Components should receive data and callbacks through props.
 - Avoid duplicating date, scoring, or status logic in components.
+- Prediction editability, including `matches.force_open`, belongs in `src/lib/domain.ts`.
