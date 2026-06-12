@@ -34,11 +34,6 @@ are intentionally kept separate from the schema setup.
 
 ## Matches
 
-- `force_open`: manual override for the prediction deadline.
-  - Allowed values: `true`, `false`, `null`.
-  - `true` bypasses only the 24-hour prediction lock while the match status is `open`.
-  - It never allows predictions after kickoff.
-  - It does not override `closed`, `pending_teams`, or `final` statuses.
 - `penalty_winner`: actual penalty shootout winner for knockout matches.
   - Allowed values: `team_a`, `team_b`, `null`.
   - Use `null` when the match did not go to penalties or the winner is not loaded yet.

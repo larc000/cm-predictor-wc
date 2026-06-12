@@ -10,9 +10,6 @@
 - One prediction per user per match.
 - Users may edit predictions until 24 hours before kickoff.
 - `pending_teams`, `closed`, and `final` matches cannot be predicted.
-- `matches.force_open = true` bypasses only the 24-hour cutoff for an `open` match.
-- `force_open` never allows predictions after kickoff. If current time is greater than or equal to `matches.date_time`, the match is locked.
-- `force_open` does not override `closed`, `pending_teams`, or `final`.
 
 ## Scoring
 

@@ -46,13 +46,6 @@ export function getMatchEditState(match: Match) {
     };
   }
 
-  if (match.force_open) {
-    return {
-      canEdit: true,
-      reason: ''
-    };
-  }
-
   const hoursBeforeMatch = millisecondsBeforeMatch / (1000 * 60 * 60);
 
   if (hoursBeforeMatch < 24) {
