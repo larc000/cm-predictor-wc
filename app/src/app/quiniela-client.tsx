@@ -8,6 +8,7 @@ import { Toast } from '@/components/feedback/Toast';
 import { MainNav } from '@/components/layout/MainNav';
 import { Shell } from '@/components/layout/Shell';
 import { MatchList } from '@/components/matches/MatchList';
+import { PerformanceTable } from '@/components/performance/PerformanceTable';
 import { PredictionAuditReport } from '@/components/ranking/PredictionAuditReport';
 import { RankingTable } from '@/components/ranking/RankingTable';
 import { Rules } from '@/components/rules/Rules';
@@ -29,6 +30,7 @@ import type {
   MatchWithPrediction,
   PenaltyWinner,
   PredictionAuditRow,
+  PerformanceReportRow,
   Prediction
 } from '@/lib/types';
 
@@ -50,6 +52,9 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   const [predictionAuditRows, setPredictionAuditRows] = useState<PredictionAuditRow[]>([]);
   const [predictionAuditLoading, setPredictionAuditLoading] = useState(false);
   const [predictionAuditError, setPredictionAuditError] = useState('');
+  const [performanceRows, setPerformanceRows] = useState<PerformanceReportRow[]>([]);
+  const [performanceLoading, setPerformanceLoading] = useState(false);
+  const [performanceError, setPerformanceError] = useState('');
   const [draftScores, setDraftScores] = useState<DraftScores>({});
   const [editing, setEditing] = useState<EditingMap>({});
   const [authForm, setAuthForm] = useState({ name: '', email: '', password: '' });
@@ -110,6 +115,13 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   useEffect(() => {
     if (activeSection === 'prediction-audit' && appUser) {
       loadPredictionAudit().catch(() => undefined);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSection, appUser?.id]);
+
+  useEffect(() => {
+    if (activeSection === 'performance' && appUser) {
+      loadPerformanceReport().catch(() => undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSection, appUser?.id]);
@@ -385,6 +397,36 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     }
   }
 
+  async function loadPerformanceReport() {
+    if (!supabase) {
+      return;
+    }
+
+    setPerformanceLoading(true);
+    setPerformanceError('');
+
+    try {
+      const { data, error: performanceQueryError } = await supabase
+        .from('performance_report')
+        .select('*');
+
+      if (performanceQueryError) {
+        throw performanceQueryError;
+      }
+
+      setPerformanceRows(
+        ((data || []) as PerformanceReportRow[])
+          .map(normalizePerformanceReportRow)
+          .sort((a, b) => a.position - b.position)
+      );
+    } catch (caught) {
+      setPerformanceError(getErrorMessage(caught));
+      throw caught;
+    } finally {
+      setPerformanceLoading(false);
+    }
+  }
+
   async function handleAuth(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');
@@ -453,6 +495,9 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     setPredictionAuditRows([]);
     setPredictionAuditError('');
     setPredictionAuditLoading(false);
+    setPerformanceRows([]);
+    setPerformanceError('');
+    setPerformanceLoading(false);
     setDraftScores({});
     setEditing({});
   }
@@ -731,6 +776,17 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         />
       ) : null}
 
+      {activeSection === 'performance' ? (
+        <PerformanceTable
+          rows={performanceRows}
+          loading={performanceLoading}
+          error={performanceError}
+          activeUserId={appUser?.id || ''}
+          activeUserEmail={appUser?.email || ''}
+          onRefresh={() => loadPerformanceReport().catch(() => undefined)}
+        />
+      ) : null}
+
     </Shell>
   );
 }
@@ -759,6 +815,17 @@ function normalizePredictionAuditRow(row: PredictionAuditRow) {
     pred_score_a: Number(row.pred_score_a),
     pred_score_b: Number(row.pred_score_b),
     points: Number(row.points) || 0
+  };
+}
+
+function normalizePerformanceReportRow(row: PerformanceReportRow) {
+  return {
+    ...row,
+    position: Number(row.position) || 0,
+    total_points: Number(row.total_points) || 0,
+    result_count: Number(row.result_count) || 0,
+    exact_score_count: Number(row.exact_score_count) || 0,
+    penalties_count: Number(row.penalties_count) || 0
   };
 }
 

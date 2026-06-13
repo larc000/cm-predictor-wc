@@ -6,6 +6,8 @@
 - `/fase-eliminatoria`: user predictions and match list for all the stages within "round_of_32", "round_of_16", "quarterfinal", "semifinal", "third_place" and "final".
 - `/reglas`: rules page.
 - `/leaderboard`: ranking page.
+- `/leaderboard/todos-los-pronosticos`: audit report for all submitted predictions.
+- `/leaderboard/tabla-rendimiento`: read-only performance report backed by `performance_report`.
 
 ## Components
 
@@ -13,6 +15,7 @@
 - `components/auth`: login/signup UI.
 - `components/matches`: match cards, grouped match lists, week/date grouping.
 - `components/ranking`: leaderboard UI.
+- `components/performance`: performance report UI.
 - `components/rules`: rules UI.
 - `components/feedback`: toast/loading/error components.
 

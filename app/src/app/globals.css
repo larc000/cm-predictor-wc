@@ -332,7 +332,7 @@ h2 {
 }
 
 .button.subtle {
-  background: #eef2ff;
+  background: #c7d0f0;
   color: var(--brand-navy);
 }
 
@@ -711,6 +711,27 @@ h2 {
   min-width: 640px;
 }
 
+.performance-table {
+  min-width: 980px;
+  table-layout: fixed;
+}
+
+.performance-table col {
+  width: 15%;
+}
+
+.performance-table .performance-position-column {
+  width: 8%;
+}
+
+.performance-table .performance-participant-column {
+  width: 32%;
+}
+
+.performance-table .performance-points-column {
+  width: 10%;
+}
+
 .ranking-table th,
 .ranking-table td {
   padding: 12px 14px;
@@ -725,6 +746,17 @@ h2 {
   font-size: 18px;
   letter-spacing: 0;
   text-transform: uppercase;
+}
+
+.performance-metric-heading span,
+.performance-metric-heading small {
+  display: block;
+  font: inherit;
+  line-height: 1.12;
+}
+
+.performance-metric-heading small {
+  color: inherit;
 }
 
 .ranking-table tr:last-child td {
@@ -977,6 +1009,10 @@ h2 {
 
   .leaderboard-table {
     min-width: 620px;
+  }
+
+  .performance-table {
+    min-width: 980px;
   }
 
   .prediction-audit-table {

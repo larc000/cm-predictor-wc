@@ -1,8 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { UserLocationFlag } from '@/components/users/UserLocationFlag';
 import type { LeaderboardRow } from '@/lib/types';
 
 const PREVIEW_LIMIT = 10;
@@ -57,6 +57,9 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
           <p className="section-copy">Puntos acumulados por participante.</p>
         </div>
         <div className="section-actions">
+          <Link className="button subtle" href="/leaderboard/tabla-rendimiento">
+            Tabla de rendimiento
+          </Link>
           <Link className="button subtle" href="/leaderboard/todos-los-pronosticos">
             Todos los pronósticos
           </Link>
@@ -121,7 +124,6 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
 
 function renderRankingRow(row: LeaderboardRow, rank: number, activeUserId: string) {
   const isActiveUser = row.user_id === activeUserId;
-  const locationFlag = getLocationFlag(row.timezone);
 
   return (
     <tr
@@ -134,15 +136,7 @@ function renderRankingRow(row: LeaderboardRow, rank: number, activeUserId: strin
         <div className="ranking-participant">
           <div>
             <div className="ranking-participant-name">
-              {locationFlag ? (
-                <Image
-                  className="ranking-location-flag"
-                  src={locationFlag.src}
-                  alt={locationFlag.alt}
-                  width={22}
-                  height={15}
-                />
-              ) : null}
+              <UserLocationFlag timezone={row.timezone} />
               <strong>{row.name || row.email}</strong>
             </div>
             <br />
@@ -154,22 +148,4 @@ function renderRankingRow(row: LeaderboardRow, rank: number, activeUserId: strin
       <td className="points-cell">{row.points || 0}</td>
     </tr>
   );
-}
-
-function getLocationFlag(timezone?: string | null) {
-  if (timezone === 'America/Costa_Rica') {
-    return {
-      src: '/cr.png',
-      alt: 'Costa Rica'
-    };
-  }
-
-  if (timezone === 'America/Bogota') {
-    return {
-      src: '/co.png',
-      alt: 'Colombia'
-    };
-  }
-
-  return null;
 }

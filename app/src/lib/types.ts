@@ -51,7 +51,8 @@ export type AppSection =
   | 'fase-eliminatoria'
   | 'reglas'
   | 'leaderboard'
-  | 'prediction-audit';
+  | 'prediction-audit'
+  | 'performance';
 
 export type PredictionAuditRow = {
   match_id: string;
@@ -92,4 +93,20 @@ export type LeaderboardRow = {
   name: string | null;
   timezone: string | null;
   points: number;
+};
+
+export type PerformanceReportRow = {
+  user_id: string | null;
+  email: string | null;
+  name: string | null;
+  timezone: string | null;
+  location?: string | null;
+  country?: string | null;
+  country_code?: string | null;
+  position: number;
+  participant: string | null;
+  total_points: number;
+  result_count: number;
+  exact_score_count: number;
+  penalties_count: number;
 };
