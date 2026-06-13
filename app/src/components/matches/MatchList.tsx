@@ -8,6 +8,7 @@ type MatchListProps = {
   editing: EditingMap;
   savingMatchId: string;
   timezone: string;
+  emptyMessage?: string;
   onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
   onPenaltyWinnerChange: (matchId: string, penaltyWinner: PenaltyWinner) => void;
   onSubmitPrediction: (match: MatchWithPrediction) => void;
@@ -21,6 +22,7 @@ export function MatchList({
   editing,
   savingMatchId,
   timezone,
+  emptyMessage = 'No hay partidos disponibles.',
   onDraftChange,
   onPenaltyWinnerChange,
   onSubmitPrediction,
@@ -30,7 +32,7 @@ export function MatchList({
   const dateKeys = Object.keys(groupedMatches);
 
   if (dateKeys.length === 0) {
-    return <div className="notice">No hay partidos disponibles.</div>;
+    return <div className="notice">{emptyMessage}</div>;
   }
 
   return dateKeys.sort().map((dateKey) => (

@@ -8,6 +8,7 @@ import { Toast } from '@/components/feedback/Toast';
 import { MainNav } from '@/components/layout/MainNav';
 import { Shell } from '@/components/layout/Shell';
 import { MatchList } from '@/components/matches/MatchList';
+import { MatchResultFilterNav } from '@/components/matches/MatchResultFilterNav';
 import { PerformanceTable } from '@/components/performance/PerformanceTable';
 import { PredictionAuditReport } from '@/components/ranking/PredictionAuditReport';
 import { RankingTable } from '@/components/ranking/RankingTable';
@@ -28,6 +29,7 @@ import type {
   LeaderboardRow,
   Match,
   MatchWithPrediction,
+  MatchResultFilter,
   PenaltyWinner,
   PredictionAuditRow,
   PerformanceReportRow,
@@ -55,6 +57,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   const [performanceRows, setPerformanceRows] = useState<PerformanceReportRow[]>([]);
   const [performanceLoading, setPerformanceLoading] = useState(false);
   const [performanceError, setPerformanceError] = useState('');
+  const [matchResultFilter, setMatchResultFilter] = useState<MatchResultFilter>('pending');
   const [draftScores, setDraftScores] = useState<DraftScores>({});
   const [editing, setEditing] = useState<EditingMap>({});
   const [authForm, setAuthForm] = useState({ name: '', email: '', password: '' });
@@ -134,7 +137,11 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         const stage = String(match.stage || '').toLowerCase();
 
         if (activeSection === 'fase-grupos') {
-          return stage === 'group';
+          if (stage !== 'group') {
+            return false;
+          }
+
+          return matchMatchesResultFilter(match, matchResultFilter);
         }
 
         if (activeSection === 'fase-eliminatoria') {
@@ -150,7 +157,12 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         groups[key].push(match);
         return groups;
       }, {});
-  }, [activeSection, matches, appUser?.timezone]);
+  }, [activeSection, matches, appUser?.timezone, matchResultFilter]);
+
+  const groupStageEmptyMessage =
+    matchResultFilter === 'pending'
+      ? 'No hay partidos pendientes por mostrar.'
+      : 'Todavía no hay resultados finales.';
 
   const myPoints = useMemo(() => {
     const leaderboardRow = leaderboard.find((row) => row.user_id === appUser?.id);
@@ -716,12 +728,14 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
               <p className="section-copy">Tus marcadores, estados y puntos por partido.</p>
             </div>
           </div>
+          <MatchResultFilterNav activeFilter={matchResultFilter} onFilterChange={setMatchResultFilter} />
           <MatchList
             groupedMatches={groupedMatches}
             draftScores={draftScores}
             editing={editing}
             savingMatchId={savingMatchId}
             timezone={appUser?.timezone || 'America/Costa_Rica'}
+            emptyMessage={groupStageEmptyMessage}
             onDraftChange={updateDraft}
             onPenaltyWinnerChange={updatePenaltyWinner}
             onSubmitPrediction={submitPrediction}
@@ -827,6 +841,16 @@ function normalizePerformanceReportRow(row: PerformanceReportRow) {
     exact_score_count: Number(row.exact_score_count) || 0,
     penalties_count: Number(row.penalties_count) || 0
   };
+}
+
+function matchMatchesResultFilter(match: MatchWithPrediction, filter: MatchResultFilter) {
+  const status = String(match.status || '').toLowerCase();
+
+  if (filter === 'final') {
+    return status === 'final';
+  }
+
+  return status === 'open' || status === 'closed';
 }
 
 async function refreshMatchPredictionStatuses() {

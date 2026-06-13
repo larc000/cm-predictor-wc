@@ -54,6 +54,8 @@ export type AppSection =
   | 'prediction-audit'
   | 'performance';
 
+export type MatchResultFilter = 'pending' | 'final';
+
 export type PredictionAuditRow = {
   match_id: string;
   group_name: string | null;
