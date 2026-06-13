@@ -30,6 +30,8 @@ import type {
   Match,
   MatchWithPrediction,
   MatchResultFilter,
+  MatchResultStat,
+  MatchResultStatsByMatch,
   PenaltyWinner,
   PredictionAuditRow,
   PerformanceReportRow,
@@ -57,6 +59,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   const [performanceRows, setPerformanceRows] = useState<PerformanceReportRow[]>([]);
   const [performanceLoading, setPerformanceLoading] = useState(false);
   const [performanceError, setPerformanceError] = useState('');
+  const [matchResultStatsByMatch, setMatchResultStatsByMatch] = useState<MatchResultStatsByMatch>({});
   const [matchResultFilter, setMatchResultFilter] = useState<MatchResultFilter>('pending');
   const [draftScores, setDraftScores] = useState<DraftScores>({});
   const [editing, setEditing] = useState<EditingMap>({});
@@ -128,6 +131,13 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSection, appUser?.id]);
+
+  useEffect(() => {
+    if (activeSection === 'fase-grupos' && matchResultFilter === 'final' && appUser) {
+      loadMatchResultStats().catch(() => undefined);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSection, appUser?.id, matchResultFilter]);
 
   const groupedMatches = useMemo(() => {
     const timezone = appUser?.timezone || 'America/Costa_Rica';
@@ -439,6 +449,29 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     }
   }
 
+  async function loadMatchResultStats() {
+    if (!supabase) {
+      return;
+    }
+
+    const { data, error: statsError } = await supabase
+      .from('match_result_stats')
+      .select('*');
+
+    if (statsError) {
+      throw statsError;
+    }
+
+    setMatchResultStatsByMatch(
+      ((data || []) as MatchResultStat[])
+        .map(normalizeMatchResultStat)
+        .reduce<MatchResultStatsByMatch>((statsByMatch, stat) => {
+          statsByMatch[stat.match_id] = stat;
+          return statsByMatch;
+        }, {})
+    );
+  }
+
   async function handleAuth(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');
@@ -510,6 +543,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     setPerformanceRows([]);
     setPerformanceError('');
     setPerformanceLoading(false);
+    setMatchResultStatsByMatch({});
     setDraftScores({});
     setEditing({});
   }
@@ -735,6 +769,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
             editing={editing}
             savingMatchId={savingMatchId}
             timezone={appUser?.timezone || 'America/Costa_Rica'}
+            resultStatsByMatch={matchResultFilter === 'final' ? matchResultStatsByMatch : {}}
             emptyMessage={groupStageEmptyMessage}
             onDraftChange={updateDraft}
             onPenaltyWinnerChange={updatePenaltyWinner}
@@ -840,6 +875,19 @@ function normalizePerformanceReportRow(row: PerformanceReportRow) {
     result_count: Number(row.result_count) || 0,
     exact_score_count: Number(row.exact_score_count) || 0,
     penalties_count: Number(row.penalties_count) || 0
+  };
+}
+
+function normalizeMatchResultStat(row: MatchResultStat) {
+  return {
+    ...row,
+    total_active_users: Number(row.total_active_users) || 0,
+    result_only_count: Number(row.result_only_count) || 0,
+    exact_score_count: Number(row.exact_score_count) || 0,
+    penalties_count: Number(row.penalties_count) || 0,
+    result_only_pct: Number(row.result_only_pct) || 0,
+    exact_score_pct: Number(row.exact_score_pct) || 0,
+    penalties_pct: Number(row.penalties_pct) || 0
   };
 }
 

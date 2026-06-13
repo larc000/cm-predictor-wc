@@ -1,5 +1,11 @@
 import { getMatchDateGroup } from '@/lib/domain';
-import type { DraftScores, EditingMap, MatchWithPrediction, PenaltyWinner } from '@/lib/types';
+import type {
+  DraftScores,
+  EditingMap,
+  MatchResultStatsByMatch,
+  MatchWithPrediction,
+  PenaltyWinner
+} from '@/lib/types';
 import { MatchCard } from './MatchCard';
 
 type MatchListProps = {
@@ -8,6 +14,7 @@ type MatchListProps = {
   editing: EditingMap;
   savingMatchId: string;
   timezone: string;
+  resultStatsByMatch?: MatchResultStatsByMatch;
   emptyMessage?: string;
   onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
   onPenaltyWinnerChange: (matchId: string, penaltyWinner: PenaltyWinner) => void;
@@ -22,6 +29,7 @@ export function MatchList({
   editing,
   savingMatchId,
   timezone,
+  resultStatsByMatch = {},
   emptyMessage = 'No hay partidos disponibles.',
   onDraftChange,
   onPenaltyWinnerChange,
@@ -47,6 +55,7 @@ export function MatchList({
           draft={draftScores[match.match_id] || { a: '', b: '', penaltyWinner: null }}
           editing={Boolean(editing[match.match_id])}
           saving={savingMatchId === match.match_id}
+          resultStats={resultStatsByMatch[match.match_id]}
           timezone={timezone}
           onDraftChange={onDraftChange}
           onPenaltyWinnerChange={onPenaltyWinnerChange}

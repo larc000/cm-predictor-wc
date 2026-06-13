@@ -1,13 +1,15 @@
 import Image from 'next/image';
 import { formatMatchDate, getStageLabel } from '@/lib/domain';
 import { COUNTRY_CODES } from '@/lib/countries';
-import type { MatchWithPrediction, PenaltyWinner, ScoreDraft } from '@/lib/types';
+import type { MatchResultStat, MatchWithPrediction, PenaltyWinner, ScoreDraft } from '@/lib/types';
+import { MatchResultStats } from './MatchResultStats';
 
 type MatchCardProps = {
   match: MatchWithPrediction;
   draft: ScoreDraft;
   editing: boolean;
   saving: boolean;
+  resultStats?: MatchResultStat;
   timezone: string;
   onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
   onPenaltyWinnerChange: (matchId: string, penaltyWinner: PenaltyWinner) => void;
@@ -21,6 +23,7 @@ export function MatchCard({
   draft,
   editing,
   saving,
+  resultStats,
   timezone,
   onDraftChange,
   onPenaltyWinnerChange,
@@ -155,6 +158,8 @@ export function MatchCard({
       </div>
 
       <FinalResultColumn match={match} pointsLabel={pointsLabel} />
+
+      {normalizedStatus === 'final' ? <MatchResultStats stats={resultStats} /> : null}
     </article>
   );
 }

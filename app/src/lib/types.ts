@@ -56,6 +56,19 @@ export type AppSection =
 
 export type MatchResultFilter = 'pending' | 'final';
 
+export type MatchResultStat = {
+  match_id: string;
+  total_active_users: number | null;
+  result_only_count: number | null;
+  exact_score_count: number | null;
+  penalties_count: number | null;
+  result_only_pct: number | null;
+  exact_score_pct: number | null;
+  penalties_pct: number | null;
+};
+
+export type MatchResultStatsByMatch = Record<string, MatchResultStat>;
+
 export type PredictionAuditRow = {
   match_id: string;
   group_name: string | null;
