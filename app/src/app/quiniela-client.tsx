@@ -166,7 +166,16 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
         return true;
       })
-      .sort((a, b) => new Date(a.date_time).getTime() - new Date(b.date_time).getTime())
+      .sort((a, b) => {
+        const dateA = new Date(a.date_time).getTime();
+        const dateB = new Date(b.date_time).getTime();
+
+        if (activeSection === 'fase-grupos' && matchResultFilter === 'final') {
+          return dateB - dateA;
+        }
+
+        return dateA - dateB;
+      })
       .reduce<Record<string, MatchWithPrediction[]>>((groups, match) => {
         const key = getMatchDateKey(match.date_time, timezone);
         groups[key] = groups[key] || [];
@@ -804,6 +813,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
             timezone={appUser?.timezone || 'America/Costa_Rica'}
             resultStatsByMatch={matchResultFilter === 'final' ? matchResultStatsByMatch : {}}
             emptyMessage={groupStageEmptyMessage}
+            dateSortDirection={matchResultFilter === 'final' ? 'desc' : 'asc'}
             onDraftChange={updateDraft}
             onPenaltyWinnerChange={updatePenaltyWinner}
             onSubmitPrediction={submitPrediction}

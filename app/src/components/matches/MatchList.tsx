@@ -17,6 +17,7 @@ type MatchListProps = {
   timezone: string;
   resultStatsByMatch?: MatchResultStatsByMatch;
   emptyMessage?: string;
+  dateSortDirection?: 'asc' | 'desc';
   onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
   onPenaltyWinnerChange: (matchId: string, penaltyWinner: PenaltyWinner) => void;
   onSubmitPrediction: (match: MatchWithPrediction) => void;
@@ -33,6 +34,7 @@ export function MatchList({
   timezone,
   resultStatsByMatch = {},
   emptyMessage = 'No hay partidos disponibles.',
+  dateSortDirection = 'asc',
   onDraftChange,
   onPenaltyWinnerChange,
   onSubmitPrediction,
@@ -46,7 +48,9 @@ export function MatchList({
     return <div className="notice">{emptyMessage}</div>;
   }
 
-  return dateKeys.sort().map((dateKey) => (
+  return dateKeys
+    .sort((a, b) => dateSortDirection === 'desc' ? b.localeCompare(a) : a.localeCompare(b))
+    .map((dateKey) => (
     <div key={dateKey}>
       <h3 className="group-title">
         {getMatchDateGroup(groupedMatches[dateKey][0].date_time, timezone)}
