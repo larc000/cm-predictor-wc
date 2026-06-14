@@ -38,10 +38,6 @@ export function MatchWinnersModal({ title, winners, onClose }: MatchWinnersModal
                     <UserLocationFlag timezone={getUserLocation(winner)} />
                     <strong>{winner.name || winner.email || 'Sin nombre'}</strong>
                   </div>
-                  {winner.email ? <small>{winner.email}</small> : null}
-                  {getLocationLabel(winner) ? (
-                    <span className="match-winner-location">{getLocationLabel(winner)}</span>
-                  ) : null}
                 </div>
                 <div className="match-winner-score">
                   <span>Pronóstico</span>
