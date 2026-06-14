@@ -1,7 +1,13 @@
 import Image from 'next/image';
 import { formatMatchDate, getStageLabel } from '@/lib/domain';
 import { COUNTRY_CODES } from '@/lib/countries';
-import type { MatchResultStat, MatchWithPrediction, PenaltyWinner, ScoreDraft } from '@/lib/types';
+import type {
+  MatchResultStat,
+  MatchWinnerType,
+  MatchWithPrediction,
+  PenaltyWinner,
+  ScoreDraft
+} from '@/lib/types';
 import { MatchResultStats } from './MatchResultStats';
 
 type MatchCardProps = {
@@ -16,6 +22,7 @@ type MatchCardProps = {
   onSubmitPrediction: (match: MatchWithPrediction) => void;
   onEditPrediction: (match: MatchWithPrediction) => void;
   onCancelEdit: (match: MatchWithPrediction) => void;
+  onShowWinners: (matchId: string, winnerType: MatchWinnerType, title: string) => void;
 };
 
 export function MatchCard({
@@ -29,7 +36,8 @@ export function MatchCard({
   onPenaltyWinnerChange,
   onSubmitPrediction,
   onEditPrediction,
-  onCancelEdit
+  onCancelEdit,
+  onShowWinners
 }: MatchCardProps) {
   const saved = match.hasPrediction;
   const inputDisabled = !match.canEdit || (saved && !editing);
@@ -159,7 +167,9 @@ export function MatchCard({
 
       <FinalResultColumn match={match} pointsLabel={pointsLabel} />
 
-      {normalizedStatus === 'final' ? <MatchResultStats stats={resultStats} /> : null}
+      {normalizedStatus === 'final' ? (
+        <MatchResultStats stats={resultStats} onShowWinners={onShowWinners} />
+      ) : null}
     </article>
   );
 }

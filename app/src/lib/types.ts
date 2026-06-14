@@ -56,6 +56,8 @@ export type AppSection =
 
 export type MatchResultFilter = 'pending' | 'final';
 
+export type MatchWinnerType = 'result_only' | 'exact_score' | 'penalties';
+
 export type MatchResultStat = {
   match_id: string;
   total_active_users: number | null;
@@ -68,6 +70,26 @@ export type MatchResultStat = {
 };
 
 export type MatchResultStatsByMatch = Record<string, MatchResultStat>;
+
+export type MatchResultWinner = {
+  match_id: string;
+  user_id: string | null;
+  email: string | null;
+  name: string | null;
+  timezone: string | null;
+  location: string | null;
+  pred_score_a: number | null;
+  pred_score_b: number | null;
+  pred_penalty_winner: PenaltyWinner;
+  points: number | null;
+  winner_type: MatchWinnerType | string;
+};
+
+export type MatchWinnersModalState = {
+  matchId: string;
+  winnerType: MatchWinnerType;
+  title: string;
+} | null;
 
 export type PredictionAuditRow = {
   match_id: string;

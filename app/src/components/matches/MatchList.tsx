@@ -3,6 +3,7 @@ import type {
   DraftScores,
   EditingMap,
   MatchResultStatsByMatch,
+  MatchWinnerType,
   MatchWithPrediction,
   PenaltyWinner
 } from '@/lib/types';
@@ -21,6 +22,7 @@ type MatchListProps = {
   onSubmitPrediction: (match: MatchWithPrediction) => void;
   onEditPrediction: (match: MatchWithPrediction) => void;
   onCancelEdit: (match: MatchWithPrediction) => void;
+  onShowWinners: (matchId: string, winnerType: MatchWinnerType, title: string) => void;
 };
 
 export function MatchList({
@@ -35,7 +37,8 @@ export function MatchList({
   onPenaltyWinnerChange,
   onSubmitPrediction,
   onEditPrediction,
-  onCancelEdit
+  onCancelEdit,
+  onShowWinners
 }: MatchListProps) {
   const dateKeys = Object.keys(groupedMatches);
 
@@ -62,6 +65,7 @@ export function MatchList({
           onSubmitPrediction={onSubmitPrediction}
           onEditPrediction={onEditPrediction}
           onCancelEdit={onCancelEdit}
+          onShowWinners={onShowWinners}
         />
       ))}
     </div>

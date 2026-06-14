@@ -9,6 +9,7 @@ import { MainNav } from '@/components/layout/MainNav';
 import { Shell } from '@/components/layout/Shell';
 import { MatchList } from '@/components/matches/MatchList';
 import { MatchResultFilterNav } from '@/components/matches/MatchResultFilterNav';
+import { MatchWinnersModal } from '@/components/matches/MatchWinnersModal';
 import { PerformanceTable } from '@/components/performance/PerformanceTable';
 import { PredictionAuditReport } from '@/components/ranking/PredictionAuditReport';
 import { RankingTable } from '@/components/ranking/RankingTable';
@@ -32,6 +33,9 @@ import type {
   MatchResultFilter,
   MatchResultStat,
   MatchResultStatsByMatch,
+  MatchResultWinner,
+  MatchWinnerType,
+  MatchWinnersModalState,
   PenaltyWinner,
   PredictionAuditRow,
   PerformanceReportRow,
@@ -60,6 +64,8 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   const [performanceLoading, setPerformanceLoading] = useState(false);
   const [performanceError, setPerformanceError] = useState('');
   const [matchResultStatsByMatch, setMatchResultStatsByMatch] = useState<MatchResultStatsByMatch>({});
+  const [matchResultWinners, setMatchResultWinners] = useState<MatchResultWinner[]>([]);
+  const [matchWinnersModal, setMatchWinnersModal] = useState<MatchWinnersModalState>(null);
   const [matchResultFilter, setMatchResultFilter] = useState<MatchResultFilter>('pending');
   const [draftScores, setDraftScores] = useState<DraftScores>({});
   const [editing, setEditing] = useState<EditingMap>({});
@@ -134,7 +140,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
   useEffect(() => {
     if (activeSection === 'fase-grupos' && matchResultFilter === 'final' && appUser) {
-      loadMatchResultStats().catch(() => undefined);
+      loadFinalMatchResultData().catch(() => undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSection, appUser?.id, matchResultFilter]);
@@ -189,6 +195,18 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
     return index === -1 ? null : index + 1;
   }, [appUser?.id, leaderboard]);
+
+  const selectedMatchWinners = useMemo(() => {
+    if (!matchWinnersModal) {
+      return [];
+    }
+
+    return matchResultWinners.filter(
+      (winner) =>
+        winner.match_id === matchWinnersModal.matchId &&
+        winner.winner_type === matchWinnersModal.winnerType
+    );
+  }, [matchResultWinners, matchWinnersModal]);
 
   async function loadProfileAndData(user: User) {
     setError('');
@@ -449,27 +467,36 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     }
   }
 
-  async function loadMatchResultStats() {
+  async function loadFinalMatchResultData() {
     if (!supabase) {
       return;
     }
 
-    const { data, error: statsError } = await supabase
-      .from('match_result_stats')
-      .select('*');
+    const [
+      { data: statsData, error: statsError },
+      { data: winnersData, error: winnersError }
+    ] = await Promise.all([
+      supabase.from('match_result_stats').select('*'),
+      supabase.from('match_result_winners').select('*')
+    ]);
 
     if (statsError) {
       throw statsError;
     }
 
+    if (winnersError) {
+      throw winnersError;
+    }
+
     setMatchResultStatsByMatch(
-      ((data || []) as MatchResultStat[])
+      ((statsData || []) as MatchResultStat[])
         .map(normalizeMatchResultStat)
         .reduce<MatchResultStatsByMatch>((statsByMatch, stat) => {
           statsByMatch[stat.match_id] = stat;
           return statsByMatch;
         }, {})
     );
+    setMatchResultWinners(((winnersData || []) as MatchResultWinner[]).map(normalizeMatchResultWinner));
   }
 
   async function handleAuth(event: FormEvent<HTMLFormElement>) {
@@ -544,6 +571,8 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     setPerformanceError('');
     setPerformanceLoading(false);
     setMatchResultStatsByMatch({});
+    setMatchResultWinners([]);
+    setMatchWinnersModal(null);
     setDraftScores({});
     setEditing({});
   }
@@ -684,6 +713,10 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     }));
   }
 
+  function openMatchWinnersModal(matchId: string, winnerType: MatchWinnerType, title: string) {
+    setMatchWinnersModal({ matchId, winnerType, title });
+  }
+
   if (!isSupabaseConfigured) {
     return (
       <Shell appUser={appUser} allowedEmailDomain={allowedEmailDomain} onSignOut={signOut}>
@@ -776,6 +809,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
             onSubmitPrediction={submitPrediction}
             onEditPrediction={startEdit}
             onCancelEdit={cancelEdit}
+            onShowWinners={openMatchWinnersModal}
           />
         </section>
       ) : null}
@@ -799,6 +833,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
             onSubmitPrediction={submitPrediction}
             onEditPrediction={startEdit}
             onCancelEdit={cancelEdit}
+            onShowWinners={openMatchWinnersModal}
           />
         </section>
       ) : null}
@@ -833,6 +868,14 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
           activeUserId={appUser?.id || ''}
           activeUserEmail={appUser?.email || ''}
           onRefresh={() => loadPerformanceReport().catch(() => undefined)}
+        />
+      ) : null}
+
+      {matchWinnersModal ? (
+        <MatchWinnersModal
+          title={matchWinnersModal.title}
+          winners={selectedMatchWinners}
+          onClose={() => setMatchWinnersModal(null)}
         />
       ) : null}
 
@@ -888,6 +931,15 @@ function normalizeMatchResultStat(row: MatchResultStat) {
     result_only_pct: Number(row.result_only_pct) || 0,
     exact_score_pct: Number(row.exact_score_pct) || 0,
     penalties_pct: Number(row.penalties_pct) || 0
+  };
+}
+
+function normalizeMatchResultWinner(row: MatchResultWinner) {
+  return {
+    ...row,
+    pred_score_a: row.pred_score_a === null ? null : Number(row.pred_score_a),
+    pred_score_b: row.pred_score_b === null ? null : Number(row.pred_score_b),
+    points: row.points === null ? null : Number(row.points)
   };
 }
 
