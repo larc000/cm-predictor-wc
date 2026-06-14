@@ -831,10 +831,43 @@ h2 {
   display: grid;
 }
 
+.match-winner-score-group {
+  display: grid;
+  border-bottom: 1px solid #eee;
+}
+
+.match-winner-score-group:last-child {
+  border-bottom: 0;
+}
+
+.match-winner-score-group-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 18px;
+  background: #f6f7fb;
+}
+
+.match-winner-score-group-heading span {
+  color: var(--brand-blue);
+  font-family: var(--font-condensed);
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.match-winner-score-group-heading strong {
+  color: var(--brand-orange);
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1;
+}
+
 .match-winner-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
   padding: 3px 18px;
   border-bottom: 1px solid #eee;
