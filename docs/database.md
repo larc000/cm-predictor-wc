@@ -17,7 +17,7 @@ are intentionally kept separate from the schema setup.
 
 ## Match statuses
 
-- `open`: users can predict if kickoff is more than 24 hours away.
+- `open`: users can predict if kickoff is more than 1 hour away.
 - `closed`: manually or automatically unavailable.
 - `pending_teams`: knockout match exists but teams are TBD.
 - `final`: score is loaded and points can be calculated.

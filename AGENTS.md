@@ -40,7 +40,7 @@ Scoring:
 - 3 points for correct result.
 - +2 points for exact score.
 - Maximum 5 points per match.
-- Predictions close 24 hours before kickoff.
+- Predictions close 1 hour before kickoff.
 - Knockout matches with TBD teams use `pending_teams`.
 
 ## Project map

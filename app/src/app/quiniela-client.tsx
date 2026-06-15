@@ -47,7 +47,7 @@ type QuinielaClientProps = {
 };
 
 const PREDICTION_CLOSED_MESSAGE =
-  'Las predicciones para este partido ya están cerradas. Los pronósticos deben registrarse al menos 24 horas antes del inicio del partido.';
+  'Las predicciones para este partido ya están cerradas. Los pronósticos deben registrarse al menos 1 hora antes del inicio del partido.';
 
 export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   const [authMode, setAuthMode] = useState<AuthMode>('sign-in');
@@ -1022,7 +1022,11 @@ function normalizeSupabaseMessage(message: string) {
     normalized.includes('cerró 24 horas') ||
     normalized.includes('cerro 24 horas') ||
     normalized.includes('cerró 24 horas antes') ||
-    normalized.includes('cerro 24 horas antes')
+    normalized.includes('cerro 24 horas antes') ||
+    normalized.includes('cerró 1 hora') ||
+    normalized.includes('cerro 1 hora') ||
+    normalized.includes('cerró 1 hora antes') ||
+    normalized.includes('cerro 1 hora antes')
   ) {
     return PREDICTION_CLOSED_MESSAGE;
   }

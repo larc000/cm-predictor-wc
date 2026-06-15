@@ -8,7 +8,7 @@
 ## Predictions
 
 - One prediction per user per match.
-- Users may edit predictions until 24 hours before kickoff.
+- Users may edit predictions until 1 hour before kickoff.
 - `pending_teams`, `closed`, and `final` matches cannot be predicted.
 
 ## Scoring

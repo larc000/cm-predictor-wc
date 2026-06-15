@@ -48,11 +48,11 @@ export function getMatchEditState(match: Match) {
 
   const hoursBeforeMatch = millisecondsBeforeMatch / (1000 * 60 * 60);
 
-  if (hoursBeforeMatch < 24) {
+  if (hoursBeforeMatch < 1) {
     return {
       canEdit: false,
       reason:
-        'Las predicciones para este partido ya están cerradas. Los pronósticos deben registrarse al menos 24 horas antes del inicio del partido.'
+        'Las predicciones para este partido ya están cerradas. Los pronósticos deben registrarse al menos 1 hora antes del inicio del partido.'
     };
   }
 
