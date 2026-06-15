@@ -184,9 +184,24 @@ function groupPredictionRows(rows: PredictionAuditRow[]) {
     });
   });
 
-  return Array.from(groups.values()).sort(
-    (a, b) => new Date(b.match.date_time).getTime() - new Date(a.match.date_time).getTime()
-  );
+  return Array.from(groups.values())
+    .map((group) => ({
+      ...group,
+      predictions: group.predictions.sort(comparePredictedScoreDesc)
+    }))
+    .sort((a, b) => new Date(b.match.date_time).getTime() - new Date(a.match.date_time).getTime());
+}
+
+function comparePredictedScoreDesc(a: PredictionAuditRow, b: PredictionAuditRow) {
+  if (a.pred_score_a !== b.pred_score_a) {
+    return b.pred_score_a - a.pred_score_a;
+  }
+
+  if (a.pred_score_b !== b.pred_score_b) {
+    return b.pred_score_b - a.pred_score_b;
+  }
+
+  return (a.user_name || a.user_email).localeCompare(b.user_name || b.user_email);
 }
 
 function filterRows(rows: PredictionAuditRow[], search: string) {
