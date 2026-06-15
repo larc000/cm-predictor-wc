@@ -29,8 +29,8 @@ export function PredictionAuditReport({
   onRefresh
 }: PredictionAuditReportProps) {
   const [visibleGroupCount, setVisibleGroupCount] = useState(MATCH_GROUPS_PER_PAGE);
-  const [userSearch, setUserSearch] = useState('');
-  const filteredRows = useMemo(() => filterRowsByUser(rows, userSearch), [rows, userSearch]);
+  const [search, setSearch] = useState('');
+  const filteredRows = useMemo(() => filterRows(rows, search), [rows, search]);
   const groupedRows = useMemo(() => groupPredictionRows(filteredRows), [filteredRows]);
   const visibleGroups = groupedRows.slice(0, visibleGroupCount);
   const hasMoreGroups = visibleGroupCount < groupedRows.length;
@@ -54,14 +54,14 @@ export function PredictionAuditReport({
       </div>
 
       <div className="prediction-audit-filters">
-        <label htmlFor="prediction-audit-user-search">Buscar usuario</label>
+        <label htmlFor="prediction-audit-search">Buscar</label>
         <input
-          id="prediction-audit-user-search"
+          id="prediction-audit-search"
           type="search"
-          placeholder="Nombre o correo"
-          value={userSearch}
+          placeholder="Nombre, correo o país"
+          value={search}
           onChange={(event) => {
-            setUserSearch(event.target.value);
+            setSearch(event.target.value);
             setVisibleGroupCount(MATCH_GROUPS_PER_PAGE);
           }}
         />
@@ -75,7 +75,7 @@ export function PredictionAuditReport({
         ) : rows.length === 0 ? (
           <div className="notice">Todavía no hay pronósticos registrados.</div>
         ) : filteredRows.length === 0 ? (
-          <div className="notice">No hay pronósticos para ese usuario.</div>
+          <div className="notice">No hay pronósticos para esa búsqueda.</div>
         ) : (
           <div className="table-scroll">
             <table className="ranking-table prediction-audit-table">
@@ -189,7 +189,7 @@ function groupPredictionRows(rows: PredictionAuditRow[]) {
   );
 }
 
-function filterRowsByUser(rows: PredictionAuditRow[], search: string) {
+function filterRows(rows: PredictionAuditRow[], search: string) {
   const normalizedSearch = search.trim().toLowerCase();
 
   if (!normalizedSearch) {
@@ -199,8 +199,15 @@ function filterRowsByUser(rows: PredictionAuditRow[], search: string) {
   return rows.filter((row) => {
     const name = String(row.user_name || '').toLowerCase();
     const email = row.user_email.toLowerCase();
+    const teamA = row.team_a.toLowerCase();
+    const teamB = row.team_b.toLowerCase();
 
-    return name.includes(normalizedSearch) || email.includes(normalizedSearch);
+    return (
+      name.includes(normalizedSearch) ||
+      email.includes(normalizedSearch) ||
+      teamA.includes(normalizedSearch) ||
+      teamB.includes(normalizedSearch)
+    );
   });
 }
 
