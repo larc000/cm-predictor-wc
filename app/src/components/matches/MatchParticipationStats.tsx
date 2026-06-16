@@ -17,10 +17,9 @@ export function MatchParticipationStats({ participation }: MatchParticipationSta
       <h4>Participación</h4>
       <div className="match-result-stats-grid">
         <p>
-          <strong>{predictionsSubmitted} de {activeUsers}</strong> participantes han enviado pronóstico
+          <strong>{predictionsSubmitted} de {activeUsers}</strong> personas han enviado pronóstico
         </p>
         <p>
-          <strong>{formatPercentage(participation.participation_pct)}</strong> completado
         </p>
       </div>
     </section>
