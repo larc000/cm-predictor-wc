@@ -11,6 +11,7 @@ import { MatchList } from '@/components/matches/MatchList';
 import { MatchResultFilterNav } from '@/components/matches/MatchResultFilterNav';
 import { MatchWinnersModal } from '@/components/matches/MatchWinnersModal';
 import { PerformanceTable } from '@/components/performance/PerformanceTable';
+import { CustomLeaderboard } from '@/components/ranking/CustomLeaderboard';
 import { PredictionAuditReport } from '@/components/ranking/PredictionAuditReport';
 import { RankingTable } from '@/components/ranking/RankingTable';
 import { Rules } from '@/components/rules/Rules';
@@ -122,7 +123,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   }, [toast]);
 
   useEffect(() => {
-    if (activeSection === 'leaderboard' && appUser) {
+    if ((activeSection === 'leaderboard' || activeSection === 'custom-leaderboard') && appUser) {
       loadLeaderboard().catch(() => undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -894,6 +895,16 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
           activeUserId={appUser?.id || ''}
           onRefresh={() => loadLeaderboard().catch(() => undefined)}
         />
+      ) : null}
+
+      {activeSection === 'custom-leaderboard' ? (
+        leaderboardError ? (
+          <div className="notice error">No se pudo cargar el ranking: {leaderboardError}</div>
+        ) : leaderboardLoading && leaderboard.length === 0 ? (
+          <div className="notice">Cargando ranking...</div>
+        ) : (
+          <CustomLeaderboard leaderboard={leaderboard} activeUserId={appUser?.id || ''} />
+        )
       ) : null}
 
       {activeSection === 'prediction-audit' ? (

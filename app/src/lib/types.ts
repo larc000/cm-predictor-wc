@@ -51,6 +51,7 @@ export type AppSection =
   | 'fase-eliminatoria'
   | 'reglas'
   | 'leaderboard'
+  | 'custom-leaderboard'
   | 'prediction-audit'
   | 'performance';
 

@@ -1104,6 +1104,99 @@ h2 {
   font-size: 14px;
 }
 
+.custom-leaderboard-section {
+  margin-top: 0;
+}
+
+.custom-leaderboard-controls {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  max-width: 440px;
+  margin-bottom: 12px;
+}
+
+.custom-leaderboard-controls label {
+  color: var(--brand-ink);
+  font-family: var(--font-condensed);
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.custom-leaderboard-controls input {
+  border: 1px solid #b7bfd5;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
+.custom-leaderboard-options {
+  position: absolute;
+  top: calc(100% + 6px);
+  z-index: 5;
+  display: grid;
+  width: 100%;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--brand-line);
+  border-radius: 8px;
+  box-shadow: 0 16px 34px rgba(6, 29, 99, 0.16);
+}
+
+.custom-leaderboard-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2px 8px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 0;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+  color: var(--brand-navy);
+  cursor: pointer;
+  text-align: left;
+}
+
+.custom-leaderboard-option:last-child {
+  border-bottom: 0;
+}
+
+.custom-leaderboard-option:hover {
+  background: #f6f7fb;
+}
+
+.custom-leaderboard-option small {
+  grid-column: 2;
+  color: var(--brand-muted);
+}
+
+.custom-leaderboard-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.custom-leaderboard-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--brand-line);
+  border-radius: 999px;
+  background: #fff3eb;
+  color: var(--brand-navy);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.custom-leaderboard-chip span {
+  color: var(--brand-orange);
+  font-size: 18px;
+  line-height: 1;
+}
+
 .rules-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

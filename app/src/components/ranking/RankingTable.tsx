@@ -57,6 +57,9 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
           <p className="section-copy">Puntos acumulados por participante.</p>
         </div>
         <div className="section-actions">
+          <Link className="button subtle" href="/leaderboard/personalizado">
+            Leaderboard personalizado
+          </Link>
           <Link className="button subtle" href="/leaderboard/tabla-rendimiento">
             Tabla de rendimiento
           </Link>
