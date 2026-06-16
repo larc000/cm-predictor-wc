@@ -37,6 +37,8 @@ import type {
   MatchWinnerType,
   MatchWinnersModalState,
   PenaltyWinner,
+  PendingMatchParticipation,
+  PendingMatchParticipationByMatch,
   PredictionAuditRow,
   PerformanceReportRow,
   Prediction
@@ -66,6 +68,8 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   const [matchResultStatsByMatch, setMatchResultStatsByMatch] = useState<MatchResultStatsByMatch>({});
   const [matchResultWinners, setMatchResultWinners] = useState<MatchResultWinner[]>([]);
   const [matchWinnersModal, setMatchWinnersModal] = useState<MatchWinnersModalState>(null);
+  const [pendingParticipationByMatch, setPendingParticipationByMatch] =
+    useState<PendingMatchParticipationByMatch>({});
   const [matchResultFilter, setMatchResultFilter] = useState<MatchResultFilter>('pending');
   const [draftScores, setDraftScores] = useState<DraftScores>({});
   const [editing, setEditing] = useState<EditingMap>({});
@@ -141,6 +145,13 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   useEffect(() => {
     if (activeSection === 'fase-grupos' && matchResultFilter === 'final' && appUser) {
       loadFinalMatchResultData().catch(() => undefined);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSection, appUser?.id, matchResultFilter]);
+
+  useEffect(() => {
+    if (activeSection === 'fase-grupos' && matchResultFilter === 'pending' && appUser) {
+      loadPendingMatchParticipation().catch(() => undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSection, appUser?.id, matchResultFilter]);
@@ -508,6 +519,29 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     setMatchResultWinners(((winnersData || []) as MatchResultWinner[]).map(normalizeMatchResultWinner));
   }
 
+  async function loadPendingMatchParticipation() {
+    if (!supabase) {
+      return;
+    }
+
+    const { data, error: participationError } = await supabase
+      .from('pending_match_participation')
+      .select('*');
+
+    if (participationError) {
+      throw participationError;
+    }
+
+    setPendingParticipationByMatch(
+      ((data || []) as PendingMatchParticipation[])
+        .map(normalizePendingMatchParticipation)
+        .reduce<PendingMatchParticipationByMatch>((participationByMatch, participation) => {
+          participationByMatch[participation.match_id] = participation;
+          return participationByMatch;
+        }, {})
+    );
+  }
+
   async function handleAuth(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');
@@ -582,6 +616,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     setMatchResultStatsByMatch({});
     setMatchResultWinners([]);
     setMatchWinnersModal(null);
+    setPendingParticipationByMatch({});
     setDraftScores({});
     setEditing({});
   }
@@ -812,6 +847,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
             savingMatchId={savingMatchId}
             timezone={appUser?.timezone || 'America/Costa_Rica'}
             resultStatsByMatch={matchResultFilter === 'final' ? matchResultStatsByMatch : {}}
+            participationByMatch={matchResultFilter === 'pending' ? pendingParticipationByMatch : {}}
             emptyMessage={groupStageEmptyMessage}
             dateSortDirection={matchResultFilter === 'final' ? 'desc' : 'asc'}
             onDraftChange={updateDraft}
@@ -950,6 +986,15 @@ function normalizeMatchResultWinner(row: MatchResultWinner) {
     pred_score_a: row.pred_score_a === null ? null : Number(row.pred_score_a),
     pred_score_b: row.pred_score_b === null ? null : Number(row.pred_score_b),
     points: row.points === null ? null : Number(row.points)
+  };
+}
+
+function normalizePendingMatchParticipation(row: PendingMatchParticipation) {
+  return {
+    ...row,
+    predictions_submitted: Number(row.predictions_submitted) || 0,
+    active_users: Number(row.active_users) || 0,
+    participation_pct: Number(row.participation_pct) || 0
   };
 }
 

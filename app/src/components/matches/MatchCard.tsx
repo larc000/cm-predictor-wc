@@ -6,8 +6,10 @@ import type {
   MatchWinnerType,
   MatchWithPrediction,
   PenaltyWinner,
+  PendingMatchParticipation,
   ScoreDraft
 } from '@/lib/types';
+import { MatchParticipationStats } from './MatchParticipationStats';
 import { MatchResultStats } from './MatchResultStats';
 
 type MatchCardProps = {
@@ -16,6 +18,7 @@ type MatchCardProps = {
   editing: boolean;
   saving: boolean;
   resultStats?: MatchResultStat;
+  participationStats?: PendingMatchParticipation;
   timezone: string;
   onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
   onPenaltyWinnerChange: (matchId: string, penaltyWinner: PenaltyWinner) => void;
@@ -31,6 +34,7 @@ export function MatchCard({
   editing,
   saving,
   resultStats,
+  participationStats,
   timezone,
   onDraftChange,
   onPenaltyWinnerChange,
@@ -42,6 +46,7 @@ export function MatchCard({
   const saved = match.hasPrediction;
   const inputDisabled = !match.canEdit || (saved && !editing);
   const normalizedStatus = match.status.toLowerCase();
+  const isPendingResult = normalizedStatus === 'open' || normalizedStatus === 'closed';
   const isKnockoutMatch = isKnockoutStage(match.stage);
   const hasTiedDraftScore = draft.a !== '' && draft.b !== '' && Number(draft.a) === Number(draft.b);
   const showPenaltyWinnerSelector = isKnockoutMatch && hasTiedDraftScore;
@@ -170,6 +175,8 @@ export function MatchCard({
       {normalizedStatus === 'final' ? (
         <MatchResultStats stats={resultStats} onShowWinners={onShowWinners} />
       ) : null}
+
+      {isPendingResult ? <MatchParticipationStats participation={participationStats} /> : null}
     </article>
   );
 }

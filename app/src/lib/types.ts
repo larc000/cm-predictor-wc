@@ -71,6 +71,19 @@ export type MatchResultStat = {
 
 export type MatchResultStatsByMatch = Record<string, MatchResultStat>;
 
+export type PendingMatchParticipation = {
+  match_id: string;
+  team_a: string | null;
+  team_b: string | null;
+  status: string | null;
+  date_time: string | null;
+  predictions_submitted: number | null;
+  active_users: number | null;
+  participation_pct: number | null;
+};
+
+export type PendingMatchParticipationByMatch = Record<string, PendingMatchParticipation>;
+
 export type MatchResultWinner = {
   match_id: string;
   user_id: string | null;

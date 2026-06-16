@@ -5,7 +5,8 @@ import type {
   MatchResultStatsByMatch,
   MatchWinnerType,
   MatchWithPrediction,
-  PenaltyWinner
+  PenaltyWinner,
+  PendingMatchParticipationByMatch
 } from '@/lib/types';
 import { MatchCard } from './MatchCard';
 
@@ -16,6 +17,7 @@ type MatchListProps = {
   savingMatchId: string;
   timezone: string;
   resultStatsByMatch?: MatchResultStatsByMatch;
+  participationByMatch?: PendingMatchParticipationByMatch;
   emptyMessage?: string;
   dateSortDirection?: 'asc' | 'desc';
   onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
@@ -33,6 +35,7 @@ export function MatchList({
   savingMatchId,
   timezone,
   resultStatsByMatch = {},
+  participationByMatch = {},
   emptyMessage = 'No hay partidos disponibles.',
   dateSortDirection = 'asc',
   onDraftChange,
@@ -63,6 +66,7 @@ export function MatchList({
           editing={Boolean(editing[match.match_id])}
           saving={savingMatchId === match.match_id}
           resultStats={resultStatsByMatch[match.match_id]}
+          participationStats={participationByMatch[match.match_id]}
           timezone={timezone}
           onDraftChange={onDraftChange}
           onPenaltyWinnerChange={onPenaltyWinnerChange}
