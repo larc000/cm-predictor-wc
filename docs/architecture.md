@@ -2,7 +2,6 @@
 
 ## Routes
 
-- `/fase-grupos`: user predictions and match list in the stage "group".
 - `/fase-eliminatoria`: user predictions and match list for all the stages within "round_of_32", "round_of_16", "quarterfinal", "semifinal", "third_place" and "final".
 - `/reglas`: rules page.
 - `/leaderboard`: ranking page.

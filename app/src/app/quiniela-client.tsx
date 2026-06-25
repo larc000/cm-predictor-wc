@@ -144,18 +144,18 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   }, [activeSection, appUser?.id]);
 
   useEffect(() => {
-    if (activeSection === 'fase-grupos' && matchResultFilter === 'final' && appUser) {
+    if (activeSection === 'fase-eliminatoria' && matchResultFilter === 'final' && appUser) {
       loadFinalMatchResultData().catch(() => undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSection, appUser?.id, matchResultFilter]);
+  }, [activeSection, appUser?.id, matchResultFilter, matches]);
 
   useEffect(() => {
-    if (activeSection === 'fase-grupos' && matchResultFilter === 'pending' && appUser) {
+    if (activeSection === 'fase-eliminatoria' && matchResultFilter === 'pending' && appUser) {
       loadPendingMatchParticipation().catch(() => undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSection, appUser?.id, matchResultFilter]);
+  }, [activeSection, appUser?.id, matchResultFilter, matches]);
 
   const groupedMatches = useMemo(() => {
     const timezone = appUser?.timezone || 'America/Costa_Rica';
@@ -164,16 +164,8 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
       .filter((match) => {
         const stage = String(match.stage || '').toLowerCase();
 
-        if (activeSection === 'fase-grupos') {
-          if (stage !== 'group') {
-            return false;
-          }
-
-          return matchMatchesResultFilter(match, matchResultFilter);
-        }
-
         if (activeSection === 'fase-eliminatoria') {
-          return stage !== '' && stage !== 'group';
+          return isKnockoutStage(stage) && matchMatchesResultFilter(match, matchResultFilter);
         }
 
         return true;
@@ -182,7 +174,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         const dateA = new Date(a.date_time).getTime();
         const dateB = new Date(b.date_time).getTime();
 
-        if (activeSection === 'fase-grupos' && matchResultFilter === 'final') {
+        if (activeSection === 'fase-eliminatoria' && matchResultFilter === 'final') {
           return dateB - dateA;
         }
 
@@ -196,7 +188,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
       }, {});
   }, [activeSection, matches, appUser?.timezone, matchResultFilter]);
 
-  const groupStageEmptyMessage =
+  const knockoutEmptyMessage =
     matchResultFilter === 'pending'
       ? 'No hay partidos pendientes por mostrar.'
       : 'Todavía no hay resultados finales.';
@@ -493,20 +485,24 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
       return;
     }
 
+    const finalMatchIds = getFilteredKnockoutMatchIds(matches, 'final');
+
+    if (finalMatchIds.length === 0) {
+      setMatchResultStatsByMatch({});
+      setMatchResultWinners([]);
+      return;
+    }
+
     const [
       { data: statsData, error: statsError },
-      { data: winnersData, error: winnersError }
+      winnersData
     ] = await Promise.all([
-      supabase.from('match_result_stats').select('*'),
-      supabase.from('match_result_winners').select('*')
+      supabase.from('match_result_stats').select('*').in('match_id', finalMatchIds),
+      fetchMatchResultWinners(finalMatchIds)
     ]);
 
     if (statsError) {
       throw statsError;
-    }
-
-    if (winnersError) {
-      throw winnersError;
     }
 
     setMatchResultStatsByMatch(
@@ -525,9 +521,17 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
       return;
     }
 
+    const pendingMatchIds = getFilteredKnockoutMatchIds(matches, 'pending');
+
+    if (pendingMatchIds.length === 0) {
+      setPendingParticipationByMatch({});
+      return;
+    }
+
     const { data, error: participationError } = await supabase
       .from('pending_match_participation')
-      .select('*');
+      .select('*')
+      .in('match_id', pendingMatchIds);
 
     if (participationError) {
       throw participationError;
@@ -832,11 +836,11 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
       {error ? <p className="error">{error}</p> : null}
 
-      {activeSection === 'fase-grupos' ? (
+      {activeSection === 'fase-eliminatoria' ? (
         <section>
           <div className="section-heading">
             <div>
-              <h2>Fase de Grupos</h2>
+              <h2>Fase Eliminatoria</h2>
               <p className="section-copy">Tus marcadores, estados y puntos por partido.</p>
             </div>
           </div>
@@ -849,32 +853,8 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
             timezone={appUser?.timezone || 'America/Costa_Rica'}
             resultStatsByMatch={matchResultFilter === 'final' ? matchResultStatsByMatch : {}}
             participationByMatch={matchResultFilter === 'pending' ? pendingParticipationByMatch : {}}
-            emptyMessage={groupStageEmptyMessage}
+            emptyMessage={knockoutEmptyMessage}
             dateSortDirection={matchResultFilter === 'final' ? 'desc' : 'asc'}
-            onDraftChange={updateDraft}
-            onPenaltyWinnerChange={updatePenaltyWinner}
-            onSubmitPrediction={submitPrediction}
-            onEditPrediction={startEdit}
-            onCancelEdit={cancelEdit}
-            onShowWinners={openMatchWinnersModal}
-          />
-        </section>
-      ) : null}
-
-      {activeSection === 'fase-eliminatoria' ? (
-        <section>
-          <div className="section-heading">
-            <div>
-              <h2>Fase Eliminatoria</h2>
-              <p className="section-copy">Tus marcadores, estados y puntos por partido.</p>
-            </div>
-          </div>
-          <MatchList
-            groupedMatches={groupedMatches}
-            draftScores={draftScores}
-            editing={editing}
-            savingMatchId={savingMatchId}
-            timezone={appUser?.timezone || 'America/Costa_Rica'}
             onDraftChange={updateDraft}
             onPenaltyWinnerChange={updatePenaltyWinner}
             onSubmitPrediction={submitPrediction}
@@ -1019,6 +999,41 @@ function matchMatchesResultFilter(match: MatchWithPrediction, filter: MatchResul
   return status === 'open' || status === 'closed';
 }
 
+function getFilteredKnockoutMatchIds(matches: MatchWithPrediction[], filter: MatchResultFilter) {
+  return matches
+    .filter((match) => isKnockoutStage(match.stage) && matchMatchesResultFilter(match, filter))
+    .map((match) => match.match_id);
+}
+
+async function fetchMatchResultWinners(matchIds: string[]) {
+  if (!supabase) {
+    return [];
+  }
+
+  const pageSize = 1000;
+  const rows: MatchResultWinner[] = [];
+
+  for (let from = 0; ; from += pageSize) {
+    const to = from + pageSize - 1;
+    const { data, error } = await supabase
+      .from('match_result_winners')
+      .select('*')
+      .in('match_id', matchIds)
+      .range(from, to);
+
+    if (error) {
+      throw error;
+    }
+
+    const pageRows = (data || []) as MatchResultWinner[];
+    rows.push(...pageRows);
+
+    if (pageRows.length < pageSize) {
+      return rows;
+    }
+  }
+}
+
 async function refreshMatchPredictionStatuses() {
   if (!supabase) {
     return;
@@ -1033,10 +1048,20 @@ async function refreshMatchPredictionStatuses() {
 
 function requiresPenaltyWinner(match: MatchWithPrediction, draft: DraftScores[string]) {
   const stage = String(match.stage || '').toLowerCase();
-  const isKnockoutMatch = stage !== '' && stage !== 'group';
   const isTiedScore = draft.a !== '' && draft.b !== '' && Number(draft.a) === Number(draft.b);
 
-  return isKnockoutMatch && isTiedScore;
+  return isKnockoutStage(stage) && isTiedScore;
+}
+
+function isKnockoutStage(stage?: string | null) {
+  return [
+    'round_of_32',
+    'round_of_16',
+    'quarterfinal',
+    'semifinal',
+    'third_place',
+    'final'
+  ].includes(String(stage || '').toLowerCase());
 }
 
 function getErrorMessage(error: unknown) {

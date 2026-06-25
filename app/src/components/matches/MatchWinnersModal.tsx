@@ -108,21 +108,3 @@ function formatScoreKey(scoreKey: string) {
 function getUserLocation(winner: MatchResultWinner) {
   return winner.timezone || winner.location || null;
 }
-
-function getLocationLabel(winner: MatchResultWinner) {
-  const location = getUserLocation(winner);
-
-  if (!location) {
-    return '';
-  }
-
-  if (location === 'America/Costa_Rica' || location.toLowerCase() === 'cr') {
-    return 'Costa Rica';
-  }
-
-  if (location === 'America/Bogota' || location.toLowerCase() === 'co') {
-    return 'Colombia';
-  }
-
-  return location;
-}

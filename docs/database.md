@@ -24,7 +24,6 @@ are intentionally kept separate from the schema setup.
 
 ## Match stages
 
-- `group`
 - `round_of_32`
 - `round_of_16`
 - `quarterfinal`

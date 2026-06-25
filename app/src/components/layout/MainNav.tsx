@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const navItems = [
-  { href: '/fase-grupos', label: 'Fase de Grupos' },
   { href: '/fase-eliminatoria', label: 'Fase Eliminatoria' },
   { href: '/reglas', label: 'Reglas' },
   { href: '/leaderboard', label: 'Leaderboard' }

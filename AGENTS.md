@@ -28,7 +28,6 @@ Match statuses:
 - `final`
 
 Match stages:
-- `group`
 - `round_of_32`
 - `round_of_16`
 - `quarterfinal`
@@ -37,9 +36,10 @@ Match stages:
 - `final`
 
 Scoring:
-- 3 points for correct result.
+- 1 point for correct result.
 - +2 points for exact score.
-- Maximum 5 points per match.
+- +1 point for correct penalty winner.
+- Maximum 4 points per match.
 - Predictions close 1 hour before kickoff.
 - Knockout matches with TBD teams use `pending_teams`.
 

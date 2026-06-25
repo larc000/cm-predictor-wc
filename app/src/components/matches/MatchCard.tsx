@@ -70,10 +70,7 @@ export function MatchCard({
       <div className="match-header">
         <div className="match-heading">
           <div className="match-stage">
-            {match.stage === 'group'
-              ? `Grupo ${match.group_name}`
-              : `${getStageLabel(match.stage)}${match.group_name ? ` - Grupo ${match.group_name}` : ''}`
-            }
+            {getStageLabel(match.stage)}
           </div>
 
           <div className="teams">
@@ -294,7 +291,14 @@ function onlyDigits(value: string) {
 function isKnockoutStage(stage?: string | null) {
   const value = String(stage || '').toLowerCase();
 
-  return value !== '' && value !== 'group';
+  return [
+    'round_of_32',
+    'round_of_16',
+    'quarterfinal',
+    'semifinal',
+    'third_place',
+    'final'
+  ].includes(value);
 }
 
 function normalizePenaltyWinner(value: string): PenaltyWinner {

@@ -24,18 +24,6 @@ export function Rules() {
         </div>
       </div>
 
-      <h3>Puntuación - FASE DE GRUPOS</h3>
-      <div className="rules-grid">
-        <div className="rule-card">
-          <strong>+1 pt</strong>
-          <p>Por acertar el resultado: ganador, perdedor o empate.</p>
-        </div>
-        <div className="rule-card">
-          <strong>+2 pts</strong>
-          <p>Extra por acertar el marcador exacto del partido.</p>
-        </div>
-      </div>
-
       <h3>
         Puntuación - FASE ELIMINATORIA (dieciseisavos, octavos, cuartos, semifinales, 3er lugar y
         final)

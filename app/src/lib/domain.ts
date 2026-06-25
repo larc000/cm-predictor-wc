@@ -132,7 +132,6 @@ export function getLocationFromTimezone(timezone?: string | null) {
 export function getStageLabel(stage?: string | null) {
   const value = String(stage || '').toLowerCase();
 
-  if (value === 'group') return 'Fase de grupos';
   if (value === 'round_of_32') return 'Dieciseisavos';
   if (value === 'round_of_16') return 'Octavos de final';
   if (value === 'quarterfinal') return 'Cuartos de final';
