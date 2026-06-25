@@ -13,35 +13,35 @@ export function MatchResultStats({ stats, onShowWinners }: MatchResultStatsProps
   const penaltiesCount = Number(stats.penalties_count) || 0;
 
   return (
-    <section className="match-result-stats" aria-label="Aciertos de este partido">
-      <h4>Aciertos de este partido</h4>
+    <section className="match-result-stats" aria-label="Match hits">
+      <h4>Match hits</h4>
       <div className="match-result-stats-grid">
         <StatItem
-          label="Resultado"
+          label="Result"
           count={stats.result_only_count}
           percentage={stats.result_only_pct}
           matchId={stats.match_id}
           winnerType="result_only"
-          modalTitle="Acertaron resultado"
+          modalTitle="Correct result"
           onShowWinners={onShowWinners}
         />
         <StatItem
-          label="Marcador exacto"
+          label="Exact score"
           count={stats.exact_score_count}
           percentage={stats.exact_score_pct}
           matchId={stats.match_id}
           winnerType="exact_score"
-          modalTitle="Acertaron marcador exacto"
+          modalTitle="Correct exact score"
           onShowWinners={onShowWinners}
         />
         {penaltiesCount > 0 ? (
           <StatItem
-            label="Penales"
+            label="Penalties"
             count={stats.penalties_count}
             percentage={stats.penalties_pct}
             matchId={stats.match_id}
             winnerType="penalties"
-            modalTitle="Acertaron marcador y penales"
+            modalTitle="Correct score and penalties"
             onShowWinners={onShowWinners}
           />
         ) : null}
@@ -78,10 +78,10 @@ function StatItem({
           type="button"
           onClick={() => onShowWinners(matchId, winnerType, modalTitle)}
         >
-          {normalizedCount} personas
+          {normalizedCount} people
         </button>
       ) : (
-        <strong>0 personas</strong>
+        <strong>0 people</strong>
       )}{' '}
       ({formatPercentage(percentage)})
     </p>

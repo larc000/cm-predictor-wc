@@ -6,13 +6,13 @@ type MatchResultFilterNavProps = {
 };
 
 const resultFilters: Array<{ value: MatchResultFilter; label: string }> = [
-  { value: 'pending', label: 'Resultados pendientes' },
-  { value: 'final', label: 'Resultados finales' }
+  { value: 'pending', label: 'Pending results' },
+  { value: 'final', label: 'Final results' }
 ];
 
 export function MatchResultFilterNav({ activeFilter, onFilterChange }: MatchResultFilterNavProps) {
   return (
-    <nav className="secondary-tabs" aria-label="Filtro de resultados">
+    <nav className="secondary-tabs" aria-label="Result filter">
       {resultFilters.map((filter) => {
         const isActive = activeFilter === filter.value;
 

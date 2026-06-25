@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
 import type { User } from '@supabase/supabase-js';
@@ -27,7 +28,6 @@ import type {
   AppSection,
   AuthMode,
   DraftScores,
-  EditingMap,
   LeaderboardRow,
   Match,
   MatchWithPrediction,
@@ -50,10 +50,10 @@ type QuinielaClientProps = {
 };
 
 const PREDICTION_CLOSED_MESSAGE =
-  'Las predicciones para este partido ya están cerradas. Los pronósticos deben registrarse al menos 1 hora antes del inicio del partido.';
+  'Predictions for this match are already closed. Predictions must be submitted at least 1 hour before kickoff.';
 
 export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
-  const [authMode, setAuthMode] = useState<AuthMode>('sign-in');
+  const [authMode, setAuthMode] = useState<AuthMode>('sign-up');
   const [sessionUser, setSessionUser] = useState<User | null>(null);
   const [appUser, setAppUser] = useState<AppUser | null>(null);
   const [matches, setMatches] = useState<MatchWithPrediction[]>([]);
@@ -73,7 +73,6 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     useState<PendingMatchParticipationByMatch>({});
   const [matchResultFilter, setMatchResultFilter] = useState<MatchResultFilter>('pending');
   const [draftScores, setDraftScores] = useState<DraftScores>({});
-  const [editing, setEditing] = useState<EditingMap>({});
   const [authForm, setAuthForm] = useState({ name: '', email: '', password: '' });
   const [loading, setLoading] = useState(isSupabaseConfigured);
   const [savingMatchId, setSavingMatchId] = useState('');
@@ -190,8 +189,8 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
   const knockoutEmptyMessage =
     matchResultFilter === 'pending'
-      ? 'No hay partidos pendientes por mostrar.'
-      : 'Todavía no hay resultados finales.';
+      ? 'There are no pending matches to show.'
+      : 'There are no final results yet.';
 
   const myPoints = useMemo(() => {
     const leaderboardRow = leaderboard.find((row) => row.user_id === appUser?.id);
@@ -228,21 +227,21 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
     try {
       if (!supabase) {
-        throw new Error('Supabase no está configurado.');
+        throw new Error('Supabase is not configured.');
       }
 
       const email = user.email || '';
 
       if (!isAllowedEmail(email, allowedEmailDomain)) {
         await supabase.auth.signOut();
-        throw new Error(`Debes ingresar con un correo @${allowedEmailDomain}.`);
+        throw new Error(`You must sign in with an @${allowedEmailDomain} email.`);
       }
 
       const profile = await ensureProfile(user);
 
       if (!profile.active) {
         setAppUser(profile);
-        throw new Error('Tu usuario está inactivo.');
+        throw new Error('Your user is inactive.');
       }
 
       setAppUser(profile);
@@ -263,7 +262,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
   async function ensureProfile(user: User) {
     if (!supabase) {
-      throw new Error('Supabase no está configurado.');
+      throw new Error('Supabase is not configured.');
     }
 
     const email = (user.email || '').trim().toLowerCase();
@@ -292,13 +291,13 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     }
 
     if (!allowedProfile) {
-      throw new Error('Tu correo no está registrado para participar en la quiniela.');
+      throw new Error('Your email is not registered for this predictor.');
     }
 
     const profile = allowedProfile as AppUser;
 
     if (profile.auth_user_id && profile.auth_user_id !== user.id) {
-      throw new Error('Este correo ya está vinculado a otra cuenta.');
+      throw new Error('This email is already linked to another account.');
     }
 
     const name =
@@ -362,19 +361,6 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
       return nextDrafts;
     });
 
-    setEditing((currentEditing) => {
-      if (!options.preserveDrafts) {
-        return {};
-      }
-
-      return merged.reduce<EditingMap>((nextEditing, match) => {
-        if (match.canEdit && currentEditing[match.match_id]) {
-          nextEditing[match.match_id] = true;
-        }
-
-        return nextEditing;
-      }, {});
-    });
   }
 
   async function loadLeaderboard() {
@@ -553,12 +539,12 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     setMessage('');
 
     if (!supabase) {
-      setError('Supabase no está configurado.');
+      setError('Supabase is not configured.');
       return;
     }
 
     if (!isAllowedEmail(authForm.email, allowedEmailDomain)) {
-      setError(`Usa tu correo corporativo @${allowedEmailDomain}.`);
+      setError(`Use your corporate @${allowedEmailDomain} email.`);
       return;
     }
 
@@ -580,7 +566,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
       if (!data.session) {
         setError(
-          'La cuenta se creó, pero Supabase no inició sesión automáticamente. Desactiva "Confirm email" en Supabase Auth para que el registro no dependa de correos.'
+          'The account was created, but Supabase did not sign in automatically. Disable "Confirm email" in Supabase Auth so registration does not depend on emails.'
         );
         return;
       }
@@ -623,7 +609,6 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     setMatchWinnersModal(null);
     setPendingParticipationByMatch({});
     setDraftScores({});
-    setEditing({});
   }
 
   function updateDraft(matchId: string, side: 'a' | 'b', value: string) {
@@ -657,12 +642,12 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     const draft = draftScores[match.match_id] || { a: '', b: '', penaltyWinner: null };
 
     if (draft.a === '' || draft.b === '') {
-      setToast('Completa el marcador.');
+      setToast('Complete the score.');
       return;
     }
 
     if (requiresPenaltyWinner(match, draft) && !draft.penaltyWinner) {
-      setToast('Selecciona quién gana por penales.');
+      setToast('Select who wins on penalties.');
       return;
     }
 
@@ -703,7 +688,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         throw upsertError;
       }
 
-      setToast(match.hasPrediction ? 'Pronóstico actualizado.' : 'Pronóstico guardado.');
+      setToast(match.hasPrediction ? 'Prediction updated.' : 'Prediction saved.');
       await Promise.all([
         loadMatches(),
         activeSection === 'leaderboard' ? loadLeaderboard().catch(() => undefined) : Promise.resolve()
@@ -734,32 +719,6 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
           : match
       )
     );
-    setEditing((current) => ({
-      ...current,
-      [matchId]: false
-    }));
-  }
-
-  function startEdit(match: MatchWithPrediction) {
-    setEditing((current) => ({
-      ...current,
-      [match.match_id]: true
-    }));
-  }
-
-  function cancelEdit(match: MatchWithPrediction) {
-    setDraftScores((current) => ({
-      ...current,
-      [match.match_id]: {
-        a: match.myPredScoreA === '' ? '' : String(match.myPredScoreA),
-        b: match.myPredScoreB === '' ? '' : String(match.myPredScoreB),
-        penaltyWinner: match.myPredPenaltyWinner
-      }
-    }));
-    setEditing((current) => ({
-      ...current,
-      [match.match_id]: false
-    }));
   }
 
   function openMatchWinnersModal(matchId: string, winnerType: MatchWinnerType, title: string) {
@@ -782,7 +741,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   if (loading) {
     return (
       <Shell appUser={appUser} allowedEmailDomain={allowedEmailDomain} onSignOut={signOut}>
-        <div className="notice">Cargando...</div>
+        <div className="notice">Loading...</div>
       </Shell>
     );
   }
@@ -791,8 +750,8 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     return (
       <Shell appUser={appUser} allowedEmailDomain={allowedEmailDomain} onSignOut={signOut}>
         <div className="notice">
-          <h3>Usuario inactivo</h3>
-          <p>Tu cuenta existe, pero está inactiva para participar en la quiniela.</p>
+          <h3>Inactive user</h3>
+          <p>Your account exists, but it is inactive for this predictor.</p>
         </div>
       </Shell>
     );
@@ -818,15 +777,24 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   return (
     <Shell appUser={appUser} allowedEmailDomain={allowedEmailDomain} onSignOut={signOut}>
       <div className="sticky-nav">
+        <div className="mobile-nav-top">
+          <div className="mobile-nav-title">
+            <Link className="mobile-nav-back" href="/" aria-label="Back">
+              ←
+            </Link>
+            <strong>{getMobileSectionTitle(activeSection)}</strong>
+          </div>
+        </div>
+
         <MainNav />
 
-        <div className="score-summary" aria-label="Mi puntaje">
+        <div className="score-summary" aria-label="My score">
           <div className="score-summary-item">
-            <span>Mi Puntaje</span>
+            <span>My Score</span>
             <strong>{myPoints} pts</strong>
           </div>
           <div className="score-summary-item">
-            <span>Posición</span>
+            <span>Position</span>
             <strong>{myLeaderboardPosition ? `# ${myLeaderboardPosition}` : '-'}</strong>
           </div>
         </div>
@@ -840,15 +808,14 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         <section>
           <div className="section-heading">
             <div>
-              <h2>Fase Eliminatoria</h2>
-              <p className="section-copy">Tus marcadores, estados y puntos por partido.</p>
+              <h2>Knockout Stage</h2>
+              <p className="section-copy">Your scores, statuses, and points by match.</p>
             </div>
           </div>
           <MatchResultFilterNav activeFilter={matchResultFilter} onFilterChange={setMatchResultFilter} />
           <MatchList
             groupedMatches={groupedMatches}
             draftScores={draftScores}
-            editing={editing}
             savingMatchId={savingMatchId}
             timezone={appUser?.timezone || 'America/Costa_Rica'}
             resultStatsByMatch={matchResultFilter === 'final' ? matchResultStatsByMatch : {}}
@@ -858,8 +825,6 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
             onDraftChange={updateDraft}
             onPenaltyWinnerChange={updatePenaltyWinner}
             onSubmitPrediction={submitPrediction}
-            onEditPrediction={startEdit}
-            onCancelEdit={cancelEdit}
             onShowWinners={openMatchWinnersModal}
           />
         </section>
@@ -879,9 +844,9 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
 
       {activeSection === 'custom-leaderboard' ? (
         leaderboardError ? (
-          <div className="notice error">No se pudo cargar el ranking: {leaderboardError}</div>
+          <div className="notice error">Could not load the leaderboard: {leaderboardError}</div>
         ) : leaderboardLoading && leaderboard.length === 0 ? (
-          <div className="notice">Cargando ranking...</div>
+          <div className="notice">Loading leaderboard...</div>
         ) : (
           <CustomLeaderboard leaderboard={leaderboard} activeUserId={appUser?.id || ''} />
         )
@@ -907,6 +872,11 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
           onRefresh={() => loadPerformanceReport().catch(() => undefined)}
         />
       ) : null}
+
+      <div className="mobile-rank-bar">
+        Your score rank: {myPoints} pts,{' '}
+        {myLeaderboardPosition ? `position #${myLeaderboardPosition}` : 'position pending'}
+      </div>
 
       {matchWinnersModal ? (
         <MatchWinnersModal
@@ -945,6 +915,17 @@ function normalizePredictionAuditRow(row: PredictionAuditRow) {
     pred_score_b: Number(row.pred_score_b),
     points: Number(row.points) || 0
   };
+}
+
+function getMobileSectionTitle(activeSection: AppSection) {
+  if (activeSection === 'fase-eliminatoria') return 'Knockout Stage';
+  if (activeSection === 'reglas') return 'Rules';
+  if (activeSection === 'leaderboard') return 'Leaderboard';
+  if (activeSection === 'custom-leaderboard') return 'Custom Leaderboard';
+  if (activeSection === 'prediction-audit') return 'Predictions';
+  if (activeSection === 'performance') return 'Performance';
+
+  return 'World Cup 2026';
 }
 
 function normalizePerformanceReportRow(row: PerformanceReportRow) {
@@ -996,7 +977,7 @@ function matchMatchesResultFilter(match: MatchWithPrediction, filter: MatchResul
     return status === 'final';
   }
 
-  return status === 'open' || status === 'closed';
+  return status === 'open' || status === 'closed' || status === 'pending_teams';
 }
 
 function getFilteredKnockoutMatchIds(matches: MatchWithPrediction[], filter: MatchResultFilter) {
@@ -1077,22 +1058,22 @@ function getErrorMessage(error: unknown) {
     }
   }
 
-  return 'Ocurrió un error inesperado.';
+  return 'An unexpected error occurred.';
 }
 
 function normalizeSupabaseMessage(message: string) {
   const normalized = message.toLowerCase();
 
   if (normalized.includes('email not confirmed')) {
-    return 'Tu cuenta existe, pero Supabase todavía está pidiendo confirmación por correo. Desactiva "Confirm email" en Supabase Auth.';
+    return 'Your account exists, but Supabase is still asking for email confirmation. Disable "Confirm email" in Supabase Auth.';
   }
 
   if (normalized.includes('invalid login credentials')) {
-    return 'Correo o contraseña incorrectos.';
+    return 'Incorrect email or password.';
   }
 
   if (normalized.includes('user already registered') || normalized.includes('already registered')) {
-    return 'Este correo ya tiene cuenta. Ingresa con tu contraseña.';
+    return 'This email already has an account. Sign in with your password.';
   }
 
   if (isPredictionPolicyMessage(message)) {
@@ -1139,7 +1120,10 @@ function shouldReturnToAuth(message: string) {
   return (
     message.includes('no está registrado') ||
     message.includes('ya está vinculado') ||
-    message.includes('Debes ingresar con un correo')
+    message.includes('Debes ingresar con un correo') ||
+    message.includes('not registered') ||
+    message.includes('already linked') ||
+    message.includes('must sign in with')
   );
 }
 

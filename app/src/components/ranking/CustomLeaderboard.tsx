@@ -68,25 +68,25 @@ export function CustomLeaderboard({ leaderboard, activeUserId }: CustomLeaderboa
     <section className="custom-leaderboard-section">
       <div className="section-heading">
         <div>
-          <h2>Leaderboard personalizado</h2>
-          <p className="section-copy">Compara tu posición con compañeros específicos.</p>
+          <h2>Custom leaderboard</h2>
+          <p className="section-copy">Compare your position with specific coworkers.</p>
         </div>
         <div className="section-actions">
           <Link className="button subtle" href="/leaderboard">
-            Volver
+            Back
           </Link>
           <button className="button subtle" type="button" disabled={selectedKeys.length === 0} onClick={clearSelection}>
-            Limpiar selección
+            Clear selection
           </button>
         </div>
       </div>
 
       <div className="custom-leaderboard-controls">
-        <label htmlFor="custom-leaderboard-search">Buscar participante</label>
+        <label htmlFor="custom-leaderboard-search">Search participant</label>
         <input
           id="custom-leaderboard-search"
           type="search"
-          placeholder="Nombre o correo"
+          placeholder="Name or email"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
@@ -94,7 +94,7 @@ export function CustomLeaderboard({ leaderboard, activeUserId }: CustomLeaderboa
         {search.trim() ? (
           <div className="custom-leaderboard-options">
             {selectableRows.length === 0 ? (
-              <div className="notice">No hay participantes disponibles para esa búsqueda.</div>
+              <div className="notice">No participants available for that search.</div>
             ) : (
               selectableRows.map(({ row, key }) => (
                 <button
@@ -114,7 +114,7 @@ export function CustomLeaderboard({ leaderboard, activeUserId }: CustomLeaderboa
       </div>
 
       {selectedRows.length > 0 ? (
-        <div className="custom-leaderboard-chips" aria-label="Participantes seleccionados">
+        <div className="custom-leaderboard-chips" aria-label="Selected participants">
           {selectedRows.map(({ row, key }) => (
             <button key={key} className="custom-leaderboard-chip" type="button" onClick={() => removeParticipant(key)}>
               {row.name || row.email}
@@ -126,15 +126,15 @@ export function CustomLeaderboard({ leaderboard, activeUserId }: CustomLeaderboa
 
       <div className="leaderboard">
         {selectedRows.length === 0 ? (
-          <div className="notice">Selecciona participantes para crear tu leaderboard personalizado.</div>
+          <div className="notice">Select participants to create your custom leaderboard.</div>
         ) : (
           <div className="table-scroll">
             <table className="ranking-table leaderboard-table">
               <thead>
                 <tr>
-                  <th>Posición</th>
-                  <th>Participante</th>
-                  <th className="points-cell">Puntos</th>
+                  <th>Position</th>
+                  <th>Participant</th>
+                  <th className="points-cell">Points</th>
                 </tr>
               </thead>
               <tbody>
@@ -154,7 +154,7 @@ export function CustomLeaderboard({ leaderboard, activeUserId }: CustomLeaderboa
                           <br />
                           <small>{row.email}</small>
                         </div>
-                        {row.user_id === activeUserId ? <span className="current-user-chip">Tú</span> : null}
+                        {row.user_id === activeUserId ? <span className="current-user-chip">You</span> : null}
                       </div>
                     </td>
                     <td className="points-cell">{row.points || 0}</td>

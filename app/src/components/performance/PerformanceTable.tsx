@@ -25,26 +25,26 @@ export function PerformanceTable({
     <section>
       <div className="section-heading">
         <div>
-          <h2>Tabla de rendimiento</h2>
-          <p className="section-copy">Detalle de puntos y aciertos por participante.</p>
+          <h2>Performance table</h2>
+          <p className="section-copy">Point and prediction-hit details by participant.</p>
         </div>
         <div className="section-actions">
           <Link className="button subtle" href="/leaderboard">
-            Volver
+            Back
           </Link>
           <button className="button subtle" type="button" disabled={loading} onClick={onRefresh}>
-            {loading ? 'Cargando...' : 'Actualizar'}
+            {loading ? 'Loading...' : 'Refresh'}
           </button>
         </div>
       </div>
 
       <div className="leaderboard">
         {error ? (
-          <div className="notice error">No se pudo cargar la tabla de rendimiento: {error}</div>
+          <div className="notice error">Could not load the performance table: {error}</div>
         ) : loading && rows.length === 0 ? (
-          <div className="notice">Cargando tabla de rendimiento...</div>
+          <div className="notice">Loading performance table...</div>
         ) : rows.length === 0 ? (
-          <div className="notice">Aún no hay partidos finalizados para generar estadísticas.</div>
+          <div className="notice">There are no final matches yet to generate statistics.</div>
         ) : (
           <div className="table-scroll">
             <table className="ranking-table performance-table">
@@ -58,20 +58,20 @@ export function PerformanceTable({
               </colgroup>
               <thead>
                 <tr>
-                  <th>Posición</th>
-                  <th>Participante</th>
-                  <th className="points-cell">Puntos</th>
+                  <th>Position</th>
+                  <th>Participant</th>
+                  <th className="points-cell">Points</th>
                   <th className="points-cell performance-metric-heading">
-                    <span>Solo Resultado</span>
+                    <span>Result Only</span>
                     <small>(1 pt)</small>
                   </th>
                   <th className="points-cell performance-metric-heading">
-                    <span>Resultado + marcador</span>
+                    <span>Result + Score</span>
                     <small>(3pts)</small>
                   </th>
                   <th className="points-cell performance-metric-heading">
-                    <span>Resultado + marcador</span>
-                    <small>+ penales (4pts)</small>
+                    <span>Result + Score</span>
+                    <small>+ penalties (4pts)</small>
                   </th>
                 </tr>
               </thead>
@@ -114,7 +114,7 @@ function PerformanceRow({
           <div>
             <div className="ranking-participant-name">
               <UserLocationFlag timezone={getUserLocation(row)} />
-              <strong>{row.participant || row.name || row.email || 'Sin nombre'}</strong>
+              <strong>{row.participant || row.name || row.email || 'No name'}</strong>
             </div>
             {row.email ? (
               <>

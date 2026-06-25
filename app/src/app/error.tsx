@@ -10,10 +10,10 @@ export default function Error({
   return (
     <main className="app-shell">
       <section className="notice">
-        <h2>Algo salió mal</h2>
-        <p>{error.message || 'No se pudo cargar esta sección.'}</p>
+        <h2>Something went wrong</h2>
+        <p>{error.message || 'This section could not be loaded.'}</p>
         <button className="button" type="button" onClick={reset}>
-          Intentar de nuevo
+          Try again
         </button>
       </section>
     </main>

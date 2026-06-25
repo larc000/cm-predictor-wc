@@ -10,21 +10,21 @@ export function getMatchEditState(match: Match) {
   if (status === 'pending_teams') {
     return {
       canEdit: false,
-      reason: 'Los equipos de este partido todavía están por definirse.'
+      reason: 'The teams for this match are still TBD.'
     };
   }
 
   if (status === 'final') {
     return {
       canEdit: false,
-      reason: 'Este partido ya finalizó.'
+      reason: 'This match has already finished.'
     };
   }
 
   if (status !== 'open') {
     return {
       canEdit: false,
-      reason: 'Este partido ya no admite cambios ni nuevas predicciones.'
+      reason: 'This match no longer allows changes or new predictions.'
     };
   }
 
@@ -33,7 +33,7 @@ export function getMatchEditState(match: Match) {
   if (Number.isNaN(matchDate.getTime())) {
     return {
       canEdit: false,
-      reason: 'No se pudo validar la fecha del partido.'
+      reason: 'The match date could not be validated.'
     };
   }
 
@@ -42,7 +42,7 @@ export function getMatchEditState(match: Match) {
   if (millisecondsBeforeMatch <= 0) {
     return {
       canEdit: false,
-      reason: 'El partido ya inició. No se permiten nuevas predicciones.'
+      reason: 'The match has already started. New predictions are not allowed.'
     };
   }
 
@@ -52,7 +52,7 @@ export function getMatchEditState(match: Match) {
     return {
       canEdit: false,
       reason:
-        'Las predicciones para este partido ya están cerradas. Los pronósticos deben registrarse al menos 1 hora antes del inicio del partido.'
+        'Predictions for this match are already closed. Predictions must be submitted at least 1 hour before kickoff.'
     };
   }
 
@@ -88,7 +88,7 @@ export function mergeMatchesWithPredictions(
 }
 
 export function formatMatchDate(dateTime: string, timezone = 'America/Costa_Rica') {
-  return new Intl.DateTimeFormat('es-CR', {
+  return new Intl.DateTimeFormat('en-US', {
     timeZone: timezone,
     day: 'numeric',
     month: 'short',
@@ -99,7 +99,7 @@ export function formatMatchDate(dateTime: string, timezone = 'America/Costa_Rica
 }
 
 export function getMatchDateGroup(dateTime: string, timezone = 'America/Costa_Rica') {
-  return new Intl.DateTimeFormat('es-CR', {
+  return new Intl.DateTimeFormat('en-US', {
     timeZone: timezone,
     day: 'numeric',
     month: 'long',
@@ -126,17 +126,17 @@ export function getLocationFromTimezone(timezone?: string | null) {
   if (timezone === 'America/Costa_Rica') return 'Costa Rica';
   if (timezone === 'America/Bogota') return 'Colombia';
 
-  return 'Sin ubicación';
+  return 'No location';
 }
 
 export function getStageLabel(stage?: string | null) {
   const value = String(stage || '').toLowerCase();
 
-  if (value === 'round_of_32') return 'Dieciseisavos';
-  if (value === 'round_of_16') return 'Octavos de final';
-  if (value === 'quarterfinal') return 'Cuartos de final';
+  if (value === 'round_of_32') return 'Round of 32';
+  if (value === 'round_of_16') return 'Round of 16';
+  if (value === 'quarterfinal') return 'Quarterfinal';
   if (value === 'semifinal') return 'Semifinal';
-  if (value === 'third_place') return 'Tercer lugar';
+  if (value === 'third_place') return 'Third Place';
   if (value === 'final') return 'Final';
 
   return stage;

@@ -39,26 +39,26 @@ export function PredictionAuditReport({
     <section>
       <div className="section-heading">
         <div>
-          <h2>Todos los pronósticos</h2>
-          <p className="section-copy">Reporte de pronósticos de todos los usuarios agrupado por partido. </p>
-          <p className="section-copy">  Se muestran una vez el partido esté en estado Cerrado o Final.</p>
+          <h2>All predictions</h2>
+          <p className="section-copy">Prediction report for all users, grouped by match.</p>
+          <p className="section-copy">Matches appear once they are Closed or Final.</p>
         </div>
         <div className="section-actions">
           <Link className="button subtle" href="/leaderboard">
-            Volver
+            Back
           </Link>
           <button className="button subtle" type="button" disabled={loading} onClick={onRefresh}>
-            {loading ? 'Cargando...' : 'Actualizar'}
+            {loading ? 'Loading...' : 'Refresh'}
           </button>
         </div>
       </div>
 
       <div className="prediction-audit-filters">
-        <label htmlFor="prediction-audit-search">Buscar</label>
+        <label htmlFor="prediction-audit-search">Search</label>
         <input
           id="prediction-audit-search"
           type="search"
-          placeholder="Nombre, correo o país"
+          placeholder="Name, email, or country"
           value={search}
           onChange={(event) => {
             setSearch(event.target.value);
@@ -69,23 +69,23 @@ export function PredictionAuditReport({
 
       <div className="leaderboard prediction-audit">
         {error ? (
-          <div className="notice error">No se pudo cargar el reporte: {error}</div>
+          <div className="notice error">Could not load the report: {error}</div>
         ) : loading && rows.length === 0 ? (
-          <div className="notice">Cargando pronósticos...</div>
+          <div className="notice">Loading predictions...</div>
         ) : rows.length === 0 ? (
-          <div className="notice">Todavía no hay pronósticos registrados.</div>
+          <div className="notice">There are no predictions yet.</div>
         ) : filteredRows.length === 0 ? (
-          <div className="notice">No hay pronósticos para esa búsqueda.</div>
+          <div className="notice">No predictions match that search.</div>
         ) : (
           <div className="table-scroll">
             <table className="ranking-table prediction-audit-table">
               <thead>
                 <tr>
-                  <th>Fecha</th>
-                  <th>Equipo A</th>
-                  <th>Equipo B</th>
-                  <th>Usuario</th>
-                  <th>Fecha enviada</th>
+                  <th>Date</th>
+                  <th>Team A</th>
+                  <th>Team B</th>
+                  <th>User</th>
+                  <th>Submitted At</th>
                   <th className="points-cell">Pts</th>
                 </tr>
               </thead>
@@ -111,11 +111,11 @@ export function PredictionAuditReport({
                 )
               }
             >
-              Cargar más
+              Load more
             </button>
           ) : null}
           <span className="leaderboard-preview-copy">
-            Mostrando {visibleGroups.length} de {groupedRows.length} partidos.
+            Showing {visibleGroups.length} of {groupedRows.length} matches.
           </span>
         </div>
       ) : null}
@@ -142,15 +142,15 @@ function MatchPredictionRows({
         <td>
           <TeamResult teamName={match.team_b} score={match.score_b} />
         </td>
-        <td aria-label="Usuario" />
-        <td aria-label="Fecha enviada" />
+        <td aria-label="User" />
+        <td aria-label="Submitted at" />
         <td className="points-cell">
           <span className={`status-chip ${getStatusClass(match.status)}`}>{getStatusLabel(match.status)}</span>
         </td>
       </tr>
       {predictions.map((prediction) => (
         <tr key={`${prediction.match_id}-${prediction.user_id}`}>
-          <td aria-label="Fecha" />
+          <td aria-label="Date" />
           <td className="prediction-score-cell">{prediction.pred_score_a}</td>
           <td className="prediction-score-cell">{prediction.pred_score_b}</td>
           <td>
@@ -238,11 +238,11 @@ function TeamResult({ teamName, score }: { teamName: string; score: number | nul
 function getStatusLabel(status: string) {
   const normalizedStatus = status.toLowerCase();
 
-  if (normalizedStatus === 'open') return 'Abierto';
+  if (normalizedStatus === 'open') return 'Open';
   if (normalizedStatus === 'final') return 'Final';
-  if (normalizedStatus === 'pending_teams') return 'Pendiente';
+  if (normalizedStatus === 'pending_teams') return 'Pending';
 
-  return 'Cerrado';
+  return 'Closed';
 }
 
 function getStatusClass(status: string) {

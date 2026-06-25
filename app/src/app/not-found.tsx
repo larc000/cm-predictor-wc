@@ -4,10 +4,10 @@ export default function NotFound() {
   return (
     <main className="app-shell">
       <section className="notice">
-        <h2>Página no encontrada</h2>
-        <p>La sección que buscás no existe en esta quiniela.</p>
+        <h2>Page not found</h2>
+        <p>The section you are looking for does not exist in this predictor.</p>
         <Link className="button" href="/fase-eliminatoria">
-          Volver a Mi Quiniela
+          Back to Knockout Stage
         </Link>
       </section>
     </main>

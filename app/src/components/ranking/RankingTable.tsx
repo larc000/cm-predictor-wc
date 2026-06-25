@@ -54,39 +54,39 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
       <div className="section-heading">
         <div>
           <h2>Leaderboard</h2>
-          <p className="section-copy">Puntos acumulados por participante.</p>
+          <p className="section-copy">Total points by participant.</p>
         </div>
         <div className="section-actions">
           <Link className="button subtle" href="/leaderboard/personalizado">
-            Leaderboard personalizado
+            Custom leaderboard
           </Link>
           <Link className="button subtle" href="/leaderboard/tabla-rendimiento">
-            Tabla de rendimiento
+            Performance table
           </Link>
           <Link className="button subtle" href="/leaderboard/todos-los-pronosticos">
-            Todos los pronósticos
+            All predictions
           </Link>
           <button className="button subtle" type="button" disabled={loading} onClick={onRefresh}>
-            {loading ? 'Cargando...' : 'Actualizar'}
+            {loading ? 'Loading...' : 'Refresh'}
           </button>
         </div>
       </div>
 
       <div className="leaderboard">
         {error ? (
-          <div className="notice error">No se pudo cargar el ranking: {error}</div>
+          <div className="notice error">Could not load the leaderboard: {error}</div>
         ) : loading && leaderboard.length === 0 ? (
-          <div className="notice">Cargando ranking...</div>
+          <div className="notice">Loading leaderboard...</div>
         ) : leaderboard.length === 0 ? (
-          <div className="notice">Todavía no hay participantes en el ranking.</div>
+          <div className="notice">There are no participants in the leaderboard yet.</div>
         ) : (
           <div className="table-scroll">
             <table className="ranking-table leaderboard-table">
               <thead>
                 <tr>
-                  <th>Posición</th>
-                  <th>Participante</th>
-                  <th className="points-cell">Puntos</th>
+                  <th>Position</th>
+                  <th>Participant</th>
+                  <th className="points-cell">Points</th>
                 </tr>
               </thead>
               <tbody>
@@ -112,11 +112,11 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
       {!error && leaderboard.length > 0 && shouldShowToggle ? (
         <div className="leaderboard-actions">
           <button className="button subtle" type="button" onClick={() => setShowFullRanking((current) => !current)}>
-            {showFullRanking ? 'Ver Top 10' : 'Ver tabla completa'}
+            {showFullRanking ? 'View Top 10' : 'View full table'}
           </button>
           {!showFullRanking && currentUserRank ? (
             <span className="leaderboard-preview-copy">
-              {isCurrentUserInPreview ? 'Tu posición está en el Top 10.' : `Tu posición actual es #${currentUserRank}.`}
+              {isCurrentUserInPreview ? 'Your position is in the Top 10.' : `Your current position is #${currentUserRank}.`}
             </span>
           ) : null}
         </div>
@@ -145,7 +145,7 @@ function renderRankingRow(row: LeaderboardRow, rank: number, activeUserId: strin
             <br />
             <small>{row.email}</small>
           </div>
-          {isActiveUser ? <span className="current-user-chip">Tú</span> : null}
+          {isActiveUser ? <span className="current-user-chip">You</span> : null}
         </div>
       </td>
       <td className="points-cell">{row.points || 0}</td>

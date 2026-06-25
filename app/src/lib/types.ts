@@ -135,8 +135,6 @@ export type ScoreDraft = {
 
 export type DraftScores = Record<string, ScoreDraft>;
 
-export type EditingMap = Record<string, boolean>;
-
 export type LeaderboardRow = {
   user_id: string;
   email: string;

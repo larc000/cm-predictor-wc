@@ -15,7 +15,6 @@ import { MatchResultStats } from './MatchResultStats';
 type MatchCardProps = {
   match: MatchWithPrediction;
   draft: ScoreDraft;
-  editing: boolean;
   saving: boolean;
   resultStats?: MatchResultStat;
   participationStats?: PendingMatchParticipation;
@@ -23,15 +22,12 @@ type MatchCardProps = {
   onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
   onPenaltyWinnerChange: (matchId: string, penaltyWinner: PenaltyWinner) => void;
   onSubmitPrediction: (match: MatchWithPrediction) => void;
-  onEditPrediction: (match: MatchWithPrediction) => void;
-  onCancelEdit: (match: MatchWithPrediction) => void;
   onShowWinners: (matchId: string, winnerType: MatchWinnerType, title: string) => void;
 };
 
 export function MatchCard({
   match,
   draft,
-  editing,
   saving,
   resultStats,
   participationStats,
@@ -39,17 +35,22 @@ export function MatchCard({
   onDraftChange,
   onPenaltyWinnerChange,
   onSubmitPrediction,
-  onEditPrediction,
-  onCancelEdit,
   onShowWinners
 }: MatchCardProps) {
   const saved = match.hasPrediction;
-  const inputDisabled = !match.canEdit || (saved && !editing);
+  const inputDisabled = !match.canEdit || saving;
   const normalizedStatus = match.status.toLowerCase();
   const isPendingResult = normalizedStatus === 'open' || normalizedStatus === 'closed';
   const isKnockoutMatch = isKnockoutStage(match.stage);
   const hasTiedDraftScore = draft.a !== '' && draft.b !== '' && Number(draft.a) === Number(draft.b);
   const showPenaltyWinnerSelector = isKnockoutMatch && hasTiedDraftScore;
+  const handlePredictionBlur = () => {
+    if (inputDisabled || !shouldAutosavePrediction(match, draft)) {
+      return;
+    }
+
+    onSubmitPrediction(match);
+  };
 
   const statusClass =
     normalizedStatus === 'open'
@@ -60,10 +61,10 @@ export function MatchCard({
           ? 'status-pending'
           : 'status-closed';
   const pointsLabel = !saved
-    ? 'Sin pronóstico'
+    ? 'No prediction'
     : normalizedStatus === 'final'
-      ? `Puntos: ${match.myPoints || 0}`
-      : 'Puntos pendientes';
+      ? `Points: ${match.myPoints || 0}`
+      : 'Pending points';
 
   return (
     <article className="match">
@@ -72,102 +73,55 @@ export function MatchCard({
           <div className="match-stage">
             {getStageLabel(match.stage)}
           </div>
-
-          <div className="teams">
-            {match.team_a} vs {match.team_b}
+          <div className="date">Date: {formatMatchDate(match.date_time, timezone)}</div>
+          <div className="match-badges">
+            <span className="points-chip result-points-chip">{pointsLabel}</span>
+            <span className={`status-chip ${statusClass}`}>{getStatusLabel(match.status)}</span>
           </div>
-          <div className="date">Fecha: {formatMatchDate(match.date_time, timezone)}</div>
-        </div>
-        <div>
-        <span className="points-chip result-points-chip">{pointsLabel}</span>
-        <span className={`status-chip ${statusClass}`}>{getStatusLabel(match.status)}</span>
         </div>
       </div>
 
       <div className="match-main">
-        <div className="prediction-row">
-          <div className="score-box">
-            <label>{match.team_a}</label>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              autoComplete="off"
-              value={draft.a}
-              disabled={inputDisabled}
-              onChange={(event) => onDraftChange(match.match_id, 'a', onlyDigits(event.target.value))}
-            />
-          </div>
+        <div
+          className="prediction-panel"
+          onBlur={(event) => {
+            const nextTarget = event.relatedTarget as Node | null;
 
-          <div className="separator">-</div>
+            if (!nextTarget || !event.currentTarget.contains(nextTarget)) {
+              handlePredictionBlur();
+            }
+          }}
+        >
+          <PredictionScoreboard
+            match={match}
+            draft={draft}
+            inputDisabled={inputDisabled}
+            onDraftChange={onDraftChange}
+          />
 
-          <div className="score-box">
-            <label>{match.team_b}</label>
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              autoComplete="off"
-              value={draft.b}
-              disabled={inputDisabled}
-              onChange={(event) => onDraftChange(match.match_id, 'b', onlyDigits(event.target.value))}
-            />
-          </div>
-
-          <div className="actions">
-            {!saved || editing ? (
-              <button
-                className="button"
-                type="button"
-                disabled={!match.canEdit || saving}
-                onClick={() => onSubmitPrediction(match)}
+          {showPenaltyWinnerSelector ? (
+            <div className="penalty-winner-field">
+              <label htmlFor={`penalty_${match.match_id}`}>Who wins on penalties?</label>
+              <select
+                id={`penalty_${match.match_id}`}
+                value={draft.penaltyWinner || ''}
+                disabled={inputDisabled}
+                onChange={(event) =>
+                  onPenaltyWinnerChange(match.match_id, normalizePenaltyWinner(event.target.value))
+                }
               >
-                {saving ? 'Guardando...' : saved ? 'Guardar cambios' : 'Guardar'}
-              </button>
-            ) : null}
+                <option value="">Select</option>
+                <option value="team_a">{match.team_a}</option>
+                <option value="team_b">{match.team_b}</option>
+              </select>
+            </div>
+          ) : null}
 
-            {saved && match.canEdit && !editing ? (
-              <button className="button secondary" type="button" onClick={() => onEditPrediction(match)}>
-                Editar
-              </button>
-            ) : null}
-
-            {saved && editing ? (
-              <button className="button secondary" type="button" onClick={() => onCancelEdit(match)}>
-                Cancelar
-              </button>
-            ) : null}
-
-            {saved && !match.canEdit ? (
-              <button className="button" type="button" disabled>
-                Guardado
-              </button>
-            ) : null}
-          </div>
+          {!match.canEdit ? <div className="match-lock-message">{match.lockReason}</div> : null}
         </div>
-
-        {showPenaltyWinnerSelector ? (
-          <div className="penalty-winner-field">
-            <label htmlFor={`penalty_${match.match_id}`}>¿Quién gana por penales?</label>
-            <select
-              id={`penalty_${match.match_id}`}
-              value={draft.penaltyWinner || ''}
-              disabled={inputDisabled}
-              onChange={(event) =>
-                onPenaltyWinnerChange(match.match_id, normalizePenaltyWinner(event.target.value))
-              }
-            >
-              <option value="">Seleccionar</option>
-              <option value="team_a">{match.team_a}</option>
-              <option value="team_b">{match.team_b}</option>
-            </select>
-          </div>
-        ) : null}
-
-        {!match.canEdit ? <div className="match-lock-message">{match.lockReason}</div> : null}
       </div>
 
-      <FinalResultColumn match={match} pointsLabel={pointsLabel} />
+      <FinalResultColumn match={match} />
 
       {normalizedStatus === 'final' ? (
         <MatchResultStats stats={resultStats} onShowWinners={onShowWinners} />
@@ -178,7 +132,53 @@ export function MatchCard({
   );
 }
 
-function FinalResultColumn({ match, pointsLabel }: { match: MatchWithPrediction; pointsLabel: string }) {
+function PredictionScoreboard({
+  match,
+  draft,
+  inputDisabled,
+  onDraftChange
+}: {
+  match: MatchWithPrediction;
+  draft: ScoreDraft;
+  inputDisabled: boolean;
+  onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
+}) {
+  return (
+    <div className="prediction-scoreboard" aria-label="Prediction">
+      <TeamFlag teamName={match.team_a} />
+      <div className="score-box">
+        <label>{match.team_a}</label>
+        <input
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          autoComplete="off"
+          value={draft.a}
+          disabled={inputDisabled}
+          onChange={(event) => onDraftChange(match.match_id, 'a', onlyDigits(event.target.value))}
+        />
+      </div>
+
+      <div className="separator">VS</div>
+
+      <div className="score-box">
+        <label>{match.team_b}</label>
+        <input
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          autoComplete="off"
+          value={draft.b}
+          disabled={inputDisabled}
+          onChange={(event) => onDraftChange(match.match_id, 'b', onlyDigits(event.target.value))}
+        />
+      </div>
+      <TeamFlag teamName={match.team_b} />
+    </div>
+  );
+}
+
+function FinalResultColumn({ match }: { match: MatchWithPrediction }) {
   const isFinal = match.status.toLowerCase() === 'final';
   const hasFinalScore = isFinal && match.score_a !== null && match.score_b !== null;
   const showPenaltyWinner = hasFinalScore && isKnockoutStage(match.stage) && Boolean(match.penalty_winner);
@@ -187,31 +187,34 @@ function FinalResultColumn({ match, pointsLabel }: { match: MatchWithPrediction;
     <aside className={`match-result-panel ${hasFinalScore ? 'is-final' : 'is-pending'}`}>
       <div>
         <div className="match-result-kicker">
-          {hasFinalScore ? 'Resultado final' : 'Resultado pendiente'}
+          {hasFinalScore ? 'Final result' : 'Result pending'}
         </div>
         <div className="match-result-copy">
-          {hasFinalScore ? 'Marcador oficial del partido' : 'Se actualizará cuando el partido finalice'}
+          {hasFinalScore ? 'Official match score' : 'It will update when the match ends'}
         </div>
       </div>
 
-      <div className="result-scoreboard" aria-label="Resultado del partido">
-        <ResultTeamRow
+      <div className="result-scoreboard" aria-label="Match result">
+        <TeamFlag teamName={match.team_a} />
+        <ResultTeamBlock
           teamName={match.team_a}
           score={hasFinalScore ? match.score_a : null}
           wonOnPenalties={showPenaltyWinner && match.penalty_winner === 'team_a'}
         />
-        <ResultTeamRow
+        <div className="separator">VS</div>
+        <ResultTeamBlock
           teamName={match.team_b}
           score={hasFinalScore ? match.score_b : null}
           wonOnPenalties={showPenaltyWinner && match.penalty_winner === 'team_b'}
         />
+        <TeamFlag teamName={match.team_b} />
       </div>
 
     </aside>
   );
 }
 
-function ResultTeamRow({
+function ResultTeamBlock({
   teamName,
   score,
   wonOnPenalties = false
@@ -221,8 +224,7 @@ function ResultTeamRow({
   wonOnPenalties?: boolean;
 }) {
   return (
-    <div className="result-team-row">
-      <TeamFlag teamName={teamName} />
+    <div className="result-team-block">
       <span className="result-team-name">
         {teamName}
         {wonOnPenalties ? <span className="penalty-winner-mark">*</span> : null}
@@ -247,7 +249,7 @@ function TeamFlag({ teamName }: { teamName: string }) {
     <Image
       className="team-flag"
       src={`/flags/${code}.svg`}
-      alt={`Bandera de ${teamName}`}
+      alt={`${teamName} flag`}
       width={36}
       height={24}
     />
@@ -278,10 +280,38 @@ function normalizeCountryName(value: string) {
 function getStatusLabel(status: string) {
   const value = status.toLowerCase();
 
-  if (value === 'open') return 'Abierto';
-  if (value === 'pending_teams') return 'Equipos por definir';
+  if (value === 'open') return 'Open';
+  if (value === 'pending_teams') return 'Teams TBD';
   if (value === 'final') return 'Final';
-  return 'Cerrado';
+  return 'Closed';
+}
+
+function shouldAutosavePrediction(match: MatchWithPrediction, draft: ScoreDraft) {
+  if (!match.canEdit || draft.a === '' || draft.b === '') {
+    return false;
+  }
+
+  const requiresPenaltyWinner =
+    isKnockoutStage(match.stage) &&
+    Number(draft.a) === Number(draft.b);
+
+  if (requiresPenaltyWinner && !draft.penaltyWinner) {
+    return false;
+  }
+
+  if (!match.hasPrediction) {
+    return true;
+  }
+
+  const savedScoreA = match.myPredScoreA === '' ? '' : String(match.myPredScoreA);
+  const savedScoreB = match.myPredScoreB === '' ? '' : String(match.myPredScoreB);
+  const savedPenaltyWinner = match.myPredPenaltyWinner || null;
+
+  return (
+    draft.a !== savedScoreA ||
+    draft.b !== savedScoreB ||
+    (draft.penaltyWinner || null) !== savedPenaltyWinner
+  );
 }
 
 function onlyDigits(value: string) {

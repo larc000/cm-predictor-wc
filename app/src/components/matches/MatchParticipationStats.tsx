@@ -13,14 +13,14 @@ export function MatchParticipationStats({ participation }: MatchParticipationSta
   const activeUsers = Number(participation.active_users) || 0;
 
   return (
-    <section className="match-result-stats" aria-label="Participación">
-      <h4>Participación</h4>
+    <section className="match-result-stats" aria-label="Participation">
+      <h4>Participation</h4>
       <div className="match-result-stats-grid">
         <p>
-          <strong>{predictionsSubmitted} de {activeUsers}</strong> participantes han enviado pronóstico
+          <strong>{predictionsSubmitted} of {activeUsers}</strong> participants have submitted predictions
         </p>
         <p>
-          <strong>{formatPercentage(participation.participation_pct)}</strong> completado
+          <strong>{formatPercentage(participation.participation_pct)}</strong> complete
         </p>
       </div>
     </section>

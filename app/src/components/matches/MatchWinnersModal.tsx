@@ -22,21 +22,21 @@ export function MatchWinnersModal({ title, winners, onClose }: MatchWinnersModal
         <div className="modal-header">
           <div>
             <h3 id="match-winners-modal-title">{title}</h3>
-            <p>{winners.length} participantes</p>
+            <p>{winners.length} participants</p>
           </div>
           <button className="button subtle" type="button" onClick={onClose}>
-            Cerrar
+            Close
           </button>
         </div>
 
         {winners.length === 0 ? (
-          <div className="notice">No hay participantes para esta categoría.</div>
+          <div className="notice">There are no participants for this category.</div>
         ) : (
           <div className="match-winners-list">
             {groupedWinners.map((group) => (
               <section key={group.scoreKey} className="match-winner-score-group">
                 <div className="match-winner-score-group-heading">
-                  <span>Pronóstico</span>
+                  <span>Prediction</span>
                   <strong>{group.scoreLabel}</strong>
                 </div>
                 {group.winners.map((winner) => (
@@ -44,7 +44,7 @@ export function MatchWinnersModal({ title, winners, onClose }: MatchWinnersModal
                     <div>
                       <div className="ranking-participant-name">
                         <UserLocationFlag timezone={getUserLocation(winner)} />
-                        <strong>{winner.name || winner.email || 'Sin nombre'}</strong>
+                        <strong>{winner.name || winner.email || 'No name'}</strong>
                       </div>
                     </div>
                   </article>

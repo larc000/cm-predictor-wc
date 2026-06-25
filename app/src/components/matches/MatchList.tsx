@@ -1,7 +1,6 @@
 import { getMatchDateGroup } from '@/lib/domain';
 import type {
   DraftScores,
-  EditingMap,
   MatchResultStatsByMatch,
   MatchWinnerType,
   MatchWithPrediction,
@@ -13,7 +12,6 @@ import { MatchCard } from './MatchCard';
 type MatchListProps = {
   groupedMatches: Record<string, MatchWithPrediction[]>;
   draftScores: DraftScores;
-  editing: EditingMap;
   savingMatchId: string;
   timezone: string;
   resultStatsByMatch?: MatchResultStatsByMatch;
@@ -23,26 +21,21 @@ type MatchListProps = {
   onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
   onPenaltyWinnerChange: (matchId: string, penaltyWinner: PenaltyWinner) => void;
   onSubmitPrediction: (match: MatchWithPrediction) => void;
-  onEditPrediction: (match: MatchWithPrediction) => void;
-  onCancelEdit: (match: MatchWithPrediction) => void;
   onShowWinners: (matchId: string, winnerType: MatchWinnerType, title: string) => void;
 };
 
 export function MatchList({
   groupedMatches,
   draftScores,
-  editing,
   savingMatchId,
   timezone,
   resultStatsByMatch = {},
   participationByMatch = {},
-  emptyMessage = 'No hay partidos disponibles.',
+  emptyMessage = 'There are no matches available.',
   dateSortDirection = 'asc',
   onDraftChange,
   onPenaltyWinnerChange,
   onSubmitPrediction,
-  onEditPrediction,
-  onCancelEdit,
   onShowWinners
 }: MatchListProps) {
   const dateKeys = Object.keys(groupedMatches);
@@ -63,7 +56,6 @@ export function MatchList({
           key={match.match_id}
           match={match}
           draft={draftScores[match.match_id] || { a: '', b: '', penaltyWinner: null }}
-          editing={Boolean(editing[match.match_id])}
           saving={savingMatchId === match.match_id}
           resultStats={resultStatsByMatch[match.match_id]}
           participationStats={participationByMatch[match.match_id]}
@@ -71,8 +63,6 @@ export function MatchList({
           onDraftChange={onDraftChange}
           onPenaltyWinnerChange={onPenaltyWinnerChange}
           onSubmitPrediction={onSubmitPrediction}
-          onEditPrediction={onEditPrediction}
-          onCancelEdit={onCancelEdit}
           onShowWinners={onShowWinners}
         />
       ))}
