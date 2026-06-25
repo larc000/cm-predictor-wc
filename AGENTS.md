@@ -1,4 +1,4 @@
-# Quiniela CM LATAM - agent instructions
+# CM Predictor - agent instructions
 
 ## Stack
 
