@@ -129,7 +129,7 @@ export function CustomLeaderboard({ leaderboard, activeUserId }: CustomLeaderboa
           <div className="notice">Select participants to create your custom leaderboard.</div>
         ) : (
           <div className="table-scroll">
-            <table className="ranking-table leaderboard-table">
+            <table className="ranking-table leaderboard-table compact-ranking-table">
               <thead>
                 <tr>
                   <th>Position</th>

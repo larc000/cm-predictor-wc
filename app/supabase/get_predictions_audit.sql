@@ -45,6 +45,7 @@ as $$
   from public.predictions p
   join public.matches m on m.match_id = p.match_id
   join public.users u on u.id = p.user_id
+  where lower(m.status) in ('closed', 'final')
   order by
     m.date_time desc,
     m.match_id asc,

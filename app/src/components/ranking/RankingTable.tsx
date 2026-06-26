@@ -60,13 +60,13 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
         </div>
         <div className="section-actions leaderboard-section-actions">
           <nav className="secondary-tabs leaderboard-secondary-tabs" aria-label="Leaderboard sections">
-            <Link className="secondary-tab-button" href="/leaderboard/personalizado">
+            <Link className="secondary-tab-button" href="/leaderboard/custom">
               Custom Leaderboard
             </Link>
-            <Link className="secondary-tab-button" href="/leaderboard/tabla-rendimiento">
+            <Link className="secondary-tab-button" href="/leaderboard/stats">
               Stats
             </Link>
-            <Link className="secondary-tab-button" href="/leaderboard/todos-los-pronosticos">
+            <Link className="secondary-tab-button" href="/leaderboard/all-predictions">
               All predictions
             </Link>
             <button className="secondary-tab-button" type="button" disabled={loading} onClick={onRefresh}>
@@ -96,7 +96,7 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
           <div className="notice">There are no participants in the leaderboard yet.</div>
         ) : (
           <div className="table-scroll">
-            <table className="ranking-table leaderboard-table">
+            <table className="ranking-table leaderboard-table compact-ranking-table">
               <thead>
                 <tr>
                   <th>Position</th>

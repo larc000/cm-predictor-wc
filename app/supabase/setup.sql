@@ -344,6 +344,7 @@ as $$
         or lower(requester.email) = lower(auth.jwt() ->> 'email')
       )
   )
+    and lower(m.status) in ('closed', 'final')
   order by
     m.date_time desc,
     m.match_id asc,

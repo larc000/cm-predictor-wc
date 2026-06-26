@@ -852,7 +852,7 @@ h2 {
   color: #000;
   font-family: var(--font-condensed);
   font-size: 18px;
-  line-height: 0.8;
+  line-height: 1;
   letter-spacing: 0;
   text-align: center;
   text-overflow: ellipsis;
@@ -1918,11 +1918,19 @@ h2 {
   }
 
   .leaderboard {
-    overflow: hidden;
+    overflow: visible;
   }
 
   .leaderboard-table {
-    min-width: 620px;
+    min-width: 760px;
+  }
+
+  .leaderboard .compact-ranking-table {
+    min-width: 0;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
   }
 
   .performance-table {
@@ -2233,13 +2241,23 @@ h2 {
   }
 
   .leaderboard-secondary-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
     width: 100%;
     margin-bottom: 20px;
+    padding: 6px;
+    border-radius: 20px;
   }
 
   .leaderboard-secondary-tabs .secondary-tab-button {
-    flex: 1;
     min-width: 0;
+    min-height: 40px;
+    padding: 8px 10px;
+    font-size: 12px;
+    line-height: 1.05;
+    text-align: center;
+    white-space: normal;
   }
 
   .mobile-leaderboard-rank-card {
@@ -2296,16 +2314,47 @@ h2 {
   }
 
   .leaderboard-section .table-scroll {
-    overflow-x: visible;
+    overflow-x: auto;
   }
 
   .leaderboard-section .leaderboard-table {
     width: 100%;
   }
 
+  .leaderboard-section .compact-ranking-table {
+    min-width: 0;
+  }
+
   .leaderboard-section .leaderboard-table td {
     padding-left: 20px;
     padding-right: 20px;
+  }
+
+  .leaderboard-section .compact-ranking-table td {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .leaderboard-section .compact-ranking-table td:first-child {
+    width: 52px;
+    padding-left: 8px;
+    padding-right: 6px;
+  }
+
+  .leaderboard-section .compact-ranking-table .points-cell {
+    width: 76px;
+    padding-left: 6px;
+    padding-right: 8px;
+    text-align: right;
+  }
+
+  .leaderboard-section .compact-ranking-table .ranking-participant {
+    gap: 6px;
+  }
+
+  .leaderboard-section .compact-ranking-table .ranking-participant-name strong,
+  .leaderboard-section .compact-ranking-table .ranking-participant small {
+    overflow-wrap: anywhere;
   }
 
   .score-summary {
@@ -2382,6 +2431,12 @@ h2 {
 }
 
 @media (min-width: 900px) {
+  .score-box label {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
   .app-shell {
     width: min(100%, 1120px);
     max-width: 1120px;

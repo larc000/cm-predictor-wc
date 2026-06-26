@@ -459,7 +459,11 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         throw auditQueryError;
       }
 
-      setPredictionAuditRows(((data || []) as PredictionAuditRow[]).map(normalizePredictionAuditRow));
+      setPredictionAuditRows(
+        ((data || []) as PredictionAuditRow[])
+          .map(normalizePredictionAuditRow)
+          .filter((row) => isAuditableMatchStatus(row.status))
+      );
     } catch (caught) {
       setPredictionAuditError(getErrorMessage(caught));
       throw caught;
@@ -951,6 +955,11 @@ function normalizePredictionAuditRow(row: PredictionAuditRow) {
     pred_score_b: Number(row.pred_score_b),
     points: Number(row.points) || 0
   };
+}
+
+function isAuditableMatchStatus(status: string) {
+  const normalizedStatus = String(status || '').toLowerCase();
+  return normalizedStatus === 'closed' || normalizedStatus === 'final';
 }
 
 function getMobileSectionTitle(activeSection: AppSection) {
