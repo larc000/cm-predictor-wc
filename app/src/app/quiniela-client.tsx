@@ -913,10 +913,12 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         />
       ) : null}
 
-      <div className="mobile-rank-bar">
-        Your score rank: {myPoints} pts,{' '}
-        {myLeaderboardPosition ? `position #${myLeaderboardPosition}` : 'position pending'}
-      </div>
+      {shouldShowMobileRankBar(activeSection) ? (
+        <div className="mobile-rank-bar">
+          Your score rank: {myPoints} pts,{' '}
+          {myLeaderboardPosition ? `position #${myLeaderboardPosition}` : 'position pending'}
+        </div>
+      ) : null}
 
       {matchWinnersModal ? (
         <MatchWinnersModal
@@ -984,6 +986,16 @@ function getMobileBackHref(activeSection: AppSection) {
   }
 
   return '/';
+}
+
+function shouldShowMobileRankBar(activeSection: AppSection) {
+  return ![
+    'fase-eliminatoria',
+    'leaderboard',
+    'custom-leaderboard',
+    'prediction-audit',
+    'performance'
+  ].includes(activeSection);
 }
 
 function normalizePerformanceReportRow(row: PerformanceReportRow) {

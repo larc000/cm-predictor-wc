@@ -661,8 +661,17 @@ h2 {
 }
 
 .notice {
+  width: min(100%, 760px);
+  margin-left: auto;
+  margin-right: auto;
   padding: 14px 16px;
   color: var(--brand-muted);
+}
+
+.modal .notice,
+.custom-leaderboard-options .notice,
+.leaderboard .notice {
+  width: 100%;
 }
 
 .notice h3 {
@@ -2362,11 +2371,17 @@ h2 {
   }
 
   .mobile-rank-bar {
+    position: fixed;
+    right: 20px;
+    bottom: 16px;
+    left: 20px;
+    z-index: 40;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 44px;
-    margin: 24px 0 0;
+    max-width: 350px;
+    margin: 0 auto;
     padding: 12px;
     border-radius: 8px;
     background: linear-gradient(173deg, #f24711 25%, #b1310a 75%);
