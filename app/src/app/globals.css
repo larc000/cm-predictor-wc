@@ -1346,8 +1346,8 @@ h2 {
 
 .ranking-table-separator td {
   padding: 8px 14px;
-  background: #f6f7fb;
-  color: var(--brand-muted);
+  background: #242424;
+  color: #d8d8d8;
   font-family: var(--font-display);
   font-size: 20px;
   text-align: center;

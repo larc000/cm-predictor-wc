@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { formatMatchDate, getStageLabel } from '@/lib/domain';
-import { COUNTRY_CODES } from '@/lib/countries';
+import { getCountryCode } from '@/lib/countries';
 import type {
   MatchResultStat,
   MatchWinnerType,
@@ -242,7 +242,7 @@ function TeamFlag({ teamName }: { teamName: string }) {
   if (!code) {
     return (
       <span className="team-flag-placeholder" aria-hidden="true">
-        {teamName.slice(0, 1)}
+        {getPlaceholderLabel(teamName)}
       </span>
     );
   }
@@ -258,25 +258,14 @@ function TeamFlag({ teamName }: { teamName: string }) {
   );
 }
 
-function getCountryCode(teamName: string) {
-  const normalizedTeamName = normalizeCountryName(teamName);
-  const exactCode = COUNTRY_CODES[teamName];
+function getPlaceholderLabel(teamName: string) {
+  const normalizedTeamName = teamName.trim().toUpperCase();
 
-  if (exactCode) {
-    return exactCode;
-  }
+  if (normalizedTeamName === 'TBD') return '?';
+  if (normalizedTeamName.startsWith('WINNER ')) return 'W';
+  if (normalizedTeamName.startsWith('LOSER ')) return 'L';
 
-  return Object.entries(COUNTRY_CODES).find(
-    ([countryName]) => normalizeCountryName(countryName) === normalizedTeamName
-  )?.[1];
-}
-
-function normalizeCountryName(value: string) {
-  return value
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
+  return teamName.trim().slice(0, 1);
 }
 
 function getStatusLabel(status: string) {
