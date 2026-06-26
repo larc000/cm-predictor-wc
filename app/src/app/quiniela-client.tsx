@@ -991,6 +991,7 @@ function getMobileBackHref(activeSection: AppSection) {
 function shouldShowMobileRankBar(activeSection: AppSection) {
   return ![
     'fase-eliminatoria',
+    'reglas',
     'leaderboard',
     'custom-leaderboard',
     'prediction-audit',
