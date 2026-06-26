@@ -1,11 +1,97 @@
-INSERT INTO "public"."matches" ("match_id", "group_name", "date_time", "team_a", "team_b", "score_a", "score_b", "status", "stage") VALUES ('M001', 'A', '2026-06-04 00:00:00+00', 'México', 'Sudáfrica', 1, 2, 'final', 'group'), ('M002', 'A', '2026-06-05 22:07:00+00', 'Corea del Sur', 'Chequia', null, null, 'open', 'group'), ('M003', 'B', '2026-06-12 20:00:00+00', 'Canadá', 'Bosnia and Herzegovina', null, null, 'open', 'group'), ('M004', 'D', '2026-06-13 05:00:00+00', 'USA', 'Paraguay', null, null, 'open', 'group'), ('M005', 'B', '2026-06-13 23:00:00+00', 'Qatar', 'Suiza', null, null, 'open', 'group'), ('M006', 'C', '2026-06-13 23:00:00+00', 'Brasil', 'Marruecos', null, null, 'open', 'group'), ('M007', 'C', '2026-06-14 02:00:00+00', 'Haiti', 'Escocia', null, null, 'open', 'group'), ('M008', 'D', '2026-06-14 08:00:00+00', 'Australia', 'Turquía', null, null, 'open', 'group'), ('M009', 'E', '2026-06-14 19:00:00+00', 'Alemania', 'Curaçao', null, null, 'open', 'group'), ('M010', 'F', '2026-06-14 22:00:00+00', 'Países Bajos', 'Japón', null, null, 'open', 'group'), ('M011', 'E', '2026-06-15 00:00:00+00', 'Costa de Marfil', 'Ecuador', null, null, 'open', 'group'), ('M012', 'F', '2026-06-15 04:00:00+00', 'Suecia', 'Túnez', null, null, 'open', 'group'), ('M013', 'H', '2026-06-15 17:00:00+00', 'España', 'Cabo Verde', null, null, 'open', 'group'), ('M014', 'G', '2026-06-15 23:00:00+00', 'Bélgica', 'Egipto', null, null, 'open', 'group'), ('M015', 'H', '2026-06-15 23:00:00+00', 'Arabia Saudita', 'Uruguay', null, null, 'open', 'group'), ('M016', 'G', '2026-06-16 05:00:00+00', 'Irán', 'Nueva Zelanda', null, null, 'open', 'group'), ('M017', 'I', '2026-06-16 20:00:00+00', 'Francia', 'Senegal', null, null, 'open', 'group'), ('M018', 'I', '2026-06-16 23:00:00+00', 'Iraq', 'Noruega', null, null, 'open', 'group'), ('M019', 'J', '2026-06-17 03:00:00+00', 'Argentina', 'Argelia', null, null, 'open', 'group'), ('M020', 'J', '2026-06-17 08:00:00+00', 'Austria', 'Jordan', null, null, 'open', 'group'), ('M021', 'K', '2026-06-17 19:00:00+00', 'Portugal', 'Congo DR', null, null, 'open', 'group'), ('M022', 'L', '2026-06-17 22:00:00+00', 'Inglaterra', 'Croacia', null, null, 'open', 'group'), ('M023', 'L', '2026-06-18 00:00:00+00', 'Ghana', 'Panamá', null, null, 'open', 'group'), ('M024', 'K', '2026-06-18 04:00:00+00', 'Uzbekistan', 'Colombia', null, null, 'open', 'group'), ('M025', 'A', '2026-06-18 17:00:00+00', 'Chequia', 'Sudáfrica', null, null, 'open', 'group'), ('M026', 'B', '2026-06-18 23:00:00+00', 'Suiza', 'Bosnia and Herzegovina', null, null, 'open', 'group'), ('M027', 'B', '2026-06-19 02:00:00+00', 'Canadá', 'Qatar', null, null, 'open', 'group'), ('M028', 'A', '2026-06-19 03:00:00+00', 'México', 'Corea del Sur', null, null, 'open', 'group'), ('M029', 'C', '2026-06-19 23:00:00+00', 'Escocia', 'Marruecos', null, null, 'open', 'group'), ('M030', 'D', '2026-06-19 23:00:00+00', 'USA', 'Australia', null, null, 'open', 'group'), ('M031', 'C', '2026-06-20 02:00:00+00', 'Brasil', 'Haiti', null, null, 'open', 'group'), ('M032', 'D', '2026-06-20 08:00:00+00', 'Turquía', 'Paraguay', null, null, 'open', 'group'), ('M033', 'F', '2026-06-20 19:00:00+00', 'Países Bajos', 'Suecia', null, null, 'open', 'group'), ('M034', 'E', '2026-06-20 21:00:00+00', 'Alemania', 'Costa de Marfil', null, null, 'open', 'group'), ('M035', 'E', '2026-06-21 04:00:00+00', 'Ecuador', 'Curaçao', null, null, 'open', 'group'), ('M036', 'F', '2026-06-21 06:00:00+00', 'Túnez', 'Japón', null, null, 'open', 'group'), ('M037', 'H', '2026-06-21 17:00:00+00', 'España', 'Arabia Saudita', null, null, 'open', 'group'), ('M038', 'G', '2026-06-21 23:00:00+00', 'Bélgica', 'Irán', null, null, 'open', 'group'), ('M039', 'H', '2026-06-21 23:00:00+00', 'Uruguay', 'Cabo Verde', null, null, 'open', 'group'), ('M040', 'G', '2026-06-22 05:00:00+00', 'Nueva Zelanda', 'Egipto', null, null, 'open', 'group'), ('M041', 'J', '2026-06-22 19:00:00+00', 'Argentina', 'Austria', null, null, 'open', 'group'), ('M042', 'I', '2026-06-22 22:00:00+00', 'Francia', 'Iraq', null, null, 'open', 'group'), ('M043', 'I', '2026-06-23 01:00:00+00', 'Noruega', 'Senegal', null, null, 'open', 'group'), ('M044', 'J', '2026-06-23 07:00:00+00', 'Jordan', 'Argelia', null, null, 'open', 'group'), ('M045', 'K', '2026-06-23 19:00:00+00', 'Portugal', 'Uzbekistan', null, null, 'open', 'group'), ('M046', 'L', '2026-06-23 21:00:00+00', 'Inglaterra', 'Ghana', null, null, 'open', 'group'), ('M047', 'L', '2026-06-24 00:00:00+00', 'Panamá', 'Croacia', null, null, 'open', 'group'), ('M048', 'K', '2026-06-24 04:00:00+00', 'Colombia', 'Congo DR', null, null, 'open', 'group'), ('M049', 'B', '2026-06-24 23:00:00+00', 'Suiza', 'Canadá', null, null, 'open', 'group'), ('M050', 'B', '2026-06-24 23:00:00+00', 'Bosnia and Herzegovina', 'Qatar', null, null, 'open', 'group'), ('M051', 'C', '2026-06-24 23:00:00+00', 'Escocia', 'Brasil', null, null, 'open', 'group'), ('M052', 'C', '2026-06-24 23:00:00+00', 'Marruecos', 'Haiti', null, null, 'open', 'group'), ('M053', 'A', '2026-06-25 03:00:00+00', 'Chequia', 'México', null, null, 'open', 'group'), ('M054', 'A', '2026-06-25 03:00:00+00', 'Sudáfrica', 'Corea del Sur', null, null, 'open', 'group'), ('M055', 'E', '2026-06-25 21:00:00+00', 'Ecuador', 'Alemania', null, null, 'open', 'group'), ('M056', 'E', '2026-06-25 21:00:00+00', 'Curaçao', 'Costa de Marfil', null, null, 'open', 'group'), ('M057', 'F', '2026-06-26 01:00:00+00', 'Japón', 'Suecia', null, null, 'open', 'group'), ('M058', 'F', '2026-06-26 01:00:00+00', 'Túnez', 'Países Bajos', null, null, 'open', 'group'), ('M059', 'D', '2026-06-26 06:00:00+00', 'Turquía', 'USA', null, null, 'open', 'group'), ('M060', 'D', '2026-06-26 06:00:00+00', 'Paraguay', 'Australia', null, null, 'open', 'group'), ('M061', 'I', '2026-06-26 20:00:00+00', 'Noruega', 'Francia', null, null, 'open', 'group'), ('M062', 'I', '2026-06-26 20:00:00+00', 'Senegal', 'Iraq', null, null, 'open', 'group'), ('M063', 'H', '2026-06-27 02:00:00+00', 'Cabo Verde', 'Arabia Saudita', null, null, 'open', 'group'), ('M064', 'H', '2026-06-27 02:00:00+00', 'Uruguay', 'España', null, null, 'open', 'group'), ('M065', 'G', '2026-06-27 07:00:00+00', 'Egipto', 'Irán', null, null, 'open', 'group'), ('M066', 'G', '2026-06-27 07:00:00+00', 'Nueva Zelanda', 'Bélgica', null, null, 'open', 'group'), ('M067', 'L', '2026-06-27 22:00:00+00', 'Panamá', 'Inglaterra', null, null, 'open', 'group'), ('M068', 'L', '2026-06-27 22:00:00+00', 'Croacia', 'Ghana', null, null, 'open', 'group'), ('M069', 'K', '2026-06-28 02:30:00+00', 'Colombia', 'Portugal', null, null, 'open', 'group'), ('M070', 'K', '2026-06-28 02:30:00+00', 'Congo DR', 'Uzbekistan', null, null, 'open', 'group'), ('M071', 'J', '2026-06-28 04:00:00+00', 'Argelia', 'Austria', null, null, 'open', 'group'), ('M072', 'J', '2026-06-28 04:00:00+00', 'Jordan', 'Argentina', null, null, 'open', 'group'), ('M073', null, '2026-06-28 19:00:00+00', 'Portugal', 'Argentina', null, null, 'open', 'round_of_32'), ('M074', null, '2026-06-29 20:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M075', null, '2026-06-30 01:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M076', null, '2026-06-29 17:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M077', null, '2026-06-30 21:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M078', null, '2026-06-30 17:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M079', null, '2026-07-01 01:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M080', null, '2026-07-01 16:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M081', null, '2026-07-02 00:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M082', null, '2026-07-01 20:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M083', null, '2026-07-02 23:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M084', null, '2026-07-02 19:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M085', null, '2026-07-03 01:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M086', null, '2026-07-03 22:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M087', null, '2026-07-04 01:30:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M088', null, '2026-07-03 18:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_32'), ('M089', null, '2026-07-04 21:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_16'), ('M090', null, '2026-07-04 17:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_16'), ('M091', null, '2026-07-05 20:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_16'), ('M092', null, '2026-07-06 00:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_16'), ('M093', null, '2026-07-06 19:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_16'), ('M094', null, '2026-07-07 00:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_16'), ('M095', null, '2026-07-06 16:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_16'), ('M096', null, '2026-07-07 20:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'round_of_16'), ('M097', null, '2026-07-09 20:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'quarterfinal'), ('M098', null, '2026-07-10 19:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'quarterfinal'), ('M099', null, '2026-07-11 21:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'quarterfinal'), ('M100', null, '2026-07-12 01:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'quarterfinal'), ('M101', null, '2026-07-14 19:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'semifinal'), ('M102', null, '2026-07-15 19:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'semifinal'), ('M103', null, '2026-07-18 21:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'third_place'), ('M104', null, '2026-07-19 19:00:00+00', 'TBD', 'TBD', null, null, 'pending_teams', 'final')
-ON CONFLICT (match_id) DO UPDATE
-SET
-  group_name = EXCLUDED.group_name,
-  date_time = EXCLUDED.date_time,
-  team_a = EXCLUDED.team_a,
-  team_b = EXCLUDED.team_b,
-  score_a = EXCLUDED.score_a,
-  score_b = EXCLUDED.score_b,
-  status = EXCLUDED.status,
-  stage = EXCLUDED.stage;
+-- FIFA World Cup 2026 - complete matches SQL regenerated from NBC ET schedule
+-- Team names in Spanish. date_time values are UTC/GMT-0 timestamptz.
+-- Times are stored as real UTC/GMT-0 instants. Costa Rica is UTC-6, so
+-- 2026-06-13 22:00 in Costa Rica must be stored as 2026-06-14T04:00:00+00:00.
+
+alter table public.matches add column if not exists stage text;
+
+alter table public.matches drop constraint if exists matches_status_check;
+alter table public.matches add constraint matches_status_check check (status in ('open', 'closed', 'pending_teams', 'final'));
+
+insert into public.matches (
+  match_id, group_name, date_time, team_a, team_b, score_a, score_b, status, stage
+)
+values
+  ('M073', NULL, '2026-06-28T19:00:00+00:00', 'SUDÁFRICA', 'CANADÁ', NULL, NULL, 'open', 'round_of_32'),
+  ('M074', NULL, '2026-06-29T20:30:00+00:00', 'BRASIL', 'JAPÓN', NULL, NULL, 'open', 'round_of_32'),
+
+  -- Grupo F ganador vs Grupo C segundo
+  ('M075', NULL, '2026-06-30T01:00:00+00:00', 'ALEMANIA', 'ESCOCIA', NULL, NULL, 'open', 'round_of_32'),
+
+  -- Grupo C ganador vs Grupo F segundo
+  ('M076', NULL, '2026-06-29T17:00:00+00:00', 'PAÍSES BAJOS', 'MARRUECOS', NULL, NULL, 'open', 'round_of_32'),
+
+  -- Grupo I ganador vs mejor tercero
+  ('M077', NULL, '2026-06-30T21:00:00+00:00', 'COSTA DE MARFIL', 'TBD', NULL, NULL, 'pending_teams', 'round_of_32'),
+
+  -- Grupo E segundo vs Grupo I segundo
+  ('M078', NULL, '2026-06-30T17:00:00+00:00', 'ECUADOR', 'TBD', NULL, NULL, 'pending_teams', 'round_of_32'),
+
+  -- Ganador Grupo A vs mejor tercero
+  ('M079', NULL, '2026-07-01T01:00:00+00:00', 'MÉXICO', 'TBD', NULL, NULL, 'pending_teams', 'round_of_32'),
+
+  -- Ganador Grupo L vs mejor tercero
+  ('M080', NULL, '2026-07-01T16:00:00+00:00', 'INGLATERRA', 'TBD', NULL, NULL, 'pending_teams', 'round_of_32'),
+
+  -- Ganador Grupo D vs mejor tercero
+  ('M081', NULL, '2026-07-02T00:00:00+00:00', 'ESTADOS UNIDOS', 'BOSNIA Y HERZEGOVINA', NULL, NULL, 'open', 'round_of_32'),
+
+  -- Ganador Grupo G vs mejor tercero
+  ('M082', NULL, '2026-07-01T20:00:00+00:00', 'TBD', 'TBD', NULL, NULL, 'pending_teams', 'round_of_32'),
+
+  -- Segundo Grupo K vs Segundo Grupo L
+  ('M083', NULL, '2026-07-02T23:00:00+00:00', 'TBD', 'TBD', NULL, NULL, 'pending_teams', 'round_of_32'),
+
+  -- Ganador Grupo H vs Segundo Grupo J
+  ('M084', NULL, '2026-07-02T19:00:00+00:00', 'TBD', 'TBD', NULL, NULL, 'pending_teams', 'round_of_32'),
+
+  -- Ganador Grupo B vs mejor tercero
+  ('M085', NULL, '2026-07-03T03:00:00+00:00', 'SUIZA', 'TBD', NULL, NULL, 'pending_teams', 'round_of_32'),
+
+  -- Ganador Grupo J vs Segundo Grupo H
+  ('M086', NULL, '2026-07-03T22:00:00+00:00', 'ARGENTINA', 'TBD', NULL, NULL, 'pending_teams', 'round_of_32'),
+
+  -- Ganador Grupo K vs mejor tercero
+  ('M087', NULL, '2026-07-04T01:30:00+00:00', 'TBD', 'TBD', NULL, NULL, 'pending_teams', 'round_of_32'),
+
+  -- Segundo Grupo D vs Segundo Grupo G
+  ('M088', NULL, '2026-07-03T18:00:00+00:00', 'AUSTRALIA', 'TBD', NULL, NULL, 'pending_teams', 'round_of_32'),
+  
+  -- OCTAVOS DE FINAL
+('M089', NULL, '2026-07-04T21:00:00+00:00', 'GANADOR M073', 'GANADOR M074', NULL, NULL, 'pending_teams', 'round_of_16'),
+('M090', NULL, '2026-07-04T17:00:00+00:00', 'GANADOR M075', 'GANADOR M076', NULL, NULL, 'pending_teams', 'round_of_16'),
+('M091', NULL, '2026-07-05T20:00:00+00:00', 'GANADOR M077', 'GANADOR M078', NULL, NULL, 'pending_teams', 'round_of_16'),
+('M092', NULL, '2026-07-06T00:00:00+00:00', 'GANADOR M079', 'GANADOR M080', NULL, NULL, 'pending_teams', 'round_of_16'),
+('M093', NULL, '2026-07-06T19:00:00+00:00', 'GANADOR M081', 'GANADOR M082', NULL, NULL, 'pending_teams', 'round_of_16'),
+('M094', NULL, '2026-07-07T00:00:00+00:00', 'GANADOR M083', 'GANADOR M084', NULL, NULL, 'pending_teams', 'round_of_16'),
+('M095', NULL, '2026-07-07T16:00:00+00:00', 'GANADOR M085', 'GANADOR M086', NULL, NULL, 'pending_teams', 'round_of_16'),
+('M096', NULL, '2026-07-07T20:00:00+00:00', 'GANADOR M087', 'GANADOR M088', NULL, NULL, 'pending_teams', 'round_of_16'),
+
+-- CUARTOS DE FINAL
+('M097', NULL, '2026-07-09T20:00:00+00:00', 'GANADOR M089', 'GANADOR M090', NULL, NULL, 'pending_teams', 'quarterfinal'),
+('M098', NULL, '2026-07-10T19:00:00+00:00', 'GANADOR M091', 'GANADOR M092', NULL, NULL, 'pending_teams', 'quarterfinal'),
+('M099', NULL, '2026-07-11T21:00:00+00:00', 'GANADOR M093', 'GANADOR M094', NULL, NULL, 'pending_teams', 'quarterfinal'),
+('M100', NULL, '2026-07-12T01:00:00+00:00', 'GANADOR M095', 'GANADOR M096', NULL, NULL, 'pending_teams', 'quarterfinal'),
+
+-- SEMIFINALES
+('M101', NULL, '2026-07-14T19:00:00+00:00', 'GANADOR M097', 'GANADOR M098', NULL, NULL, 'pending_teams', 'semifinal'),
+('M102', NULL, '2026-07-15T19:00:00+00:00', 'GANADOR M099', 'GANADOR M100', NULL, NULL, 'pending_teams', 'semifinal'),
+
+-- TERCER LUGAR
+('M103', NULL, '2026-07-18T21:00:00+00:00', 'PERDEDOR M101', 'PERDEDOR M102', NULL, NULL, 'pending_teams', 'third_place'),
+
+-- FINAL
+('M104', NULL, '2026-07-19T19:00:00+00:00', 'GANADOR M101', 'GANADOR M102', NULL, NULL, 'pending_teams', 'final')
+
+on conflict (match_id) do update
+set
+  group_name = excluded.group_name,
+  date_time = excluded.date_time,
+  team_a = excluded.team_a,
+  team_b = excluded.team_b,
+  status = excluded.status,
+  stage = excluded.stage;
+
+-- Audit helpers:
+-- select match_id, team_a, team_b, date_time as utc_time, date_time at time zone 'America/Costa_Rica' as costa_rica_time from public.matches order by date_time;
+-- select status, stage, count(*) from public.matches group by status, stage order by stage, status;
