@@ -1,32 +1,45 @@
 'use client';
 
+import Image, { type StaticImageData } from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import iconKnockout from '@/assets/icon-knockout.png';
+import iconLeaderboard from '@/assets/icon-leaderboard.png';
+import iconRules from '@/assets/icon-rules.png';
 
-const navItems = [
+type NavItem = {
+  href: string;
+  label: string;
+  mobileLabel: string;
+  mobileSubtitle: string;
+  icon: StaticImageData;
+  accent: 'orange' | 'blue' | 'light';
+};
+
+const navItems: NavItem[] = [
   {
-    href: '/fase-eliminatoria',
+    href: '/knockout-stage',
     label: 'Knockout Stage',
     mobileLabel: 'Knockout Stage',
-    mobileSubtitle: 'Round of 16 · QF · SF · Final',
-    icon: '[]',
+    mobileSubtitle: 'Round of 32, 16, QF, SF and Final',
+    icon: iconKnockout,
     accent: 'orange'
-  },
-  {
-    href: '/reglas',
-    label: 'Rules',
-    mobileLabel: 'Rules',
-    mobileSubtitle: 'How points are scored',
-    icon: '▤',
-    accent: 'light'
   },
   {
     href: '/leaderboard',
     label: 'Leaderboard',
     mobileLabel: 'Leaderboard',
-    mobileSubtitle: 'Global & Friends rankings',
-    icon: '♕',
+    mobileSubtitle: 'Global & Colleagues rankings',
+    icon: iconLeaderboard,
     accent: 'blue'
+  },
+  {
+    href: '/rules',
+    label: 'Rules',
+    mobileLabel: 'Rules',
+    mobileSubtitle: 'How points are scored',
+    icon: iconRules,
+    accent: 'light'
   }
 ];
 
@@ -42,6 +55,7 @@ export function MainNav() {
           <Link
             key={item.href}
             className={`tab-button ${isActive ? 'active' : ''}`}
+            data-accent={item.accent}
             href={item.href}
             aria-current={isActive ? 'page' : undefined}
           >
@@ -49,7 +63,7 @@ export function MainNav() {
             <span className="mobile-nav-card-accent" data-accent={item.accent} aria-hidden="true" />
             <span className="mobile-nav-card-content">
               <span className="mobile-nav-card-icon" aria-hidden="true">
-                {item.icon}
+                <Image src={item.icon} alt="" width={24} height={24} />
               </span>
               <span className="mobile-nav-card-copy">
                 <span className="mobile-nav-card-title">{item.mobileLabel}</span>

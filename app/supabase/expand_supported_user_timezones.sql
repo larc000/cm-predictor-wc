@@ -1,3 +1,40 @@
+do $$
+declare
+  constraint_to_drop text;
+begin
+  select c.conname
+  into constraint_to_drop
+  from pg_constraint c
+  join pg_class t on t.oid = c.conrelid
+  join pg_namespace n on n.oid = t.relnamespace
+  where n.nspname = 'public'
+    and t.relname = 'users'
+    and c.contype = 'c'
+    and pg_get_constraintdef(c.oid) ilike '%timezone%'
+  limit 1;
+
+  if constraint_to_drop is not null then
+    execute format('alter table public.users drop constraint %I', constraint_to_drop);
+  end if;
+end $$;
+
+alter table public.users
+  add constraint users_timezone_check
+  check (
+    timezone in (
+      'America/Edmonton',
+      'America/Chicago',
+      'America/New_York',
+      'America/Bogota',
+      'America/Costa_Rica',
+      'America/Los_Angeles',
+      'Europe/Berlin',
+      'Europe/London',
+      'America/Toronto',
+      'America/Vancouver'
+    )
+  );
+
 drop view if exists public.leaderboard;
 
 create view public.leaderboard

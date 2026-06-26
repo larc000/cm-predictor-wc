@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { getSupportedTimezone } from '@/lib/timezones';
 
 type UserLocationFlagProps = {
   timezone?: string | null;
@@ -23,29 +24,12 @@ export function UserLocationFlag({ timezone }: UserLocationFlagProps) {
 }
 
 function getLocationFlag(timezone?: string | null) {
-  const normalizedLocation = String(timezone || '').trim().toLowerCase();
+  const supportedTimezone = getSupportedTimezone(timezone);
 
-  if (
-    normalizedLocation === 'america/costa_rica' ||
-    normalizedLocation === 'costa rica' ||
-    normalizedLocation === 'cr'
-  ) {
-    return {
-      src: '/cr.png',
-      alt: 'Costa Rica'
-    };
-  }
-
-  if (
-    normalizedLocation === 'america/bogota' ||
-    normalizedLocation === 'colombia' ||
-    normalizedLocation === 'co'
-  ) {
-    return {
-      src: '/co.png',
-      alt: 'Colombia'
-    };
-  }
-
-  return null;
+  return supportedTimezone
+    ? {
+        src: supportedTimezone.flagSrc,
+        alt: supportedTimezone.region
+      }
+    : null;
 }

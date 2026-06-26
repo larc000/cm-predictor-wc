@@ -19,6 +19,7 @@ type MatchCardProps = {
   resultStats?: MatchResultStat;
   participationStats?: PendingMatchParticipation;
   timezone: string;
+  showResultPanel?: boolean;
   onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
   onPenaltyWinnerChange: (matchId: string, penaltyWinner: PenaltyWinner) => void;
   onSubmitPrediction: (match: MatchWithPrediction) => void;
@@ -32,6 +33,7 @@ export function MatchCard({
   resultStats,
   participationStats,
   timezone,
+  showResultPanel = true,
   onDraftChange,
   onPenaltyWinnerChange,
   onSubmitPrediction,
@@ -121,7 +123,7 @@ export function MatchCard({
         </div>
       </div>
 
-      <FinalResultColumn match={match} />
+      {showResultPanel ? <FinalResultColumn match={match} /> : null}
 
       {normalizedStatus === 'final' ? (
         <MatchResultStats stats={resultStats} onShowWinners={onShowWinners} />

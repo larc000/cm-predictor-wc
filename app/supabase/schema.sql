@@ -9,7 +9,7 @@ CREATE TABLE public.users (
   active boolean NOT NULL DEFAULT true,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   auth_user_id uuid,
-  timezone text DEFAULT 'America/Costa_Rica'::text CHECK (timezone = ANY (ARRAY['America/Costa_Rica'::text, 'America/Bogota'::text])),
+  timezone text DEFAULT 'America/Costa_Rica'::text CHECK (timezone = ANY (ARRAY['America/Edmonton'::text, 'America/Chicago'::text, 'America/New_York'::text, 'America/Bogota'::text, 'America/Costa_Rica'::text, 'America/Los_Angeles'::text, 'Europe/Berlin'::text, 'Europe/London'::text, 'America/Toronto'::text, 'America/Vancouver'::text])),
   CONSTRAINT users_pkey PRIMARY KEY (id),
   CONSTRAINT users_auth_user_id_fkey FOREIGN KEY (auth_user_id) REFERENCES auth.users(id) ON DELETE SET NULL
 );

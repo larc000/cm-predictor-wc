@@ -6,8 +6,8 @@ type MatchResultFilterNavProps = {
 };
 
 const resultFilters: Array<{ value: MatchResultFilter; label: string }> = [
-  { value: 'pending', label: 'Pending results' },
-  { value: 'final', label: 'Final results' }
+  { value: 'pending', label: 'Upcoming Matches' },
+  { value: 'final', label: 'Completed Matches' }
 ];
 
 export function MatchResultFilterNav({ activeFilter, onFilterChange }: MatchResultFilterNavProps) {

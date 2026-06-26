@@ -151,7 +151,6 @@ export function CustomLeaderboard({ leaderboard, activeUserId }: CustomLeaderboa
                             <UserLocationFlag timezone={row.timezone} />
                             <strong>{row.name || row.email}</strong>
                           </div>
-                          <br />
                           <small>{row.email}</small>
                         </div>
                         {row.user_id === activeUserId ? <span className="current-user-chip">You</span> : null}

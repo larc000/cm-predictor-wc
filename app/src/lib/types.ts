@@ -47,6 +47,7 @@ export type MatchWithPrediction = Match & {
 };
 
 export type AppSection =
+  | 'home'
   | 'fase-eliminatoria'
   | 'reglas'
   | 'leaderboard'

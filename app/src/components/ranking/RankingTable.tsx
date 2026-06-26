@@ -26,6 +26,7 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
   const {
     displayRows,
     currentUserRank,
+    currentUserRow,
     isCurrentUserInPreview,
     shouldShowCurrentUserPreview,
     shouldShowToggle
@@ -43,6 +44,7 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
     return {
       displayRows: showFullRanking ? rowsWithRank : topTenRows,
       currentUserRank: currentUserRow?.rank ?? null,
+      currentUserRow,
       isCurrentUserInPreview: isCurrentUserInTopTen,
       shouldShowCurrentUserPreview: showCurrentUserPreview,
       shouldShowToggle: leaderboard.length > PREVIEW_LIMIT
@@ -50,27 +52,40 @@ export function RankingTable({ leaderboard, loading, error, activeUserId, onRefr
   }, [activeUserId, leaderboard, showFullRanking]);
 
   return (
-    <section>
+    <section className="leaderboard-section">
       <div className="section-heading">
         <div>
           <h2>Leaderboard</h2>
           <p className="section-copy">Total points by participant.</p>
         </div>
-        <div className="section-actions">
-          <Link className="button subtle" href="/leaderboard/personalizado">
-            Custom leaderboard
-          </Link>
-          <Link className="button subtle" href="/leaderboard/tabla-rendimiento">
-            Performance table
-          </Link>
-          <Link className="button subtle" href="/leaderboard/todos-los-pronosticos">
-            All predictions
-          </Link>
-          <button className="button subtle" type="button" disabled={loading} onClick={onRefresh}>
-            {loading ? 'Loading...' : 'Refresh'}
-          </button>
+        <div className="section-actions leaderboard-section-actions">
+          <nav className="secondary-tabs leaderboard-secondary-tabs" aria-label="Leaderboard sections">
+            <Link className="secondary-tab-button" href="/leaderboard/personalizado">
+              Custom Leaderboard
+            </Link>
+            <Link className="secondary-tab-button" href="/leaderboard/tabla-rendimiento">
+              Stats
+            </Link>
+            <Link className="secondary-tab-button" href="/leaderboard/todos-los-pronosticos">
+              All predictions
+            </Link>
+            <button className="secondary-tab-button" type="button" disabled={loading} onClick={onRefresh}>
+              {loading ? 'Loading...' : 'Refresh'}
+            </button>
+          </nav>
         </div>
       </div>
+
+      {currentUserRow ? (
+        <div className="mobile-leaderboard-rank-card">
+          <div>
+            <span>Your rank</span>
+            <strong>#{currentUserRank}</strong>
+            <small>of {leaderboard.length.toLocaleString()} players</small>
+          </div>
+          <b>{currentUserRow.row.points || 0} pts</b>
+        </div>
+      ) : null}
 
       <div className="leaderboard">
         {error ? (
@@ -142,13 +157,14 @@ function renderRankingRow(row: LeaderboardRow, rank: number, activeUserId: strin
               <UserLocationFlag timezone={row.timezone} />
               <strong>{row.name || row.email}</strong>
             </div>
-            <br />
             <small>{row.email}</small>
           </div>
           {isActiveUser ? <span className="current-user-chip">You</span> : null}
         </div>
       </td>
-      <td className="points-cell">{row.points || 0}</td>
+      <td className="points-cell">
+        <strong>{row.points || 0} pts</strong>
+      </td>
     </tr>
   );
 }

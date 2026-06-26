@@ -4,6 +4,7 @@
 
 - Only `@omc.com` emails are allowed.
 - Users must be active to participate.
+- Match times are shown using the participant's `users.timezone` IANA value.
 
 ## Predictions
 

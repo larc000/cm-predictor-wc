@@ -53,3 +53,18 @@ are intentionally kept separate from the schema setup.
 
 All `matches.date_time` values are stored in UTC.
 Frontend converts to `users.timezone`.
+
+Supported `users.timezone` values:
+
+| Region | IANA timezone | Current time zone |
+| --- | --- | --- |
+| Calgary | `America/Edmonton` | MDT (UTC-6) |
+| Chicago / Nashville | `America/Chicago` | CDT (UTC-5) |
+| Cincinnati / New York | `America/New_York` | EDT (UTC-4) |
+| Colombia | `America/Bogota` | COT (UTC-5) |
+| Costa Rica | `America/Costa_Rica` | CST (UTC-6) |
+| Cupertino / Los Angeles | `America/Los_Angeles` | PDT (UTC-7) |
+| Germany | `Europe/Berlin` | CEST (UTC+2) |
+| London | `Europe/London` | BST (UTC+1) |
+| Toronto | `America/Toronto` | EDT (UTC-4) |
+| Vancouver | `America/Vancouver` | PDT (UTC-7) |

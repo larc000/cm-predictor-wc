@@ -2,8 +2,8 @@
 
 ## Routes
 
-- `/fase-eliminatoria`: user predictions and match list for all the stages within "round_of_32", "round_of_16", "quarterfinal", "semifinal", "third_place" and "final".
-- `/reglas`: rules page.
+- `/knockout-stage`: user predictions and match list for all the stages within "round_of_32", "round_of_16", "quarterfinal", "semifinal", "third_place" and "final".
+- `/rules`: rules page.
 - `/leaderboard`: ranking page.
 - `/leaderboard/personalizado`: browser-persisted custom leaderboard from selected participants.
 - `/leaderboard/todos-los-pronosticos`: audit report for all submitted predictions.

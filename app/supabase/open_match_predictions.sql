@@ -13,6 +13,6 @@ begin
     and trim(team_b) <> ''
     and upper(trim(team_a)) <> 'TBD'
     and upper(trim(team_b)) <> 'TBD'
-    and date_time > (now() + interval '24 hours');
+    and date_time > (now() + interval '1 hour');
 end;
 $$;

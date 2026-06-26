@@ -135,7 +135,7 @@ function MatchPredictionRows({
   return (
     <>
       <tr className="prediction-audit-match-row">
-        <td>{formatMatchDate(match.date_time, timezone)}</td>
+        <td className="prediction-audit-match-date">{formatMatchDate(match.date_time, timezone)}</td>
         <td>
           <TeamResult teamName={match.team_a} score={match.score_a} />
         </td>
@@ -153,12 +153,14 @@ function MatchPredictionRows({
           <td aria-label="Date" />
           <td className="prediction-score-cell">{prediction.pred_score_a}</td>
           <td className="prediction-score-cell">{prediction.pred_score_b}</td>
-          <td>
+          <td className="prediction-audit-user-cell">
             <strong>{prediction.user_name || prediction.user_email}</strong>
             <br />
             <small>{prediction.user_email}</small>
           </td>
-          <td>{formatMatchDate(prediction.submitted_at, timezone)}</td>
+          <td className="prediction-audit-submitted-at">
+            {formatMatchDate(prediction.submitted_at, timezone)}
+          </td>
           <td className="points-cell">{prediction.points || 0}</td>
         </tr>
       ))}

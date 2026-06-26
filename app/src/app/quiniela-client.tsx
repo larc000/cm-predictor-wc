@@ -1,12 +1,13 @@
 'use client';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { AuthCard } from '@/components/auth/AuthCard';
 import { Toast } from '@/components/feedback/Toast';
 import { MainNav } from '@/components/layout/MainNav';
+import { MobileHomeMenu } from '@/components/layout/MobileHomeMenu';
 import { Shell } from '@/components/layout/Shell';
 import { MatchList } from '@/components/matches/MatchList';
 import { MatchResultFilterNav } from '@/components/matches/MatchResultFilterNav';
@@ -23,6 +24,7 @@ import {
   isAllowedEmail,
   mergeMatchesWithPredictions
 } from '@/lib/domain';
+import { DEFAULT_USER_TIMEZONE } from '@/lib/timezones';
 import type {
   AppUser,
   AppSection,
@@ -53,6 +55,7 @@ const PREDICTION_CLOSED_MESSAGE =
   'Predictions for this match are already closed. Predictions must be submitted at least 1 hour before kickoff.';
 
 export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
+  const router = useRouter();
   const [authMode, setAuthMode] = useState<AuthMode>('sign-up');
   const [sessionUser, setSessionUser] = useState<User | null>(null);
   const [appUser, setAppUser] = useState<AppUser | null>(null);
@@ -157,7 +160,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
   }, [activeSection, appUser?.id, matchResultFilter, matches]);
 
   const groupedMatches = useMemo(() => {
-    const timezone = appUser?.timezone || 'America/Costa_Rica';
+    const timezone = appUser?.timezone || DEFAULT_USER_TIMEZONE;
 
     return matches
       .filter((match) => {
@@ -219,6 +222,35 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
         winner.winner_type === matchWinnersModal.winnerType
     );
   }, [matchResultWinners, matchWinnersModal]);
+
+  function renderStickyNav() {
+    return (
+      <div className="sticky-nav">
+        <div className="mobile-nav-top">
+          <div className="mobile-nav-title">
+            <button className="mobile-nav-back" type="button" aria-label="Back" onClick={handleMobileBack}>
+              ←
+            </button>
+            <strong>{getMobileSectionTitle(activeSection)}</strong>
+          </div>
+        </div>
+
+        <MainNav />
+
+        <div className="sticky-nav-meta">
+          <div className="score-summary" aria-label="My score">
+            <span className="score-summary-label">Your score: <strong>{myPoints} pts</strong></span>
+            <div className="score-summary-value">
+              <span>Position &nbsp;</span>
+              <strong>{myLeaderboardPosition ? `# ${myLeaderboardPosition}` : '-'}</strong>
+            </div>
+          </div>
+        </div>
+
+        <Toast message={toast} />
+      </div>
+    );
+  }
 
   async function loadProfileAndData(user: User) {
     setError('');
@@ -725,6 +757,10 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     setMatchWinnersModal({ matchId, winnerType, title });
   }
 
+  function handleMobileBack() {
+    router.push(getMobileBackHref(activeSection));
+  }
+
   if (!isSupabaseConfigured) {
     return (
       <Shell appUser={appUser} allowedEmailDomain={allowedEmailDomain} onSignOut={signOut}>
@@ -774,33 +810,32 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
     );
   }
 
+  if (activeSection === 'home' && appUser) {
+    return (
+      <Shell appUser={appUser} allowedEmailDomain={allowedEmailDomain} onSignOut={signOut}>
+        <MobileHomeMenu
+          appUser={appUser}
+          points={myPoints}
+          leaderboardPosition={myLeaderboardPosition}
+          totalParticipants={leaderboard.length}
+          onSignOut={signOut}
+        />
+
+        <div className="desktop-home">
+          {renderStickyNav()}
+
+          <div className="notice desktop-home-notice">
+            <h3>Choose a section</h3>
+            <p>Use the navigation above to predict scores, review rules, or check the leaderboard.</p>
+          </div>
+        </div>
+      </Shell>
+    );
+  }
+
   return (
     <Shell appUser={appUser} allowedEmailDomain={allowedEmailDomain} onSignOut={signOut}>
-      <div className="sticky-nav">
-        <div className="mobile-nav-top">
-          <div className="mobile-nav-title">
-            <Link className="mobile-nav-back" href="/" aria-label="Back">
-              ←
-            </Link>
-            <strong>{getMobileSectionTitle(activeSection)}</strong>
-          </div>
-        </div>
-
-        <MainNav />
-
-        <div className="score-summary" aria-label="My score">
-          <div className="score-summary-item">
-            <span>My Score</span>
-            <strong>{myPoints} pts</strong>
-          </div>
-          <div className="score-summary-item">
-            <span>Position</span>
-            <strong>{myLeaderboardPosition ? `# ${myLeaderboardPosition}` : '-'}</strong>
-          </div>
-        </div>
-
-        <Toast message={toast} />
-      </div>
+      {renderStickyNav()}
 
       {error ? <p className="error">{error}</p> : null}
 
@@ -817,11 +852,12 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
             groupedMatches={groupedMatches}
             draftScores={draftScores}
             savingMatchId={savingMatchId}
-            timezone={appUser?.timezone || 'America/Costa_Rica'}
+            timezone={appUser?.timezone || DEFAULT_USER_TIMEZONE}
             resultStatsByMatch={matchResultFilter === 'final' ? matchResultStatsByMatch : {}}
             participationByMatch={matchResultFilter === 'pending' ? pendingParticipationByMatch : {}}
             emptyMessage={knockoutEmptyMessage}
             dateSortDirection={matchResultFilter === 'final' ? 'desc' : 'asc'}
+            showResultPanel={matchResultFilter === 'final'}
             onDraftChange={updateDraft}
             onPenaltyWinnerChange={updatePenaltyWinner}
             onSubmitPrediction={submitPrediction}
@@ -857,7 +893,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
           rows={predictionAuditRows}
           loading={predictionAuditLoading}
           error={predictionAuditError}
-          timezone={appUser?.timezone || 'America/Costa_Rica'}
+          timezone={appUser?.timezone || DEFAULT_USER_TIMEZONE}
           onRefresh={() => loadPredictionAudit().catch(() => undefined)}
         />
       ) : null}
@@ -918,6 +954,7 @@ function normalizePredictionAuditRow(row: PredictionAuditRow) {
 }
 
 function getMobileSectionTitle(activeSection: AppSection) {
+  if (activeSection === 'home') return 'World Cup 2026';
   if (activeSection === 'fase-eliminatoria') return 'Knockout Stage';
   if (activeSection === 'reglas') return 'Rules';
   if (activeSection === 'leaderboard') return 'Leaderboard';
@@ -926,6 +963,18 @@ function getMobileSectionTitle(activeSection: AppSection) {
   if (activeSection === 'performance') return 'Performance';
 
   return 'World Cup 2026';
+}
+
+function getMobileBackHref(activeSection: AppSection) {
+  if (
+    activeSection === 'custom-leaderboard' ||
+    activeSection === 'prediction-audit' ||
+    activeSection === 'performance'
+  ) {
+    return '/leaderboard';
+  }
+
+  return '/';
 }
 
 function normalizePerformanceReportRow(row: PerformanceReportRow) {

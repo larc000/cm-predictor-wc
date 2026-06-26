@@ -116,12 +116,7 @@ function PerformanceRow({
               <UserLocationFlag timezone={getUserLocation(row)} />
               <strong>{row.participant || row.name || row.email || 'No name'}</strong>
             </div>
-            {row.email ? (
-              <>
-                <br />
-                <small>{row.email}</small>
-              </>
-            ) : null}
+            {row.email ? <small>{row.email}</small> : null}
           </div>
         </div>
       </td>

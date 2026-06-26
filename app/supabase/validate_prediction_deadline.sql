@@ -15,8 +15,8 @@ begin
     raise exception 'Este partido no está abierto para predicciones.';
   end if;
 
-  if now() > match_kickoff - interval '24 hours' then
-    raise exception 'La predicción cerró 24 horas antes del partido.';
+  if now() > match_kickoff - interval '1 hour' then
+    raise exception 'Predictions for this match are already closed. Predictions must be submitted at least 1 hour before kickoff.';
   end if;
 
   return new;

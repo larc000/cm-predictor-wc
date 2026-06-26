@@ -9,7 +9,20 @@ create table if not exists public.users (
   created_at timestamptz not null default now(),
   auth_user_id uuid unique references auth.users(id) on delete set null,
   timezone text default 'America/Costa_Rica'
-    check (timezone in ('America/Costa_Rica', 'America/Bogota'))
+    check (
+      timezone in (
+        'America/Edmonton',
+        'America/Chicago',
+        'America/New_York',
+        'America/Bogota',
+        'America/Costa_Rica',
+        'America/Los_Angeles',
+        'Europe/Berlin',
+        'Europe/London',
+        'America/Toronto',
+        'America/Vancouver'
+      )
+    )
 );
 
 create table if not exists public.matches (
@@ -155,8 +168,8 @@ begin
     raise exception 'Este partido no está abierto para predicciones.';
   end if;
 
-  if now() > match_kickoff - interval '24 hours' then
-    raise exception 'Cerró 24 horas antes del partido.';
+  if now() > match_kickoff - interval '1 hour' then
+    raise exception 'Predictions for this match are already closed. Predictions must be submitted at least 1 hour before kickoff.';
   end if;
 
   return new;
@@ -186,7 +199,7 @@ begin
     and trim(team_b) <> ''
     and upper(trim(team_a)) <> 'TBD'
     and upper(trim(team_b)) <> 'TBD'
-    and date_time > (now() + interval '24 hours');
+    and date_time > (now() + interval '1 hour');
 end;
 $$;
 
@@ -201,7 +214,7 @@ begin
   set status = 'closed'
   where lower(status) = 'open'
     and date_time > now()
-    and date_time <= (now() + interval '24 hours');
+    and date_time <= (now() + interval '1 hour');
 end;
 $$;
 
@@ -338,6 +351,162 @@ as $$
     u.email asc;
 $$;
 
+create or replace view public.match_result_stats
+with (security_invoker = false)
+as
+with active_users as (
+  select count(*)::integer as total_active_users
+  from public.users
+  where active = true
+),
+final_matches as (
+  select *
+  from public.matches
+  where lower(status) = 'final'
+)
+select
+  m.match_id,
+  m.team_a,
+  m.team_b,
+  m.score_a,
+  m.score_b,
+  au.total_active_users,
+  count(p.id) filter (where prediction_user.id is not null and p.points = 1)::integer as result_only_count,
+  count(p.id) filter (where prediction_user.id is not null and p.points = 3)::integer as exact_score_count,
+  count(p.id) filter (where prediction_user.id is not null and p.points = 4)::integer as penalties_count,
+  round(
+    count(p.id) filter (where prediction_user.id is not null and p.points = 1)::numeric * 100.0 /
+      nullif(au.total_active_users, 0)::numeric,
+    1
+  ) as result_only_pct,
+  round(
+    count(p.id) filter (where prediction_user.id is not null and p.points = 3)::numeric * 100.0 /
+      nullif(au.total_active_users, 0)::numeric,
+    1
+  ) as exact_score_pct,
+  round(
+    count(p.id) filter (where prediction_user.id is not null and p.points = 4)::numeric * 100.0 /
+      nullif(au.total_active_users, 0)::numeric,
+    1
+  ) as penalties_pct
+from final_matches m
+cross join active_users au
+left join public.predictions p on p.match_id = m.match_id
+left join public.users prediction_user on prediction_user.id = p.user_id and prediction_user.active = true
+group by
+  m.match_id,
+  m.team_a,
+  m.team_b,
+  m.score_a,
+  m.score_b,
+  au.total_active_users;
+
+create or replace view public.match_result_winners
+with (security_invoker = false)
+as
+select
+  m.match_id,
+  u.id as user_id,
+  u.email,
+  u.name,
+  u.timezone,
+  case
+    when u.timezone = 'America/Edmonton' then 'Calgary'
+    when u.timezone = 'America/Chicago' then 'Chicago / Nashville'
+    when u.timezone = 'America/New_York' then 'Cincinnati / New York'
+    when u.timezone = 'America/Bogota' then 'Colombia'
+    when u.timezone = 'America/Costa_Rica' then 'Costa Rica'
+    when u.timezone = 'America/Los_Angeles' then 'Cupertino / Los Angeles'
+    when u.timezone = 'Europe/Berlin' then 'Germany'
+    when u.timezone = 'Europe/London' then 'London'
+    when u.timezone = 'America/Toronto' then 'Toronto'
+    when u.timezone = 'America/Vancouver' then 'Vancouver'
+    else null
+  end as location,
+  p.pred_score_a,
+  p.pred_score_b,
+  p.pred_penalty_winner,
+  p.points,
+  case
+    when p.points = 1 then 'result_only'
+    when p.points = 3 then 'exact_score'
+    when p.points = 4 then 'penalties'
+    else null
+  end as winner_type
+from public.predictions p
+join public.matches m on m.match_id = p.match_id
+join public.users u on u.id = p.user_id
+where lower(m.status) = 'final'
+  and u.active = true
+  and p.points in (1, 3, 4);
+
+create or replace view public.pending_match_participation
+with (security_invoker = false)
+as
+with active_users as (
+  select count(*)::integer as active_users
+  from public.users
+  where active = true
+)
+select
+  m.match_id,
+  m.team_a,
+  m.team_b,
+  m.status,
+  m.date_time,
+  count(p.id) filter (where prediction_user.id is not null)::integer as predictions_submitted,
+  au.active_users,
+  round(
+    count(p.id) filter (where prediction_user.id is not null)::numeric * 100.0 /
+      nullif(au.active_users, 0)::numeric,
+    1
+  ) as participation_pct
+from public.matches m
+cross join active_users au
+left join public.predictions p on p.match_id = m.match_id
+left join public.users prediction_user on prediction_user.id = p.user_id and prediction_user.active = true
+where lower(m.status) in ('open', 'closed', 'pending_teams')
+group by
+  m.match_id,
+  m.team_a,
+  m.team_b,
+  m.status,
+  m.date_time,
+  au.active_users;
+
+create or replace view public.performance_report
+with (security_invoker = false)
+as
+with participant_points as (
+  select
+    u.id as user_id,
+    u.email,
+    u.name,
+    u.timezone,
+    coalesce(sum(p.points), 0)::integer as total_points,
+    count(p.id) filter (where p.points = 1)::integer as result_count,
+    count(p.id) filter (where p.points = 3)::integer as exact_score_count,
+    count(p.id) filter (where p.points = 4)::integer as penalties_count
+  from public.users u
+  left join public.predictions p on p.user_id = u.id
+  where u.active = true
+  group by u.id, u.email, u.name, u.timezone
+)
+select
+  row_number() over (
+    order by total_points desc, exact_score_count desc, result_count desc, name asc nulls last, email asc
+  )::integer as position,
+  user_id,
+  email,
+  name,
+  timezone,
+  name as participant,
+  total_points,
+  result_count,
+  exact_score_count,
+  penalties_count
+from participant_points;
+
 alter table public.users enable row level security;
 alter table public.matches enable row level security;
 alter table public.predictions enable row level security;
@@ -347,8 +516,16 @@ grant select, update on public.users to authenticated;
 grant select on public.matches to authenticated;
 grant select, insert, update on public.predictions to authenticated;
 grant select on public.leaderboard to authenticated;
+grant select on public.match_result_stats to authenticated;
+grant select on public.match_result_winners to authenticated;
+grant select on public.pending_match_participation to authenticated;
+grant select on public.performance_report to authenticated;
 
 revoke all on public.leaderboard from anon;
+revoke all on public.match_result_stats from anon;
+revoke all on public.match_result_winners from anon;
+revoke all on public.pending_match_participation from anon;
+revoke all on public.performance_report from anon;
 revoke all on function public.get_leaderboard() from public;
 revoke all on function public.get_predictions_audit() from public;
 revoke all on function public.refresh_match_prediction_statuses() from public;
@@ -436,7 +613,7 @@ with check (
     from public.matches m
     where m.match_id = predictions.match_id
       and lower(m.status) = 'open'
-      and m.date_time > now() + interval '24 hours'
+      and m.date_time > now() + interval '1 hour'
   )
 );
 
@@ -472,7 +649,7 @@ with check (
     from public.matches m
     where m.match_id = predictions.match_id
       and lower(m.status) = 'open'
-      and m.date_time > now() + interval '24 hours'
+      and m.date_time > now() + interval '1 hour'
   )
 );
 

@@ -35,7 +35,7 @@ export function Shell({ appUser, allowedEmailDomain, onSignOut, children }: Shel
           <div>
             <h1>Predict the score</h1>
             <p className="subtitle">
-              Compete with friends. Predict match scores. Climb the global leaderboard.
+              Compete with colleagues.<br/> Climb the global leaderboard.
             </p>
           </div>
         </div>

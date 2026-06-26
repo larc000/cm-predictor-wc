@@ -19,9 +19,6 @@ export function MatchParticipationStats({ participation }: MatchParticipationSta
         <p>
           <strong>{predictionsSubmitted} of {activeUsers}</strong> participants have submitted predictions
         </p>
-        <p>
-          <strong>{formatPercentage(participation.participation_pct)}</strong> complete
-        </p>
       </div>
     </section>
   );

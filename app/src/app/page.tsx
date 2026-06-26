@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import QuinielaClient from './quiniela-client';
 
 export default function Page() {
-  redirect('/fase-eliminatoria');
+  return <QuinielaClient activeSection="home" />;
 }

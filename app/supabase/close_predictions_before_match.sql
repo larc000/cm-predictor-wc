@@ -9,7 +9,7 @@ begin
   set status = 'closed'
   where status = 'open'
     and date_time > now()
-    and date_time <= (now() + interval '24 hours');
+    and date_time <= (now() + interval '1 hour');
 
 end;
 $$;

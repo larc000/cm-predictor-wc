@@ -1,4 +1,5 @@
 import type { Match, MatchWithPrediction, Prediction } from './types';
+import { DEFAULT_USER_TIMEZONE, getSupportedTimezone, normalizeUserTimezone } from './timezones';
 
 export function isAllowedEmail(email: string, domain: string) {
   return email.trim().toLowerCase().endsWith(`@${domain.toLowerCase()}`);
@@ -87,9 +88,9 @@ export function mergeMatchesWithPredictions(
   });
 }
 
-export function formatMatchDate(dateTime: string, timezone = 'America/Costa_Rica') {
+export function formatMatchDate(dateTime: string, timezone = DEFAULT_USER_TIMEZONE) {
   return new Intl.DateTimeFormat('en-US', {
-    timeZone: timezone,
+    timeZone: normalizeUserTimezone(timezone),
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -98,18 +99,18 @@ export function formatMatchDate(dateTime: string, timezone = 'America/Costa_Rica
   }).format(new Date(dateTime));
 }
 
-export function getMatchDateGroup(dateTime: string, timezone = 'America/Costa_Rica') {
+export function getMatchDateGroup(dateTime: string, timezone = DEFAULT_USER_TIMEZONE) {
   return new Intl.DateTimeFormat('en-US', {
-    timeZone: timezone,
+    timeZone: normalizeUserTimezone(timezone),
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   }).format(new Date(dateTime));
 }
 
-export function getMatchDateKey(dateTime: string, timezone = 'America/Costa_Rica') {
+export function getMatchDateKey(dateTime: string, timezone = DEFAULT_USER_TIMEZONE) {
   const parts = new Intl.DateTimeFormat('en-CA', {
-    timeZone: timezone,
+    timeZone: normalizeUserTimezone(timezone),
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -123,10 +124,9 @@ export function getMatchDateKey(dateTime: string, timezone = 'America/Costa_Rica
 }
 
 export function getLocationFromTimezone(timezone?: string | null) {
-  if (timezone === 'America/Costa_Rica') return 'Costa Rica';
-  if (timezone === 'America/Bogota') return 'Colombia';
+  const supportedTimezone = getSupportedTimezone(timezone);
 
-  return 'No location';
+  return supportedTimezone?.region || 'No location';
 }
 
 export function getStageLabel(stage?: string | null) {

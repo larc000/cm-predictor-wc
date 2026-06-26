@@ -18,6 +18,7 @@ type MatchListProps = {
   participationByMatch?: PendingMatchParticipationByMatch;
   emptyMessage?: string;
   dateSortDirection?: 'asc' | 'desc';
+  showResultPanel?: boolean;
   onDraftChange: (matchId: string, side: 'a' | 'b', value: string) => void;
   onPenaltyWinnerChange: (matchId: string, penaltyWinner: PenaltyWinner) => void;
   onSubmitPrediction: (match: MatchWithPrediction) => void;
@@ -33,6 +34,7 @@ export function MatchList({
   participationByMatch = {},
   emptyMessage = 'There are no matches available.',
   dateSortDirection = 'asc',
+  showResultPanel = true,
   onDraftChange,
   onPenaltyWinnerChange,
   onSubmitPrediction,
@@ -60,6 +62,7 @@ export function MatchList({
           resultStats={resultStatsByMatch[match.match_id]}
           participationStats={participationByMatch[match.match_id]}
           timezone={timezone}
+          showResultPanel={showResultPanel}
           onDraftChange={onDraftChange}
           onPenaltyWinnerChange={onPenaltyWinnerChange}
           onSubmitPrediction={onSubmitPrediction}
