@@ -415,8 +415,7 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
           ...row,
           timezone: row.timezone || null,
           points: Number(row.points) || 0
-        }))
-        .sort((a, b) => b.points - a.points);
+        }));
 
       setLeaderboard(rows);
     } catch (caught) {
