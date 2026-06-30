@@ -820,7 +820,6 @@ export default function QuinielaClient({ activeSection }: QuinielaClientProps) {
           appUser={appUser}
           points={myPoints}
           leaderboardPosition={myLeaderboardPosition}
-          totalParticipants={leaderboard.length}
           onSignOut={signOut}
         />
 

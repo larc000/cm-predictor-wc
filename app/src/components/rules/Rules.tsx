@@ -1,10 +1,15 @@
 export function Rules() {
   return (
     <section className="rules-section">
+
+      <div className="rules-section-title">
+        <span aria-hidden="true" />
+        <h3>General</h3>
+      </div>
+
       <div className="section-heading rules-hero">
-        <div>
-          <h2>Rules</h2>
-          <p className="section-copy">Keep these rules in mind while playing:</p>
+        <div>          
+          <h4>Keep these rules in mind while playing:</h4>
           <ul className="rules-intro-list">
             <li>
               Submit or update your predictions before each match closes, 1 hour before kickoff.
@@ -21,16 +26,17 @@ export function Rules() {
               If participants are tied after the tournament, the tiebreaker will be decided by a draw.
             </li>
           </ul>
-          <p className="section-copy">
+          <h4>
             The main goal is to have fun and enjoy the tournament. Good luck!
-          </p>
+          </h4>
         </div>
       </div>
 
-      <div className="rules-section-title">
+     <div className="rules-section-title">
         <span aria-hidden="true" />
-        <h3>General</h3>
+        <h3>TIME LIMITS</h3>
       </div>
+
       <div className="rules-grid">
         <div className="rule-card rule-card-orange">
           <div>
@@ -50,21 +56,21 @@ export function Rules() {
       <div className="rules-grid">
         <div className="rule-card rule-card-orange">
           <div>
-            <strong>+1 pt</strong>
+            <strong>+1 point</strong>
             <p>For predicting the match result: winner, loser, or draw.</p>
           </div>
           <span className="rule-points-badge">1 pt</span>
         </div>
         <div className="rule-card rule-card-blue">
           <div>
-            <strong>+2 pts</strong>
+            <strong>+2 points</strong>
             <p>Extra points for predicting the exact score.</p>
           </div>
           <span className="rule-points-badge">2 pts</span>
         </div>
         <div className="rule-card rule-card-gray">
           <div>
-            <strong>+1 pt</strong>
+            <strong>+1 point</strong>
             <p>For predicting the penalty winner when applicable.</p>
           </div>
           <span className="rule-points-badge">1 pt</span>

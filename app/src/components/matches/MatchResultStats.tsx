@@ -17,21 +17,21 @@ export function MatchResultStats({ stats, onShowWinners }: MatchResultStatsProps
       <h4>Match hits</h4>
       <div className="match-result-stats-grid">
         <StatItem
-          label="Result"
+          label="Result (+1 pt)"
           count={stats.result_only_count}
           percentage={stats.result_only_pct}
           matchId={stats.match_id}
           winnerType="result_only"
-          modalTitle="Correct result"
+          modalTitle="Correct result (+1 pt)"
           onShowWinners={onShowWinners}
         />
         <StatItem
-          label="Exact score"
+          label="Exact score (+2 pts)"
           count={stats.exact_score_count}
           percentage={stats.exact_score_pct}
           matchId={stats.match_id}
           winnerType="exact_score"
-          modalTitle="Correct exact score"
+          modalTitle="Correct exact score (+2 pts)"
           onShowWinners={onShowWinners}
         />
         {penaltiesCount > 0 ? (

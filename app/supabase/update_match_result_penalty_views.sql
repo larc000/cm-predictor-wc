@@ -18,8 +18,19 @@ select
   m.score_a,
   m.score_b,
   au.total_active_users,
-  count(p.id) filter (where prediction_user.id is not null and p.points = 1)::integer as result_only_count,
-  count(p.id) filter (where prediction_user.id is not null and p.points = 3)::integer as exact_score_count,
+  count(p.id) filter (
+    where prediction_user.id is not null
+      and m.score_a is not null
+      and m.score_b is not null
+      and sign(p.pred_score_a - p.pred_score_b) = sign(m.score_a - m.score_b)
+  )::integer as result_only_count,
+  count(p.id) filter (
+    where prediction_user.id is not null
+      and m.score_a is not null
+      and m.score_b is not null
+      and p.pred_score_a = m.score_a
+      and p.pred_score_b = m.score_b
+  )::integer as exact_score_count,
   count(p.id) filter (
     where prediction_user.id is not null
       and p.pred_penalty_winner is not null
@@ -27,12 +38,23 @@ select
       and p.pred_penalty_winner = m.penalty_winner
   )::integer as penalties_count,
   round(
-    count(p.id) filter (where prediction_user.id is not null and p.points = 1)::numeric * 100.0 /
+    count(p.id) filter (
+      where prediction_user.id is not null
+        and m.score_a is not null
+        and m.score_b is not null
+        and sign(p.pred_score_a - p.pred_score_b) = sign(m.score_a - m.score_b)
+    )::numeric * 100.0 /
       nullif(au.total_active_users, 0)::numeric,
     1
   ) as result_only_pct,
   round(
-    count(p.id) filter (where prediction_user.id is not null and p.points = 3)::numeric * 100.0 /
+    count(p.id) filter (
+      where prediction_user.id is not null
+        and m.score_a is not null
+        and m.score_b is not null
+        and p.pred_score_a = m.score_a
+        and p.pred_score_b = m.score_b
+    )::numeric * 100.0 /
       nullif(au.total_active_users, 0)::numeric,
     1
   ) as exact_score_pct,
@@ -86,6 +108,17 @@ select
   p.pred_penalty_winner,
   p.points,
   (
+    m.score_a is not null
+    and m.score_b is not null
+    and sign(p.pred_score_a - p.pred_score_b) = sign(m.score_a - m.score_b)
+  ) as got_result_point,
+  (
+    m.score_a is not null
+    and m.score_b is not null
+    and p.pred_score_a = m.score_a
+    and p.pred_score_b = m.score_b
+  ) as got_exact_score_points,
+  (
     p.pred_penalty_winner is not null
     and m.penalty_winner is not null
     and p.pred_penalty_winner = m.penalty_winner
@@ -107,15 +140,15 @@ select
   pred_score_b,
   pred_penalty_winner,
   points,
-  case
-    when got_penalty_point then 'penalties'
-    when p.points = 1 then 'result_only'
-    when p.points = 3 then 'exact_score'
-    else null
-  end as winner_type
+  scoring.winner_type
 from final_predictions p
-where got_penalty_point
-  or p.points in (1, 3);
+cross join lateral (
+  values
+    ('result_only', got_result_point),
+    ('exact_score', got_exact_score_points),
+    ('penalties', got_penalty_point)
+) as scoring(winner_type, did_win)
+where scoring.did_win;
 
 revoke all on public.match_result_stats from anon;
 revoke all on public.match_result_winners from anon;

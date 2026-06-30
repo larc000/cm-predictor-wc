@@ -212,6 +212,13 @@ function FinalResultColumn({ match }: { match: MatchWithPrediction }) {
         <TeamFlag teamName={match.team_b} />
       </div>
 
+      {showPenaltyWinner ? (
+        <p className="penalty-winner-legend">
+          <span className="penalty-winner-mark" aria-hidden="true">*</span>
+          The team that won via a penalty shootout.
+        </p>
+      ) : null}
+
     </aside>
   );
 }

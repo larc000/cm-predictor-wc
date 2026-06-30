@@ -7,7 +7,7 @@
   --brand-orange: #f24711;
   --brand-pink: #f20f4f;
   --brand-ink: #ffffff;
-  --brand-muted: #cccccc;
+  --brand-muted: #CCCCCC;
   --brand-line: #4a4c55;
   --brand-surface: #1a1a1a;
   --brand-bg: #000000;
@@ -758,6 +758,9 @@ h2 {
   font-size: 12px;
 }
 
+.date{
+  color:#000;
+}
 .match-lock-message {
   margin-top: 12px;
   color: #000;
@@ -977,7 +980,7 @@ h2 {
   font-family: var(--font-condensed);
   font-size: 18px;
   font-weight: 700;
-  line-height: 0.8;
+  line-height: 1;
   letter-spacing: 0;
   text-align: center;
   text-overflow: ellipsis;
@@ -988,6 +991,20 @@ h2 {
 .penalty-winner-mark {
   color: var(--brand-orange);
   margin-left: 3px;
+}
+
+.penalty-winner-legend {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  margin: -4px 0 0;
+  color: #000;
+  font-size: 13px;
+}
+
+.penalty-winner-legend .penalty-winner-mark {
+  margin-left: 0;
 }
 
 .result-team-score {
@@ -1112,7 +1129,7 @@ h2 {
 
 .modal-header p {
   margin: 6px 0 0;
-  color: var(--brand-muted);
+  color: #000;
 }
 
 .match-winners-list {
@@ -1376,8 +1393,12 @@ h2 {
 }
 
 .ranking-participant-name strong {
-  color: #ccc;
+  color: #CCC;
   font-size: 15px;
+}
+
+.match-winner-score-group .ranking-participant-name strong {
+  color: #333;
 }
 
 .ranking-participant small {
@@ -2086,60 +2107,63 @@ h2 {
   }
 
   .mobile-home-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+    display: block;
     padding: 0 4px 16px;
   }
 
-  .mobile-home-title {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
+  .mobile-home-brand {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 14px;
     min-width: 0;
   }
 
-  .mobile-home-title span {
-    flex: 0 0 auto;
-    width: 4px;
-    height: 23px;
-    background: var(--brand-orange);
-  }
-
-  .mobile-home-title strong {
-    overflow: hidden;
-    color: #fff;
-    font-family: var(--font-condensed);
-    font-size: 34px;
-    font-weight: 700;
-    line-height: 0.8;
-    letter-spacing: -0.68px;
-    text-overflow: ellipsis;
-    text-transform: uppercase;
-    white-space: nowrap;
+  .mobile-home-logo {
+    width: 100%;
+    max-width: none;
+    height: auto;
   }
 
   .mobile-home-signout {
     display: inline-flex;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
-    width: 32px;
+    gap: 6px;
+    width: auto;
     height: 32px;
     padding: 0;
     border: 0;
     background: transparent;
     color: var(--brand-orange);
     cursor: pointer;
-    font-family: var(--font-body);
-    font-size: 25px;
-    font-weight: 800;
-    line-height: 1;
+    font-family: var(--font-condensed);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .mobile-home-signout-icon {
+    display: block;
+    width: 26px;
+    height: 26px;
+  }
+
+  .mobile-home-greeting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0 0 24px;
+    padding: 0 4px;
   }
 
   .mobile-home-greeting {
-    margin: 0 0 24px;
-    padding: 0 4px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
     color: #fff;
     font-size: 18px;
     font-weight: 800;
@@ -2186,8 +2210,10 @@ h2 {
 
   .mobile-home-rank {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 4px;
     min-height: 44px;
     margin: auto 0 0;
     padding: 12px;
@@ -2198,6 +2224,29 @@ h2 {
     font-weight: 800;
     line-height: 1.4;
     text-align: center;
+  }
+
+  .mobile-home-rank-label {
+    color: #fff;
+    font-family: var(--font-condensed);
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .mobile-home-rank-label strong,
+  .mobile-home-rank-position span,
+  .mobile-home-rank-position strong {
+    color: inherit;
+  }
+
+  .mobile-home-rank-position {
+    color: #ffe7de;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.4;
   }
 
   .secondary-tabs {
@@ -2659,7 +2708,7 @@ h2 {
 
   .section-heading,
   .group-title {
-    width: min(100%, 760px);
+    width: min(100%, 840px);
     margin-left: auto;
     margin-right: auto;
   }
