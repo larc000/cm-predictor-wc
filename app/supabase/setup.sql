@@ -374,7 +374,12 @@ select
   au.total_active_users,
   count(p.id) filter (where prediction_user.id is not null and p.points = 1)::integer as result_only_count,
   count(p.id) filter (where prediction_user.id is not null and p.points = 3)::integer as exact_score_count,
-  count(p.id) filter (where prediction_user.id is not null and p.points = 4)::integer as penalties_count,
+  count(p.id) filter (
+    where prediction_user.id is not null
+      and p.pred_penalty_winner is not null
+      and m.penalty_winner is not null
+      and p.pred_penalty_winner = m.penalty_winner
+  )::integer as penalties_count,
   round(
     count(p.id) filter (where prediction_user.id is not null and p.points = 1)::numeric * 100.0 /
       nullif(au.total_active_users, 0)::numeric,
@@ -386,7 +391,12 @@ select
     1
   ) as exact_score_pct,
   round(
-    count(p.id) filter (where prediction_user.id is not null and p.points = 4)::numeric * 100.0 /
+    count(p.id) filter (
+      where prediction_user.id is not null
+        and p.pred_penalty_winner is not null
+        and m.penalty_winner is not null
+        and p.pred_penalty_winner = m.penalty_winner
+    )::numeric * 100.0 /
       nullif(au.total_active_users, 0)::numeric,
     1
   ) as penalties_pct
@@ -405,6 +415,7 @@ group by
 create or replace view public.match_result_winners
 with (security_invoker = false)
 as
+with final_predictions as (
 select
   m.match_id,
   u.id as user_id,
@@ -428,18 +439,37 @@ select
   p.pred_score_b,
   p.pred_penalty_winner,
   p.points,
-  case
-    when p.points = 1 then 'result_only'
-    when p.points = 3 then 'exact_score'
-    when p.points = 4 then 'penalties'
-    else null
-  end as winner_type
+  (
+    p.pred_penalty_winner is not null
+    and m.penalty_winner is not null
+    and p.pred_penalty_winner = m.penalty_winner
+  ) as got_penalty_point
 from public.predictions p
 join public.matches m on m.match_id = p.match_id
 join public.users u on u.id = p.user_id
 where lower(m.status) = 'final'
   and u.active = true
-  and p.points in (1, 3, 4);
+)
+select
+  match_id,
+  user_id,
+  email,
+  name,
+  timezone,
+  location,
+  pred_score_a,
+  pred_score_b,
+  pred_penalty_winner,
+  points,
+  case
+    when got_penalty_point then 'penalties'
+    when p.points = 1 then 'result_only'
+    when p.points = 3 then 'exact_score'
+    else null
+  end as winner_type
+from final_predictions p
+where got_penalty_point
+  or p.points in (1, 3);
 
 create or replace view public.pending_match_participation
 with (security_invoker = false)

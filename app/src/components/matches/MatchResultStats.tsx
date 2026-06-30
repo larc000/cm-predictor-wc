@@ -36,12 +36,12 @@ export function MatchResultStats({ stats, onShowWinners }: MatchResultStatsProps
         />
         {penaltiesCount > 0 ? (
           <StatItem
-            label="Penalties"
+            label="Penalties (+1 pt)"
             count={stats.penalties_count}
             percentage={stats.penalties_pct}
             matchId={stats.match_id}
             winnerType="penalties"
-            modalTitle="Correct score and penalties"
+            modalTitle="Correct penalties (+1 pt)"
             onShowWinners={onShowWinners}
           />
         ) : null}
